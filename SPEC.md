@@ -171,7 +171,9 @@ Loop control inside ITERATE / QUEUE.
 - Prefer these over a DECISION whose only job is to exit a loop.
 
 ### RECURSE
-A process (or step) that calls itself.
+A process that calls itself. **Recursion *is* a self-`CALL`** — `RECURSE` is the
+same act as `CALL <ThisProcess>(…)` with the two guards below; don't write both
+for the same recursion.
 - Formal: `RECURSE [BASE: <condition>; MAX_DEPTH: <n>]`
   - `BASE` — base case (required). `MAX_DEPTH` — depth guard.
 
@@ -181,15 +183,26 @@ Serialized / turn-based flow (e.g. agents taking turns).
   - `ORDER` default `FIFO`. `ONE_AT_A_TIME` is the default for agent turns.
 
 ### PARALLEL … MERGE
-Concurrent sub-branches, lettered, then a join.
+Concurrent sub-branches that **join** at a MERGE.
 - Formal: `PARALLEL [STATE: isolated|shared] … MERGE [<rule>]`
   - `STATE` default `isolated` (branches do **not** see each other's
     `STATE UPDATE`s until MERGE). `MERGE` states how outputs combine.
 - Branches use letters: `3a.`, `3b.`, then a `MERGE` step.
+- For concurrency that **never joins** (long-running services), use SERVICE.
+
+### SERVICE
+A long-running, concurrent activity that does **not** join — e.g. a worker loop,
+a watched-folder ingester, a broker consumer. Several SERVICEs typically run at
+once over **shared** state and continue until stopped.
+- Formal: `SERVICE <Name> [UNTIL: stop]` — usually an `ITERATE [UNTIL: stop]` body.
+- Run a set concurrently with `CONCURRENT { SERVICE a; SERVICE b; … }`
+  (the non-joining counterpart of PARALLEL); name the shared state they operate on.
 
 ### DECISION
 A branch point.
-- Formal: `DECISION [ON: <value>] → <branch-A> | <branch-B> | …`
+- Inline (one-liners): `DECISION [ON: <value>] → <branch-A> | <branch-B> | …`
+- With **branch bodies** (multi-step): name branches with letters and nest their
+  steps, like PARALLEL — `2a.` … / `2b.` … under the DECISION.
 - Narrative: *"If <…>, then …; otherwise …."*
 
 ### RETRY
@@ -204,6 +217,26 @@ Handle / propagate a failure.
 - When `THEN` is `fallback` (or `handle`), **name the target**:
   `ERROR [ON: malformed; THEN: fallback → stop with current context]`. The arrow
   gives the concrete recovery, not just the mode.
+
+### AWAIT
+Suspend until an external event — a human approval, a system signal, a timeout.
+Real processes *wait*: a `[GATED, HUMAN]` write waits for an operator; a crash-safe
+egress waits for a broker ack. The process resumes (or times out) when the event
+arrives.
+- Formal: `AWAIT [EVENT: <what>; TIMEOUT: <duration|never>; THEN: <on-timeout>]`
+- Example: `AWAIT [EVENT: operator approves the proposed meaning; TIMEOUT: never]`.
+- State held across an AWAIT is whatever its scope keeps (§6); the wait may
+  outlive a restart, so durable scope is what survives.
+
+### ATOMIC / DURABLE-BEFORE  (ordering & recovery)
+Crash-safe systems hinge on *ordering between steps* and *what happens if a crash
+lands between them*. Make that explicit instead of burying it in prose:
+- `DURABLE-BEFORE: <step>` on a step — this step's effect must be durable **before**
+  `<step>` runs (e.g. "enqueue is durable before the broker offset is committed").
+- `ATOMIC { … }` — a group whose effect is all-or-nothing.
+- `RECOVERY: <action>` — a step/process annotation stating what happens if a crash
+  interrupts here on restart (e.g. `RECOVERY: redelivery re-runs the enqueue, which
+  is a no-op`). This is the crash-window analogue of `ERROR`’s fallback.
 
 ### CALL
 Invoke another PROCESS (composition, §11).
@@ -294,6 +327,10 @@ extensions** for anything custom.
 
 Example: `[LLM, STOCHASTIC, SYNC, SIDE-EFFECT]`.
 
+A tag may carry a parameter where it sharpens meaning — most usefully the
+idempotency key: `IDEMPOTENT [KEY: correlation_id]` (the *what* that makes a repeat
+a no-op), and `BATCH [n]` for fan-out size (§5 STEP).
+
 **Extensions:** custom tags are namespaced and visibly non-standard, e.g.
 `[x:rerank]`, `[team:billing]`. The reserved vocabulary is expected to **grow
 from real use** (describing actual projects), not be fixed up front.
@@ -330,8 +367,13 @@ OUTCOMES
 
 - Each requirement: an id (`R1`), a `SHALL/SHOULD/MAY` assertion, a priority tag
   (`[MUST] | [SHOULD] | [MAY]`), and an optional `ACCEPTANCE` criterion.
-- Process steps may reference requirements for traceability:
-  `4. … [SATISFIES: R2]`.
+- `[MUST]`/`[SHOULD]` are obligations; **`[MAY]` is a capability** — on a step,
+  `[SATISFIES: R#]` then means *"supports"*, not *"guarantees"*.
+- Process steps reference requirements for traceability: `4. … [SATISFIES: R2]`.
+- **A guarantee may be emergent** — satisfied by several steps together, possibly
+  across processes. Name them: `[SATISFIES: R3 — via Ingest.3 + Egress.3 + consumer de-dup]`.
+  Per-step `[SATISFIES]` is the common case; the multi-step form is for end-to-end
+  properties no single step owns.
 - **OUTCOMES** are the expected end-states (what "done" looks like), separate
   from the moment-to-moment OUTPUT of steps.
 
@@ -420,7 +462,9 @@ is **well-formed** if:
 4. reserved tags use at most one value per dimension (§7); custom tags are
    namespaced;
 5. every `STATE UPDATE` names a piece declared in a `STATE` block;
-6. LLM-driven `ITERATE` / `RECURSE` carry a bound (`MAX` / `MAX_DEPTH`).
+6. LLM-driven `ITERATE` / `RECURSE` carry a bound (`MAX` / `MAX_DEPTH`);
+7. `BREAK` / `CONTINUE` appear only inside a loop (`ITERATE` / `QUEUE`);
+8. every `AWAIT` states a `TIMEOUT` (a value or `never`).
 
 Descriptions (the prose in each step) are intentionally **not** constrained —
 that is where human readability lives. Tooling validates the skeleton, not the

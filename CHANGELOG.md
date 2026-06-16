@@ -38,6 +38,23 @@ Refinements from the first stress test (Tirzah, `examples/tirzah.cairn.md`):
 - **STATE across `CALL`** is private by default (§6.5) — data crosses via
   INPUT/OUTPUT; shared mutable state must be declared at a shared scope.
 
+Refinements from stress tests 2–3 (Hoglah, Mahalath):
+
+- **`SERVICE` + `CONCURRENT`** — long-running concurrent activities that never
+  join (worker loops, consumers, watched folders), distinct from `PARALLEL`
+  (which joins at MERGE).
+- **`AWAIT [EVENT/TIMEOUT/THEN]`** — suspend until a human/system event; real
+  processes wait (the `[GATED, HUMAN]` and broker-ack cases).
+- **`ATOMIC` / `DURABLE-BEFORE` / `RECOVERY:`** — express safety-critical ordering
+  between steps and what happens if a crash lands between them (the crash-window
+  analogue of `ERROR` fallback).
+- **`RECURSE` is a self-`CALL`** — clarified, so recursion isn't double-notated.
+- **`DECISION` branch bodies** — multi-step branches nest with letters (`2a.`/`2b.`),
+  like PARALLEL.
+- **`IDEMPOTENT [KEY: …]`** + parameterised tags (`BATCH [n]`).
+- **Emergent guarantees** — `[SATISFIES]` may name several steps across processes;
+  `[MAY]` = capability, so `[SATISFIES]` on it means "supports", not "guarantees".
+
 ## [0.5] — prior
 
 Initial prototype: PROCESS / numbered hierarchy / core verbs / tags / constructs
