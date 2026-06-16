@@ -27,6 +27,17 @@ Revision following design review. Adds:
 - **Composition** — PROCESS signatures (INPUT/OUTPUT) + `CALL`.
 - **Structural conformance** rules + a worked example in both styles.
 
+Refinements from the first stress test (Tirzah, `examples/tirzah.cairn.md`):
+
+- **`BREAK` / `CONTINUE`** loop control + `ITERATE UNTIL` may read body-set state
+  (explicit loop exit instead of a DECISION "falling out").
+- **Fan-out clarified** — a step may make many like calls (`[BATCH]`) and still be
+  one step; `PARALLEL` is reserved for concurrent independent branches.
+- **`ERROR THEN: fallback → <target>`** names the concrete recovery.
+- **STATE scope semantics** spelled out (§6.4); `iteration` scope resets each round.
+- **STATE across `CALL`** is private by default (§6.5) — data crosses via
+  INPUT/OUTPUT; shared mutable state must be declared at a shared scope.
+
 ## [0.5] — prior
 
 Initial prototype: PROCESS / numbered hierarchy / core verbs / tags / constructs

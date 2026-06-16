@@ -144,13 +144,31 @@ formality" lever — omit them and the default applies.
 ### STEP
 A single action. The default construct; the verb carries the meaning.
 
+A step may perform **many similar calls at once** (a fan-out / batch) and still be
+*one* step — e.g. "run the requested tool calls." Tag it `[BATCH]` (optionally
+`[BATCH: n]`) when the multiplicity matters. Use **PARALLEL** only for genuinely
+*concurrent branches with independent control flow*, not for a loop or batch of
+like calls.
+
 ### ITERATE
 Repeat a block.
 - Formal: `ITERATE [UNTIL: <condition>; MAX: <n>]`
-  - `UNTIL` — termination condition (default: until the body signals done).
+  - `UNTIL` — termination condition (default: until the body signals done). The
+    condition may reference state the body sets (e.g. `UNTIL: decision.status =
+    done`).
   - `MAX` — hard cap on rounds (default: required for any LLM-driven loop).
+- Loop control: a step inside the body may `BREAK` (exit the loop) or `CONTINUE`
+  (skip to the next round) — see below. This is the explicit way to leave a loop
+  early, rather than relying on a DECISION to "fall out."
 - Narrative: *"Iterate, refining …, until <condition> or after at most <n>
   rounds."*
+
+### BREAK / CONTINUE
+Loop control inside ITERATE / QUEUE.
+- `BREAK [IF: <condition>]` — leave the enclosing loop now (optionally only when
+  the condition holds).
+- `CONTINUE [IF: <condition>]` — skip the rest of this round and start the next.
+- Prefer these over a DECISION whose only job is to exit a loop.
 
 ### RECURSE
 A process (or step) that calls itself.
@@ -183,6 +201,9 @@ Re-attempt on transient failure.
 Handle / propagate a failure.
 - Formal: `ERROR [ON: <type>; THEN: handle|fallback|propagate]`
   (default `propagate` to the parent PROCESS).
+- When `THEN` is `fallback` (or `handle`), **name the target**:
+  `ERROR [ON: malformed; THEN: fallback → stop with current context]`. The arrow
+  gives the concrete recovery, not just the mode.
 
 ### CALL
 Invoke another PROCESS (composition, §11).
@@ -236,6 +257,24 @@ number, in the reference doc. This keeps the main flow human-readable while givi
 an AI a precise, executable contract. Scope makes PARALLEL/RECURSE access
 explicit (a `session`-scoped value is shared across a session; an `iteration`-
 scoped value resets each loop).
+
+### 6.4 Scope semantics
+
+- `global` — lives for the whole description.
+- `process` — lives for one run of the PROCESS that declares it.
+- `session` — shared across the turns of a session.
+- `iteration` — **reset at the start of each ITERATE/QUEUE round.** A value the
+  body recomputes each pass is `iteration`-scoped; a value that accumulates
+  across passes (e.g. `history`) is `process`-scoped.
+
+### 6.5 STATE and the CALL boundary
+
+A sub-process's STATE is **private by default**. Data crosses a `CALL` only
+through its **INPUT / OUTPUT** signature — a caller cannot see or write a callee's
+internal state, and vice versa. To share mutable state across a `CALL`, declare it
+at a shared scope (`process`/`global`) visible to both, and say so explicitly.
+This keeps composition (§10) safe to reason about: a PROCESS is understood from
+its signature, not its callees' internals.
 
 ---
 
