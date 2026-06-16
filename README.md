@@ -10,6 +10,27 @@ sync/async, queuing, and error handling.
 
 **The specification lives in [SPEC.md](SPEC.md) (v0.7).**
 
+## What it looks like
+
+A small slice, in the readable **Narrative** style:
+
+```
+PROCESS — Answer a question from local memory.
+  1. Gather context with read-only tools (search, then compile the surrounding nodes).
+  2. The model writes the answer using only what was gathered — no invented sources.
+  3. Save the exchange so the next turn can resume.
+```
+
+The same step in the precise **Formal** style (same backbone, with tags +
+traceability):
+
+```
+2. Generate the answer from gathered_context.  [LLM, STOCHASTIC, SYNC] [SATISFIES: R1]
+   CONSTRAINTS: answer only from retrieved context; do not invent sources.
+```
+
+Full worked descriptions of three real systems are in [`examples/`](examples/).
+
 ## What it's for
 
 - Documenting **requirements** and technical specifications in design documents.
@@ -65,6 +86,26 @@ rather than theoretical perfection.
 **v0.7** — first stress-tested release. Refined by describing three real systems
 in Cairn (Tirzah, Hoglah, Mahalath — see [`examples/`](examples/)). Evolving from
 real use; a structural grammar is in [GRAMMAR.md](GRAMMAR.md).
+
+## Repository
+
+- [SPEC.md](SPEC.md) — the specification (v0.7).
+- [GRAMMAR.md](GRAMMAR.md) — structural EBNF for the skeleton.
+- [examples/](examples/) — real systems described in Cairn (Tirzah, Hoglah, Mahalath).
+- [CHANGELOG.md](CHANGELOG.md) — how the spec has evolved.
+
+## Feedback & contributing
+
+Cairn evolves from real use, so **feedback is the point** — especially from
+describing your own processes in it. That is exactly how v0.7 was shaped.
+
+- **Ambiguity, gap, or rough edge?** Open a
+  [feedback issue](../../issues/new/choose).
+- **A new construct, tag, or change?** Open a proposal (same chooser) — say what
+  real process motivated it; concrete beats theoretical.
+- **Questions, ideas, show-and-tell?** Use the
+  [Discussions](../../discussions) tab.
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for how proposals are handled.
 
 ## License
 

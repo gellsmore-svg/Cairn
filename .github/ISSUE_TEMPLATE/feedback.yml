@@ -1,0 +1,32 @@
+name: Feedback
+description: Report an ambiguity, gap, or rough edge in the Cairn spec.
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping Cairn evolve from real use. Concrete reports —
+        ideally from describing an actual process — are the most useful.
+  - type: textarea
+    id: what
+    attributes:
+      label: What's unclear, missing, or awkward?
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where?
+      description: Section, construct, or tag in SPEC.md / GRAMMAR.md.
+  - type: textarea
+    id: context
+    attributes:
+      label: What were you describing when you hit it?
+      description: A real process you were trying to express helps a lot.
+  - type: input
+    id: version
+    attributes:
+      label: Spec version
+      placeholder: "v0.7"
+    validations:
+      required: true

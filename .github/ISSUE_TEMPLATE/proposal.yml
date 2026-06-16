@@ -1,0 +1,33 @@
+name: Proposal
+description: Propose a new construct, tag, or change to Cairn.
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposals that come from a real process that needed them are far stronger
+        than theoretical ones. Show the gap.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What do you propose?
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: What real process needed it?
+      description: Concrete beats theoretical — what couldn't you express cleanly?
+    validations:
+      required: true
+  - type: textarea
+    id: sketch
+    attributes:
+      label: Sketch the syntax
+      description: Formal and/or Narrative, however you'd write it.
+      render: text
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Why don't existing constructs/tags cover it?
