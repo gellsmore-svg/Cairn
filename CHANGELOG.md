@@ -1,8 +1,12 @@
 # Changelog
 
-All notable changes to the APML specification are recorded here.
+All notable changes to the Cairn specification are recorded here.
 
 ## [0.6] — 2026-06-16 (draft)
+
+**Renamed** from the working title "APML" to **Cairn** — a cairn marks a route
+with simple waypoints so anyone who follows can stay on the path, which is what a
+Cairn description does for humans and AI.
 
 Revision following design review. Adds:
 

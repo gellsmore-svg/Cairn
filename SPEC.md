@@ -1,8 +1,8 @@
-# APML — Agentic Process Meta-Language
+# Cairn — a process meta-language
 
 **Specification v0.6 (draft)**
 
-APML is a simple, textual, human-readable meta-language for describing complex
+Cairn is a simple, textual, human-readable meta-language for describing complex
 processes — especially agentic / LLM-centric ones — so that humans and LLMs can
 read, write, compare, and reason about the same description.
 
@@ -15,10 +15,10 @@ This document is the specification. For the why, see
 
 The **golden rule** comes first, because everything else serves it:
 
-> When someone reads an APML description, they should think *"I get what's
+> When someone reads a Cairn description, they should think *"I get what's
 > happening here,"* not *"I need to learn the notation first."*
 
-So APML is **human-first**. Formality is **optional and progressive**: you add
+So Cairn is **human-first**. Formality is **optional and progressive**: you add
 precision only where it matters, and the readable flow stays clean. Where machine
 precision is needed (for validation or AI execution), it lives in a **Formal**
 layer that an AI keeps in sync with the **Narrative** human reading — both are
@@ -28,7 +28,7 @@ two views of one shared structure (§4).
 
 ## 1. Document structure — three modes
 
-An APML document is built from three kinds of block. A document may use any
+An Cairn document is built from three kinds of block. A document may use any
 subset, in any combination.
 
 | Mode | Answers | Shape |
@@ -57,14 +57,14 @@ steps. Mixing them is what makes most design docs hard to follow.
    and keeps them aligned (§4).
 5. **Consistency through core verbs** (§5.3) — a recommended lexicon, never a
    rule. Clarity always wins over adherence.
-6. **Practical and evolving.** APML is used "in anger" on real projects; the
+6. **Practical and evolving.** Cairn is used "in anger" on real projects; the
    reserved vocabulary (verbs, tags) grows from real use, not theory.
 
 ---
 
 ## 3. The shared backbone and the two styles
 
-Every APML description has one **canonical backbone**:
+Every Cairn description has one **canonical backbone**:
 
 - the **numbering** (`1.`, `2.1`, …) and indentation (sequence + hierarchy),
 - the **construct** each step is (STEP, ITERATE, DECISION, …),
@@ -111,7 +111,7 @@ Steps are numbered for sequence; indentation + dotted numbers show nesting:
 
 ### 4.3 Core verbs (recommended lexicon)
 
-Start a step with one of these where it fits — it gives APML its scannable
+Start a step with one of these where it fits — it gives Cairn its scannable
 "process feel." **Recommended, not required.**
 
 `Initialize/Setup` · `Propose/Generate` · `Evaluate/Score` · `Decide/Choose` ·
@@ -197,7 +197,7 @@ known hazards. `OUTPUT` at PROCESS level is its return.
 ## 6. STATE
 
 State is the substance of agentic processes (notes, exclusion lists,
-accumulators, session memory). APML declares it at a **simple, directional level
+accumulators, session memory). Cairn declares it at a **simple, directional level
 inline**, and links to a **definitive definition by number** in a reference
 document (the reference-doc format is part of the spec and TBD in detail).
 
@@ -273,7 +273,7 @@ from real use** (describing actual projects), not be fixed up front.
 
 ## 9. Requirements & Outcomes mode
 
-APML expresses requirements **directly**, as testable assertions — distinct from
+Cairn expresses requirements **directly**, as testable assertions — distinct from
 process steps — so a single document can set the scene, state what must be true,
 and describe the flow.
 
@@ -371,7 +371,7 @@ PROCESS — Retrieve an answer for a user query.
 
 ## 12. Conformance (structural)
 
-APML descriptions are free-text inside a light structural skeleton. A description
+Cairn descriptions are free-text inside a light structural skeleton. A description
 is **well-formed** if:
 
 1. it contains at least one of CONTEXT, REQUIREMENTS/OUTCOMES, or PROCESS;
@@ -398,8 +398,8 @@ once the constructs settle.
   style, scoped+referenced STATE, progressive-formality construct modifiers,
   tag dimensions + extensions, requirements/outcomes mode, composition,
   conformance).
-- APML evolves from real use. The reserved verbs and tags grow as the language is
+- Cairn evolves from real use. The reserved verbs and tags grow as the language is
   applied to actual projects; changes are recorded in
   [CHANGELOG.md](CHANGELOG.md).
 - The first stress test is describing three real systems (Tirzah, Hoglah,
-  Mahalath) in APML — see `examples/`.
+  Mahalath) in Cairn — see `examples/`.

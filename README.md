@@ -1,6 +1,6 @@
-# APML — Agentic Process Meta-Language
+# Cairn
 
-APML is a simple, textual, human-readable meta-language for describing complex
+Cairn is a simple, textual, human-readable meta-language for describing complex
 processes clearly and consistently — especially agentic / LLM-centric ones.
 
 It lets humans and LLMs collaborate using the **same** description of a process,
@@ -28,7 +28,7 @@ sync/async, queuing, and error handling.
 
 ### Human-first readability
 The primary goal is **maximum human readability**. Anyone — technical or not —
-should read an APML description and quickly understand the process without
+should read a Cairn description and quickly understand the process without
 wrestling with syntax, jargon, or abstraction. We remove cognitive barriers so
 attention stays on **what the process actually does**, not on decoding notation.
 
@@ -54,7 +54,7 @@ clarity always wins.
 - CONTEXT and CONSTRAINTS supply supporting knowledge on demand.
 
 ### Practical and evolving
-APML is meant to be used "in anger" on real projects, evolving from actual needs
+Cairn is meant to be used "in anger" on real projects, evolving from actual needs
 rather than theoretical perfection.
 
 > The ultimate test: a reader thinks *"I get what's happening here,"* not
@@ -63,7 +63,7 @@ rather than theoretical perfection.
 ## Status
 
 Draft, **v0.6**. Evolving from real use; the first stress test is describing
-Tirzah, Hoglah, and Mahalath in APML (see [`examples/`](examples/)).
+Tirzah, Hoglah, and Mahalath in Cairn (see [`examples/`](examples/)).
 
 ## License
 
