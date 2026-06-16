@@ -2,7 +2,11 @@
 
 All notable changes to the Cairn specification are recorded here.
 
-## [0.6] — 2026-06-16 (draft)
+## [0.7] — 2026-06-16
+
+First **stress-tested release**: the v0.6 draft plus everything learned from
+describing three real systems (Tirzah, Hoglah, Mahalath) in Cairn. Adds a
+structural grammar ([GRAMMAR.md](GRAMMAR.md)).
 
 **Renamed** from the working title "APML" to **Cairn** — a cairn marks a route
 with simple waypoints so anyone who follows can stay on the path, which is what a

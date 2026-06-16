@@ -1,6 +1,6 @@
 # Cairn — a process meta-language
 
-**Specification v0.6 (draft)**
+**Specification v0.7**
 
 Cairn is a simple, textual, human-readable meta-language for describing complex
 processes — especially agentic / LLM-centric ones — so that humans and LLMs can
@@ -470,17 +470,20 @@ Descriptions (the prose in each step) are intentionally **not** constrained —
 that is where human readability lives. Tooling validates the skeleton, not the
 words.
 
-A minimal structural grammar (EBNF) for the skeleton will accompany this spec
-once the constructs settle.
+A minimal structural grammar (EBNF) for the skeleton is in
+[GRAMMAR.md](GRAMMAR.md). It defines the structure; step descriptions stay free
+text.
 
 ---
 
 ## 13. Versioning & evolution
 
-- This is **v0.6**, a draft that supersedes v0.5 (adds: shared-backbone dual
-  style, scoped+referenced STATE, progressive-formality construct modifiers,
-  tag dimensions + extensions, requirements/outcomes mode, composition,
-  conformance).
+- This is **v0.7** — the first stress-tested release. It supersedes the v0.6 draft
+  (shared-backbone dual style, scoped+referenced STATE, progressive-formality
+  modifiers, tag dimensions + extensions, requirements/outcomes mode, composition,
+  conformance) and folds in everything learned from describing three real systems:
+  `SERVICE`/`CONCURRENT`, `AWAIT`, `ATOMIC`/`DURABLE-BEFORE`/`RECOVERY`,
+  `BREAK`/`CONTINUE`, parameterised tags, and emergent `[SATISFIES]`.
 - Cairn evolves from real use. The reserved verbs and tags grow as the language is
   applied to actual projects; changes are recorded in
   [CHANGELOG.md](CHANGELOG.md).

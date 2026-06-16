@@ -8,7 +8,7 @@ independent of any programming language or platform. It bridges pseudocode-style
 clarity with modern agentic realities: iteration, recursion, non-determinism,
 sync/async, queuing, and error handling.
 
-**The specification lives in [SPEC.md](SPEC.md) (v0.6, draft).**
+**The specification lives in [SPEC.md](SPEC.md) (v0.7).**
 
 ## What it's for
 
@@ -62,8 +62,9 @@ rather than theoretical perfection.
 
 ## Status
 
-Draft, **v0.6**. Evolving from real use; the first stress test is describing
-Tirzah, Hoglah, and Mahalath in Cairn (see [`examples/`](examples/)).
+**v0.7** — first stress-tested release. Refined by describing three real systems
+in Cairn (Tirzah, Hoglah, Mahalath — see [`examples/`](examples/)). Evolving from
+real use; a structural grammar is in [GRAMMAR.md](GRAMMAR.md).
 
 ## License
 
