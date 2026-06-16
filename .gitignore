@@ -1,0 +1,8 @@
+# Internal working/state docs — never publish
+.restart.md
+.restart.md.*.bak
+.session-log.md
+
+# OS / editor noise
+.DS_Store
+*.swp
