@@ -1,6 +1,6 @@
 # Cairn — a process meta-language
 
-**Specification v0.7**
+**Specification v0.8**
 
 Cairn is a simple, textual, human-readable meta-language for describing complex
 processes — especially agentic / LLM-centric ones — so that humans and LLMs can
@@ -52,9 +52,9 @@ steps. Mixing them is what makes most design docs hard to follow.
 3. **Progressive formality.** The default is terse and readable. Precision
    (modifiers, state scopes, acceptance criteria) is added only where it earns
    its keep. Sensible defaults apply when a modifier is omitted.
-4. **One structure, two styles.** Formal (machine-precise) and Narrative
-   (human-readable) are two renderings of the *same* backbone; an AI translates
-   and keeps them aligned (§4).
+4. **One structure, many profiles.** A single canonical backbone is *projected*
+   into audience render profiles (precise `ai`, readable `operator`, and more);
+   you author once and a tool/AI renders the rest (§3).
 5. **Consistency through core verbs** (§5.3) — a recommended lexicon, never a
    rule. Clarity always wins over adherence.
 6. **Practical and evolving.** Cairn is used "in anger" on real projects; the
@@ -62,28 +62,68 @@ steps. Mixing them is what makes most design docs hard to follow.
 
 ---
 
-## 3. The shared backbone and the two styles
+## 3. The shared backbone and its render profiles
 
 Every Cairn description has one **canonical backbone**:
 
 - the **numbering** (`1.`, `2.1`, …) and indentation (sequence + hierarchy),
 - the **construct** each step is (STEP, ITERATE, DECISION, …),
-- the **tags** (§8) and **state references** (§7) on a step,
+- the **tags** (§7) and **state references** (§6) on a step,
 - any **formal modifiers** on a construct (e.g. `ITERATE [MAX: 5]`).
 
-Two styles render that backbone:
+The backbone is the single source of truth. It is **projected** into one of
+several **render profiles** for a given audience. You author the backbone once; a
+tool or AI renders the profile. You do **not** hand-maintain multiple versions.
 
-- **Formal** — terse, verb-led, carries the precise modifiers. This is the
-  **canonical** form for anything machine-checkable or AI-executable.
-- **Narrative** — the same steps written as plain prose for a human reader.
+### 3.1 Render profiles
 
-They share the numbering **1:1**, so a reader can move between them and an AI can
-translate either way and keep them consistent. When the two disagree, **Formal
-wins** for machine semantics; Narrative wins for human intent (and the
-disagreement is a bug to fix).
+A profile projects the backbone with rules for what to **expose**, what to
+**compress**, and how to phrase it. The standard profiles:
 
-> Authoring guidance: write whichever style is natural, and let tooling/AI
-> generate and sync the other. You do **not** maintain both by hand.
+| Profile | For | Exposes | Compresses | Reads like |
+|---|---|---|---|---|
+| `ai` | machines / execution | everything: every step, modifier, tag, state | nothing | a precise, complete skeleton |
+| `operator` | the person running it | intent, ownership, decisions, iteration, milestones, outputs | internal calls, mechanical sub-steps | a guided operational narrative |
+| `executive` | sponsors / overview | milestones, owners, outcomes, key decisions | almost all mechanism | a one-glance status story |
+| `audit` | review / compliance | everything significant + decisions, constraints, provenance, who-did-what | low-value mechanics only | a defensible record |
+
+`ai` and `operator` are the **canonical pair** (the precise form and the readable
+form); `executive` and `audit` are further projections of the *same* backbone.
+
+Select a profile with a directive: `render-profile: operator`. Profiles other than
+`ai` are lossy **by design**; when they seem to disagree, the `ai` projection wins
+for machine semantics — the others are never authoritative.
+
+For these projections to work, the backbone carries the needed signal: **PURPOSE**
+(intent, §5), **MILESTONE** (major transitions, §5), **Actor / ASSISTED-BY**
+(ownership vs. contribution, §7), and the always-significant constructs (DECISION,
+CONSTRAINTS, OUTPUT, AWAIT, GATED) that every profile but the most compressed
+exposes.
+
+### 3.2 The operator (human) profile
+
+The headline human view. It answers, for each phase: *what is happening, why, who
+owns it, what changed, what's next* — without implementation detail. For each
+MILESTONE / PROCESS it renders **Purpose** (the `PURPOSE:` intent), **Owner** (the
+Actor, a role if named), **Assisted by** (the `ASSISTED-BY` actors), **Outputs**
+(key `OUTPUT`s / OUTCOMES), **Iterate until** (the `ITERATE [UNTIL: …]` condition,
+when present), and **Next** (the following MILESTONE). It compresses internal
+`CALL`s and mechanical `[CODE]` sub-steps, and always exposes decisions,
+constraints, and outputs.
+
+```
+FRAME Opportunity
+  Purpose:       Convert a customer need into executable context.
+  Owner:         Product Lead
+  Assisted by:   LLM
+  Outputs:       specification, constraints, acceptance criteria
+  Iterate until: confidence threshold satisfied
+  Next:          BUILD Solution
+```
+
+**Success criterion:** a human grasps purpose, ownership, progress, and iteration
+without reading mechanism. **Guardrail:** if removing a keyword or structure makes
+understanding *harder*, the profile is over-compressed — restore it.
 
 ---
 
@@ -131,7 +171,7 @@ A step is a line; it may carry indented sub-blocks:
 ```
 
 Sub-block keywords: `STATE UPDATE`, `OUTPUT`, `RISKS`, `CONSTRAINTS` /
-`BOUNDARIES`, `CONTEXT`, or nested numbered steps.
+`BOUNDARIES`, `CONTEXT`, `PURPOSE`, or nested numbered steps.
 
 ---
 
@@ -140,6 +180,18 @@ Sub-block keywords: `STATE UPDATE`, `OUTPUT`, `RISKS`, `CONSTRAINTS` /
 Each construct below lists its **meaning**, optional **formal modifiers** (with
 defaults), and how it reads in **Narrative**. Modifiers are the "progressive
 formality" lever — omit them and the default applies.
+
+### MILESTONE
+A major transition / phase in a process (e.g. `FRAME`, `BUILD`, `VERIFY`,
+`RELEASE`). Marks the points the `operator` / `executive` profiles surface.
+- Formal: `MILESTONE <Name>` heading a step or group.
+- Top-level steps may be treated as milestones implicitly; `MILESTONE` makes a
+  significant transition explicit.
+
+### PURPOSE
+A one-line statement of **intent** on a PROCESS, MILESTONE, or step — *why* it
+exists, not *how* it works. The `operator` profile renders it as "Purpose:".
+- Formal: `PURPOSE: <intent>` (a sub-block, like OUTPUT/RISKS).
 
 ### STEP
 A single action. The default construct; the verb carries the meaning.
@@ -319,13 +371,29 @@ extensions** for anything custom.
 
 | Dimension | Reserved values |
 |---|---|
-| **Actor** | `LLM` · `HUMAN` · `CODE` · `EXTERNAL` |
+| **Actor** (owner) | `LLM` · `HUMAN` · `CODE` · `EXTERNAL` |
 | **Determinism** | `DETERMINISTIC` · `STOCHASTIC` |
 | **Timing** | `SYNC` · `ASYNC` |
 | **Effects** | `PURE` · `SIDE-EFFECT` · `IDEMPOTENT` |
 | **Control** (optional) | `BLOCKING` · `GATED` (human review) · `CACHED` |
 
 Example: `[LLM, STOCHASTIC, SYNC, SIDE-EFFECT]`.
+
+**Ownership vs. contribution.** The **Actor** dimension names the *accountable
+owner* — who decides, approves, and owns the outcome — **not** necessarily who does
+the work. To name who *materially contributes* (executes, generates, analyses) use
+`ASSISTED-BY`:
+
+- `[HUMAN, ASSISTED-BY: LLM]` — a human owns the decision; an LLM did the framing /
+  generation / analysis.
+- `ASSISTED-BY` takes one or more actors: `[LLM, ASSISTED-BY: CODE]`,
+  `[HUMAN, ASSISTED-BY: LLM, EXTERNAL]`.
+- The owner may carry a **role**: `[HUMAN: Product Lead, ASSISTED-BY: LLM]`.
+
+This keeps hybrid human-led / AI-assisted work visible at the top level instead of
+hiding it as pure `[HUMAN]` (loses the AI's contribution) or pure `[LLM]` (loses
+ownership). The `operator`/`audit` profiles render owner and assistance distinctly
+(§3).
 
 A tag may carry a parameter where it sharpens meaning — most usefully the
 idempotency key: `IDEMPOTENT [KEY: correlation_id]` (the *what* that makes a repeat
@@ -478,7 +546,12 @@ text.
 
 ## 13. Versioning & evolution
 
-- This is **v0.7** — the first stress-tested release. It supersedes the v0.6 draft
+- **v0.8** adds **render profiles** (the `ai`/`operator`/`executive`/`audit`
+  projections of one backbone, §3), **ownership vs. contribution**
+  (`Actor` = owner + `ASSISTED-BY`, §7), and `MILESTONE` / `PURPOSE` to feed the
+  human-facing profiles — from feedback after modelling an end-to-end
+  human-led, AI-assisted delivery process.
+- v0.7 was the first stress-tested release. It supersedes the v0.6 draft
   (shared-backbone dual style, scoped+referenced STATE, progressive-formality
   modifiers, tag dimensions + extensions, requirements/outcomes mode, composition,
   conformance) and folds in everything learned from describing three real systems:

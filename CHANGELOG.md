@@ -2,6 +2,25 @@
 
 All notable changes to the Cairn specification are recorded here.
 
+## [0.8] — 2026-06-16
+
+From feedback after modelling an end-to-end human-led, AI-assisted delivery
+process (customer idea → frame → build → verify → release → change management):
+
+- **Render profiles (§3).** The "two styles" generalise to audience profiles —
+  one canonical backbone *projected* into `ai` (precise), `operator` (guided
+  operational narrative), `executive` (overview), and `audit` (defensible record).
+  Profiles are rendered by tooling/AI, not hand-authored. `render-profile:` selects
+  one. The **operator profile** is specified in full (Purpose / Owner / Assisted-by
+  / Outputs / Iterate-until / Next, with compression rules + a "don't over-compress"
+  guardrail).
+- **Ownership vs. contribution (§7).** The `Actor` dimension is the *accountable
+  owner*; `ASSISTED-BY: <actors>` names who materially contributes — e.g.
+  `[HUMAN, ASSISTED-BY: LLM]`. Owners may carry a role (`[HUMAN: Product Lead]`).
+  Hybrid human-led / AI-assisted work no longer disappears at the top level.
+- **`MILESTONE` and `PURPOSE`** constructs — major transitions and per-phase intent,
+  the signals the human-facing profiles render.
+
 ## [0.7] — 2026-06-16
 
 First **stress-tested release**: the v0.6 draft plus everything learned from

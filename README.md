@@ -8,7 +8,7 @@ independent of any programming language or platform. It bridges pseudocode-style
 clarity with modern agentic realities: iteration, recursion, non-determinism,
 sync/async, queuing, and error handling.
 
-**The specification lives in [SPEC.md](SPEC.md) (v0.7).**
+**The specification lives in [SPEC.md](SPEC.md) (v0.8).**
 
 ## What it looks like
 
@@ -70,8 +70,8 @@ clarity always wins.
 ### Balance of structure and flexibility
 - Numbered steps + indentation give sequence and hierarchy.
 - Tags (`[LLM, SYNC, DYNAMIC]`) add precision without cluttering prose.
-- Two styles — a Formal skeleton and a Narrative reading — render the **same**
-  underlying structure, serving machines and humans alike.
+- One canonical backbone is projected into audience **render profiles** (precise
+  `ai`, readable `operator`, and more) — serving machines and humans alike.
 - CONTEXT and CONSTRAINTS supply supporting knowledge on demand.
 
 ### Practical and evolving
@@ -83,9 +83,11 @@ rather than theoretical perfection.
 
 ## Status
 
-**v0.7** — first stress-tested release. Refined by describing three real systems
-in Cairn (Tirzah, Hoglah, Mahalath — see [`examples/`](examples/)). Evolving from
-real use; a structural grammar is in [GRAMMAR.md](GRAMMAR.md).
+**v0.8** — adds render profiles + ownership/assistance, on top of the
+stress-tested v0.7. Refined by describing real systems in Cairn (Tirzah, Hoglah,
+Mahalath — see [`examples/`](examples/)) and by modelling a human-led, AI-assisted
+delivery process. Evolving from real use; a structural grammar is in
+[GRAMMAR.md](GRAMMAR.md).
 
 ## Repository
 

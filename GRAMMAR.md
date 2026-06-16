@@ -11,7 +11,8 @@ Notation: `=` defines, `|` alternation, `{ }` zero-or-more, `[ ]` optional,
 newline.
 
 ```ebnf
-document        = { block } ;
+document        = { directive | block } ;
+directive       = "render-profile:" profile-name NL ;   (* ai | operator | executive | audit | custom *)
 block           = context-block
                 | requirements-block
                 | outcomes-block
@@ -54,16 +55,16 @@ step-id         = number { "." number } [ letter ] "." ;   (* 1.  2.1  3a. *)
 sub-block       = annotation
                 | construct-line
                 | step ;                       (* nested steps *)
-annotation      = ( "STATE UPDATE:" | "OUTPUT:" | "RISKS:"
+annotation      = ( "STATE UPDATE:" | "OUTPUT:" | "RISKS:" | "PURPOSE:"
                   | "CONSTRAINTS:" | "BOUNDARIES:" | "CONTEXT:" ) TEXT NL ;
 
 (* a step may *be* a construct, or a construct may stand on its own line *)
-construct       = "STEP" | "ITERATE" | "RECURSE" | "QUEUE"
+construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
                 | "PARALLEL" | "SERVICE" | "DECISION" | "RETRY"
                 | "ERROR" | "AWAIT" | "CALL" ;
-construct-line  = ( "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL" | "SERVICE"
-                  | "CONCURRENT" | "DECISION" | "RETRY" | "ERROR" | "AWAIT"
-                  | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC" )
+construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
+                  | "SERVICE" | "CONCURRENT" | "DECISION" | "RETRY" | "ERROR"
+                  | "AWAIT" | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC" )
                   [ modifiers ] [ "→" TEXT ] TEXT? NL ;
 modifiers       = "[" mod { ";" mod } "]" ;
 mod             = key ":" TEXT | flag ;        (* e.g. UNTIL: …; MAX: 5 *)
@@ -71,10 +72,13 @@ mod             = key ":" TEXT | flag ;        (* e.g. UNTIL: …; MAX: 5 *)
 (* ---- tags ---- *)
 tags            = "[" tag { "," tag } "]" ;
 tag             = reserved-tag [ "[" TEXT "]" ]    (* IDEMPOTENT [KEY: …], BATCH [n] *)
+                | assisted-by
                 | satisfies
                 | ext-tag ;
 reserved-tag    = actor | determinism | timing | effect | control ;
-actor           = "LLM" | "HUMAN" | "CODE" | "EXTERNAL" ;
+actor           = ( "LLM" | "HUMAN" | "CODE" | "EXTERNAL" ) [ ":" role ] ;  (* HUMAN: Product Lead *)
+assisted-by     = "ASSISTED-BY:" actor { "," actor } ;
+role            = word { word } ;
 determinism     = "DETERMINISTIC" | "STOCHASTIC" ;
 timing          = "SYNC" | "ASYNC" ;
 effect          = "PURE" | "SIDE-EFFECT" | "IDEMPOTENT" ;
