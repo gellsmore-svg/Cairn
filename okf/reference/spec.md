@@ -1,0 +1,23 @@
+---
+type: Reference
+title: Specification (SPEC.md)
+description: The normative Cairn specification, v0.8 — covering the three document modes, the shared backbone and render profiles, the core grammar and constructs, STATE, tags, CONTEXT/CONSTRAINTS, requirements/outcomes, composition, conformance, and versioning.
+resource: https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.md
+tags: [cairn, spec, normative]
+timestamp: 2026-06-19T00:00:00Z
+---
+
+# Specification — `SPEC.md` (v0.8)
+
+The normative definition of Cairn. Section map:
+
+- §0 Reading guide · §1 [Document structure — three modes](../concepts/document-modes.md)
+- §2 Design principles · §3 [The shared backbone and its render profiles](../concepts/backbone-and-render-profiles.md)
+- §4 Core grammar · §5 [Constructs](../concepts/constructs.md)
+- §6 [STATE](../concepts/state.md) · §7 [Tags](../concepts/tags.md) · §8 CONTEXT and CONSTRAINTS
+- §9 [Requirements & Outcomes](../concepts/composition.md) · §10 [Composition (signatures + CALL)](../concepts/composition.md)
+- §11 Worked example · §12 Conformance (structural) · §13 Versioning & evolution
+
+It is deliberately small — the language is meant to fit in one document and be
+read by both humans and LLMs. The formal style's syntax is given precisely in the
+[grammar](grammar.md).
