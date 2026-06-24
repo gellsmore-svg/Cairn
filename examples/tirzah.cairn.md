@@ -44,6 +44,28 @@ continuity snapshot is updated so the next turn can resume.
 
 ---
 
+## Recursive plan wrapper — Formal
+
+```
+PLAN request-plan REVISION 1 [STATUS: active]
+  PARENT: none
+  REQUEST: user_query
+  TRIGGER: initial_request
+
+  PROCESS PlanAndAsk (INPUT: user_query, session_id; OUTPUT: answer, plan_revision, process_trace)
+    STATE
+      plan_revision  [scope: process; dir: read/write] ref: T6
+
+    1. Propose and validate a first-pass Cairn process for the request. [LLM, STOCHASTIC, SYNC]
+       CONSTRAINTS: bounded steps; no implicit tool or side-effect authority.
+       STATE UPDATE: plan_revision ← revision 1
+    2. CALL Ask(user_query, session_id) → answer, process_trace
+    3. Evaluate retrieval and answer evidence as new plan information. [CODE, DETERMINISTIC]
+    4. RECURSE [BASE: plan stable | complete | blocked; MAX_DEPTH: planning_max_revisions]
+       STATE UPDATE: plan_revision ← complete replacement plan with parent lineage
+    OUTPUT: answer, plan_revision, process_trace
+```
+
 ## PROCESS — Formal
 
 ```

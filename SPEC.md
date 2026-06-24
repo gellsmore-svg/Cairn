@@ -1,6 +1,6 @@
 # Cairn — a process meta-language
 
-**Specification v0.8**
+**Specification v0.9**
 
 Cairn is a simple, textual, human-readable meta-language for describing complex
 processes — especially agentic / LLM-centric ones — so that humans and LLMs can
@@ -172,6 +172,40 @@ A step is a line; it may carry indented sub-blocks:
 
 Sub-block keywords: `STATE UPDATE`, `OUTPUT`, `RISKS`, `CONSTRAINTS` /
 `BOUNDARIES`, `CONTEXT`, `PURPOSE`, or nested numbered steps.
+
+
+### 4.5 PLAN — a live, revisable process instance
+
+`PROCESS` defines a reusable flow. `PLAN` identifies one live application of a
+process to a request and records how that application changes as new information
+arrives.
+
+```text
+PLAN <plan-id> REVISION <n> [STATUS: draft|active|stable|complete|blocked]
+  PARENT: <revision number or none>
+  REQUEST: <the request this plan serves>
+  TRIGGER: <new information that caused this revision, or initial_request>
+
+  PROCESS <Name> (INPUT: ...; OUTPUT: ...)
+    ... normal Cairn process backbone ...
+```
+
+A plan revision:
+
+- preserves the same `plan-id` and increments `REVISION`;
+- names its parent revision, except revision 1;
+- records the information that justified the change;
+- contains a complete process backbone, not an ambiguous patch;
+- must retain hard constraints and stopping bounds unless an authorised human or
+  governing process explicitly changes them;
+- may finish as `stable` when no change is warranted, `complete` when its outcome
+  has been reached, or `blocked` when progress requires unavailable authority or
+  information.
+
+LLM-produced plans and revisions require bounded iteration. The runtime validates
+the plan structure and remains responsible for tool permissions, side effects,
+budgets, persistence, and termination. A `PLAN` is operational state, not trusted
+knowledge; promoting its claims into memory is a separate governed action.
 
 ---
 
@@ -546,6 +580,7 @@ text.
 
 ## 13. Versioning & evolution
 
+- **v0.9** adds versioned live `PLAN` envelopes for bounded recursive revision of a complete `PROCESS` backbone.
 - **v0.8** adds **render profiles** (the `ai`/`operator`/`executive`/`audit`
   projections of one backbone, §3), **ownership vs. contribution**
   (`Actor` = owner + `ASSISTED-BY`, §7), and `MILESTONE` / `PURPOSE` to feed the

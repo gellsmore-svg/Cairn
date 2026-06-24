@@ -1,13 +1,13 @@
 ---
 type: Reference
 title: Specification (SPEC.md)
-description: The normative Cairn specification, v0.8 — covering the three document modes, the shared backbone and render profiles, the core grammar and constructs, STATE, tags, CONTEXT/CONSTRAINTS, requirements/outcomes, composition, conformance, and versioning.
+description: The normative Cairn specification, v0.9 — covering versioned PLAN envelopes, the three document modes, the shared backbone and render profiles, the core grammar and constructs, STATE, tags, CONTEXT/CONSTRAINTS, requirements/outcomes, composition, conformance, and versioning.
 resource: https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.md
 tags: [cairn, spec, normative]
 timestamp: 2026-06-19T00:00:00Z
 ---
 
-# Specification — `SPEC.md` (v0.8)
+# Specification — `SPEC.md` (v0.9)
 
 The normative definition of Cairn. Section map:
 

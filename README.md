@@ -8,7 +8,7 @@ independent of any programming language or platform. It bridges pseudocode-style
 clarity with modern agentic realities: iteration, recursion, non-determinism,
 sync/async, queuing, and error handling.
 
-**The specification lives in [SPEC.md](SPEC.md) (v0.8).**
+**The specification lives in [SPEC.md](SPEC.md) (v0.9).**
 
 ## What it looks like
 
@@ -69,6 +69,7 @@ clarity always wins.
 
 ### Balance of structure and flexibility
 - Numbered steps + indentation give sequence and hierarchy.
+- `PLAN` envelopes turn a `PROCESS` into a versioned live plan that can be revised when new information arrives.
 - Tags (`[LLM, SYNC, DYNAMIC]`) add precision without cluttering prose.
 - One canonical backbone is projected into audience **render profiles** (precise
   `ai`, readable `operator`, and more) — serving machines and humans alike.
@@ -83,7 +84,7 @@ rather than theoretical perfection.
 
 ## Status
 
-**v0.8** — adds render profiles + ownership/assistance, on top of the
+**v0.9** — adds versioned live PLAN envelopes, on top of v0.8 render profiles + ownership/assistance and the
 stress-tested v0.7. Refined by describing real systems in Cairn (Tirzah, Hoglah,
 Mahalath — see [`examples/`](examples/)) and by modelling a human-led, AI-assisted
 delivery process. Evolving from real use; a structural grammar is in

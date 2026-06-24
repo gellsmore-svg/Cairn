@@ -1,4 +1,4 @@
-# Cairn — structural grammar (v0.7)
+# Cairn — structural grammar (v0.9)
 
 A minimal EBNF for the **structural skeleton** of a Cairn description. It defines
 *shape*, not meaning: the prose in step descriptions, CONTEXT, ACCEPTANCE, etc. is
@@ -16,7 +16,8 @@ directive       = "render-profile:" profile-name NL ;   (* ai | operator | execu
 block           = context-block
                 | requirements-block
                 | outcomes-block
-                | process ;
+                | process
+                | plan ;
 
 (* ---- scene & requirements modes ---- *)
 context-block   = "CONTEXT" NL { TEXT NL } ;
@@ -28,6 +29,14 @@ req-id          = "R" digit { digit } ;
 priority        = "[" ( "MUST" | "SHOULD" | "MAY" ) "]" ;
 
 (* ---- process mode ---- *)
+plan            = "PLAN" name "REVISION" number "[STATUS:" plan-status "]" NL
+                  INDENT [ "PARENT:" (number | "none") NL ]
+                         "REQUEST:" TEXT NL
+                         "TRIGGER:" TEXT NL
+                         process
+                  DEDENT ;
+plan-status     = "draft" | "active" | "stable" | "complete" | "blocked" ;
+
 process         = "PROCESS" name [ signature ] NL
                   INDENT { proc-element } DEDENT ;
 signature       = "(" "INPUT:" params ";" "OUTPUT:" params ")" ;

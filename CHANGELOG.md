@@ -1,3 +1,9 @@
+## [0.9] — 2026-06-24
+
+- Added the `PLAN` revision envelope for live recursive process instances,
+  including identity, parent revision, status, trigger information, and a complete
+  bounded `PROCESS` backbone on every revision.
+
 # Changelog
 
 All notable changes to the Cairn specification are recorded here.
