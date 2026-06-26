@@ -115,3 +115,23 @@ describing your own processes in it. That is exactly how v0.7 was shaped.
 ## License
 
 [Apache License 2.0](LICENSE).
+
+## Conformance (`cairn` package)
+
+Cairn is primarily a spec, but it also ships a tiny, dependency-free
+**conformance surface** so a runtime can validate the plans it produces instead of
+embedding a private dialect:
+
+```python
+import cairn
+errors = cairn.validate_plan(plan_dict)   # [] when conformant
+cairn.CANONICAL_PLAN                       # an executable known-good fixture
+cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC §5)
+```
+
+Tirzah's recursive planner is tested against `cairn.validate_plan` so its output
+cannot drift from the grammar.
+
+```bash
+pip install -e ".[dev]" && pytest
+```
