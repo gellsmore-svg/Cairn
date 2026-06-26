@@ -23,7 +23,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 # Dependency-free: the conformance surface is pure stdlib so any runtime can adopt it.
-dependencies = []
+dependencies = [
+    "keturah>=0.1",  # LLM-interface manifest (build_manifest / to_mcp)
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
