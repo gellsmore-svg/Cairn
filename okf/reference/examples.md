@@ -13,11 +13,13 @@ Real processes from the family, written in Cairn — both documentation and a
 stress test of the [spec](spec.md):
 
 - **[`hoglah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/hoglah.cairn.md)**
-  — Hoglah's submit → queue → execute → deliver flow
+  — Hoglah crash-safe bridge (SERVICE / DURABLE-BEFORE)
   ([Hoglah OKF](https://github.com/gellsmore-svg/hoglah/blob/main/okf/index.md)).
 - **[`tirzah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah.cairn.md)**
-  — Tirzah's ingest → retrieve → answer flow
+  — Tirzah agentic retrieval `ask`
   ([Tirzah OKF](https://github.com/gellsmore-svg/tirzah/blob/main/okf/index.md)).
+- **[`tirzah-ingest.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-ingest.cairn.md)**
+  — Tirzah source ingestion, dead-letter, profile backfill.
 - **[`mahalath.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/mahalath.cairn.md)**
   — Mahalath's ontology-construction flow.
 - **[`mahlah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/mahlah.cairn.md)**
