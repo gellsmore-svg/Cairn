@@ -22,6 +22,8 @@ stress test of the [spec](spec.md):
   ([Tirzah OKF](https://github.com/gellsmore-svg/tirzah/blob/main/okf/index.md)).
 - **[`tirzah-recursive-planning.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-recursive-planning.cairn.md)**
   — Tirzah live PLAN propose → execute → revise (recursive LLM work).
+- **[`tirzah-plan-interpreter.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-plan-interpreter.cairn.md)**
+  — Tirzah interpretive PLAN step execution (SPEC §4.6).
 - **[`tirzah-ingest.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-ingest.cairn.md)**
   — Tirzah source ingestion, dead-letter, profile backfill.
 - **[`tirzah-semantic-review.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-semantic-review.cairn.md)**

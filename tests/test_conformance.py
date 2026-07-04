@@ -29,3 +29,10 @@ def test_invalid_construct_and_status_rejected() -> None:
 def test_tirzah_step_constructs_are_in_the_grammar() -> None:
     # the constructs Tirzah's planner is allowed to emit must all be Cairn constructs
     assert {"STEP", "CALL", "ITERATE", "DECISION", "RECURSE"} <= PLAN_CONSTRUCTS
+
+
+def test_invalid_step_status_rejected() -> None:
+    plan = dict(CANONICAL_PLAN)
+    plan["steps"] = [dict(CANONICAL_PLAN["steps"][0], status="running")]
+    errors = validate_plan(plan)
+    assert any("invalid status: 'running'" in e for e in errors)

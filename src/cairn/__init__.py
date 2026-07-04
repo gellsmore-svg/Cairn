@@ -13,6 +13,7 @@ from cairn.conformance import (
     REQUIRED_PLAN_FIELDS,
     REQUIRED_STEP_FIELDS,
     REVISION_DECISIONS,
+    STEP_STATUSES,
     is_conformant,
     validate_plan,
 )
@@ -25,6 +26,7 @@ __all__ = [
     "REQUIRED_PLAN_FIELDS",
     "REQUIRED_STEP_FIELDS",
     "REVISION_DECISIONS",
+    "STEP_STATUSES",
     "is_conformant",
     "validate_plan",
 ]

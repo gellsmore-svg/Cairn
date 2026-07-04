@@ -39,6 +39,9 @@ PLAN_CONSTRUCTS: frozenset[str] = frozenset(
 PLAN_STATUSES: frozenset[str] = frozenset({"draft", "active", "stable", "complete", "blocked"})
 REVISION_DECISIONS: frozenset[str] = frozenset({"revise", "stable", "complete", "blocked"})
 
+# Per-step execution status for interpretive PLAN walkers (SPEC §4.6).
+STEP_STATUSES: frozenset[str] = frozenset({"pending", "active", "completed", "blocked", "skipped"})
+
 # The cross-repo core contract: fields a Cairn plan/step consumer can rely on.
 REQUIRED_PLAN_FIELDS: tuple[str, ...] = (
     "plan_id",
@@ -59,6 +62,9 @@ def _validate_step(step: Any, index: int) -> list[str]:
     construct = step.get("construct")
     if construct is not None and construct not in PLAN_CONSTRUCTS:
         errors.append(f"step[{index}] invalid construct: {construct!r} (allowed: {sorted(PLAN_CONSTRUCTS)})")
+    status = step.get("status")
+    if status is not None and status not in STEP_STATUSES:
+        errors.append(f"step[{index}] invalid status: {status!r} (allowed: {sorted(STEP_STATUSES)})")
     return errors
 
 

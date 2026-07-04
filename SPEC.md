@@ -207,6 +207,54 @@ the plan structure and remains responsible for tool permissions, side effects,
 budgets, persistence, and termination. A `PLAN` is operational state, not trusted
 knowledge; promoting its claims into memory is a separate governed action.
 
+### 4.6 PLAN interpretation — live step execution
+
+A `PLAN` may be **interpreted** — walked step-by-step by a runtime that enforces
+`depends_on`, `allowed_tools`, and per-step status transitions — rather than
+executed only as narrative around a monolithic pipeline.
+
+**Step state machine** (machine plans; prose plans may omit explicit status):
+
+| Status | Meaning |
+|--------|---------|
+| `pending` | Not started; dependencies may be unsatisfied |
+| `active` | Currently executing |
+| `completed` | Succeeded; outputs available to dependents |
+| `blocked` | Cannot proceed (missing handler, failed guard, unavailable tool) |
+| `skipped` | Intentionally not run (deferred construct, duplicate effect, policy) |
+
+**Interpretation order:** a step runs only when every `depends_on` id is
+`completed`. Steps with no unresolved dependencies are **ready**; the runtime picks
+from the ready set (typically ascending `id` / document order).
+
+**Dispatch by construct:**
+
+- `STEP` — acknowledge or execute. A pure framing step with no `allowed_tools`
+  may complete as an acknowledged intent. A step tagged `[LLM, STOCHASTIC]` needs
+  a stochastic handler or must delegate to a governed `CALL`.
+- `CALL` — invoke a registered handler. The handler set **must** be a subset of
+  `allowed_tools` on that step. Unknown tools → `blocked`, not silent fallback.
+- `ITERATE` / `DECISION` / `RECURSE` — either expand into an inner interpreter
+  loop with explicit bounds, or `skip` with trace when an outer revision loop
+  already owns recursion (common for `RECURSE` on revision 1).
+
+**Execution context** crosses steps through a bounded artifact map (step id →
+output) and the `PROCESS` signature — not through callee-private `STATE` (§6.5).
+
+**Trace:** each transition emits a process event (`plan.step.started`,
+`plan.step.completed`, …) separate from the answer payload. Interpretation trace +
+plan revision lineage together form the auditable record.
+
+**Degenerate case:** a single `CALL` step whose handler runs the full legacy
+pipeline is valid — interpretation collapses to today's monolithic executor. The
+value of interpretation is **granular tool gating**, **resumability**, and
+**honest step status** when plans grow beyond one blob.
+
+**Planner vs interpreter:** the planner LLM proposes steps; the interpreter never
+widens `allowed_tools` or skips `depends_on`. Revisions replace the backbone;
+the interpreter may resume from the first `pending`/`blocked` step on the new
+revision.
+
 ---
 
 ## 5. Constructs

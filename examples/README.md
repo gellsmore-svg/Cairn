@@ -7,6 +7,7 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | [`tirzah-system.cairn.md`](tirzah-system.cairn.md) | Tirzah | **Composition:** ingest → ask → observe |
 | [`tirzah.cairn.md`](tirzah.cairn.md) | Tirzah | Ask — direct · agentic · deep retrieval |
 | [`tirzah-recursive-planning.cairn.md`](tirzah-recursive-planning.cairn.md) | Tirzah | Live PLAN propose → execute → revise |
+| [`tirzah-plan-interpreter.cairn.md`](tirzah-plan-interpreter.cairn.md) | Tirzah | Interpretive step walk (SPEC §4.6) |
 | [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) | Tirzah | Source ingestion, dead-letter, profile backfill |
 | [`tirzah-semantic-review.cairn.md`](tirzah-semantic-review.cairn.md) | Tirzah | Human-gated semantic-edge review queue |
 | [`tirzah-generated-output.cairn.md`](tirzah-generated-output.cairn.md) | Tirzah | Generated-output queue → endorse/reject |

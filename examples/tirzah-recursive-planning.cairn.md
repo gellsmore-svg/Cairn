@@ -143,10 +143,12 @@ Cairn has no single `AGENTIC` tag. Agentic *potential* shows up as:
 Steps tagged `[CODE, DETERMINISTIC]` (validate, save, execute wrapper) are
 **not** agentic — Python owns them regardless of what the plan says.
 
-**Important seam today:** Tirzah's executor still runs the full ask pipeline as
-one unit; the plan is **descriptive + revisable state** ahead of/after execution,
-not yet a step-by-step interpreter that walks `depends_on` and flips step
-`status` live. That gap is the next evolution toward true plan-driven execution.
+**Interpretive mode (v1):** when `plan_interpretive_execution_enabled` is true,
+Tirzah walks the plan in `depends_on` order and dispatches `CALL` steps through a
+handler registry — see [`tirzah-plan-interpreter.cairn.md`](tirzah-plan-interpreter.cairn.md)
+and Cairn SPEC §4.6. The `tirzah_retrieval` handler still invokes the full ask
+pipeline (degenerate single-step case); splitting retrieve vs synthesize is the
+next refactor inside `interaction.py`.
 
 ---
 
@@ -158,9 +160,9 @@ explicit planner/executor split; fallback on malformed planner output.
 
 Rough edges:
 
-1. **Plan vs execution coupling** — plan describes work; executor runs a fixed
-   pipeline. Full interpretive execution (walk steps, enforce `allowed_tools` per
-   step) is not modelled here yet.
+1. **Plan vs execution coupling** — interpretive mode (§4.6) walks steps but
+   `tirzah_retrieval` still runs the monolithic pipeline; per-step retrieve/synthesize
+   split is not modelled yet.
 2. **Construct subset** — planner allows `STEP|CALL|ITERATE|DECISION|RECURSE`;
    Cairn conformance allows more (`MILESTONE`, `AWAIT`, …) than the planner emits.
 3. **Specialist hook** — `run_planned_specialist` may fire Milcah after planning;
