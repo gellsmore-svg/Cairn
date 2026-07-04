@@ -161,8 +161,10 @@ Rough edges:
 1. **Deep mode** — `tirzah_retrieval` runs `run_deep_retrieval` (chunks only);
    `answer_adapter` runs `synthesize_answer` over `useful_chunks` and persists.
    Legacy `pre_built_answer` packages still persist without a second adapter call.
-2. **Construct subset** — v1 expands direct-body `ITERATE`/`DECISION` only; nested
-   branch trees and BREAK/CONTINUE are not modelled yet.
+2. **Construct subset** — v1 expands direct-body `ITERATE`/`DECISION`; unselected
+   branch descendants are cascade-skipped; `BREAK`/`CONTINUE` with `IF:` conditions
+   exit iterate rounds. Nested `DECISION` inside an active `ITERATE` body still
+   selects branches without inline branch execution in the same round.
 3. **Resume after restart** — `plan_executions` collection persists running state;
    interpreter reloads completed steps + artifacts and continues from `pending`.
 4. **PLAN revision mid-flight** — concurrent revision + interpretation ordering
