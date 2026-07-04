@@ -5,7 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from cairn.render.formats import apply_format, to_json
+from cairn.render.export import export_view, register_exporter, registered_exporters
+from cairn.render.filters import apply_filters
+from cairn.render.formats import apply_format
 from cairn.render.parse import normalize_input
 from cairn.render.profiles import get_profile, registered_profiles
 
@@ -83,7 +85,7 @@ def render_plan(
     profile_name = opts.pop("profile", profile)
     language = opts.pop("language", language)
 
-    doc = normalize_input(input_cairn)
+    doc = apply_filters(normalize_input(input_cairn), opts)
     renderer = get_profile(profile_name)
     result = renderer.render(doc, language, opts)
 
@@ -96,4 +98,12 @@ def render_plan(
     return apply_format(result, doc, "markdown")
 
 
-__all__ = ["render_plan", "registered_profiles", "normalize_input"]
+__all__ = [
+    "apply_filters",
+    "export_view",
+    "normalize_input",
+    "register_exporter",
+    "registered_exporters",
+    "registered_profiles",
+    "render_plan",
+]

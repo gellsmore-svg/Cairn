@@ -28,6 +28,7 @@ payload = render_plan(plan_dict, output_format="json")
 | `simple_prose` | High-level flowing summary |
 | `operator` | Guided narrative: purpose, owner, outputs (SPEC §3.2) |
 | `executive` | Milestones, objectives, outcomes |
+| `audit` | Defensible record: steps, tags, requirements (SPEC §3.1) |
 | `narrative` | Alias for `narrative_steps` |
 
 ### Options
@@ -53,7 +54,28 @@ See `src/cairn/render/styles/default.yaml`.
 
 ### Languages
 
-Proof-of-concept: `en`, `es`.
+Proof-of-concept: `en`, `es`, `fr`.
+
+## CLI
+
+```bash
+cairn-render examples/keturah.cairn.md --profile operator --boxed
+cairn-render plan.json --profile audit --format json -o audit.json
+cairn-render process.cairn.md --max-depth 2 --sections process,outcomes
+```
+
+## Export plugins (docx / PDF)
+
+```python
+from cairn.render import register_exporter, export_view, render_plan
+
+def to_docx(result, options):
+    ...  # your docx builder
+    return b"..."
+
+register_exporter("docx", to_docx)
+result = render_plan(md, output_format="json")  # or build RenderResult internally
+```
 
 ## Scope
 

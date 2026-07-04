@@ -68,6 +68,18 @@ def _parse_step_lines(lines: list[str]) -> list[StepNode]:
 
         match = _STEP_LINE.match(line)
         if not match:
+            stripped = line.strip()
+            if (
+                stripped
+                and not line[:1].isspace()
+                and not stripped.lower().startswith("render-profile:")
+                and not stripped.upper().startswith("PROCESS")
+                and not _SUB_BLOCK.match(stripped)
+                and not _OPERATOR_FIELD.match(stripped)
+            ):
+                auto = StepNode(number=str(len(roots) + 1), text=stripped)
+                roots.append(auto)
+                stack = [(0, auto)]
             continue
 
         indent = len(match.group(1).replace("\t", "    "))
@@ -143,8 +155,15 @@ def parse_markdown(text: str) -> ProcessDocument:
             if not doc.title:
                 doc.title = section.replace("PROCESS —", "").replace("PROCESS -", "").strip()
             steps = _parse_step_lines(lines)
-            if steps:
+            if not steps:
+                continue
+            if "operator" in lower or "render-profile: operator" in "\n".join(lines):
+                doc.operator_steps = steps
+            elif "narrative" in lower:
+                doc.narrative_steps = steps
+            else:
                 doc.steps = steps
+                doc.mode = "formal"
 
     if not doc.steps:
         doc.steps = _parse_step_lines(text.splitlines())

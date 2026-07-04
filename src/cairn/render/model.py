@@ -33,6 +33,9 @@ class ProcessDocument:
     plan: dict[str, Any] | None = None
     warnings: list[str] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
+    # Alternate backbones from multi-profile Cairn docs (formal / operator / narrative).
+    operator_steps: list[StepNode] = field(default_factory=list)
+    narrative_steps: list[StepNode] = field(default_factory=list)
 
 
 @dataclass

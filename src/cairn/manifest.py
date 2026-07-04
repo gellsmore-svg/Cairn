@@ -46,7 +46,14 @@ def build_manifest() -> Manifest:
                         "input_cairn": {"description": "Markdown text or PLAN object"},
                         "profile": {
                             "type": "string",
-                            "enum": ["narrative_steps", "simple_prose", "operator", "executive", "narrative"],
+                            "enum": [
+                                "narrative_steps",
+                                "simple_prose",
+                                "operator",
+                                "executive",
+                                "audit",
+                                "narrative",
+                            ],
                         },
                         "language": {"type": "string"},
                         "output_format": {"type": "string", "enum": ["markdown", "text", "json", "mermaid"]},

@@ -65,3 +65,46 @@ def test_render_plan_boxed_narrative():
 
 def test_public_api_exports_render_plan():
     assert hasattr(cairn, "render_plan")
+
+
+def test_audit_profile_lists_tags():
+    plan = dict(CANONICAL_PLAN)
+    plan["steps"][0]["action"] = "Retrieve context. [CODE] [SATISFIES: R1]"
+    text = render_plan(plan, profile="audit")
+    assert "Audit record" in text
+    assert "SATISFIES" in text or "CODE" in text
+
+
+def test_french_simple_prose():
+    text = render_plan(CANONICAL_PLAN, profile="simple_prose", language="fr")
+    assert "Le flux procède ainsi" in text
+
+
+def test_max_depth_filter():
+    md = (EXAMPLES / "tirzah-plan-interpreter.cairn.md").read_text(encoding="utf-8")
+    text = render_plan(md, profile="narrative_steps", options={"max_depth": 1})
+    assert "2.1" not in text or "2.3" not in text
+
+
+def test_sections_filter_process_only():
+    md = (EXAMPLES / "keturah.cairn.md").read_text(encoding="utf-8")
+    text = render_plan(md, profile="narrative_steps", options={"sections": ["process"]})
+    assert "R1." not in text
+
+
+def test_export_view_requires_registered_exporter():
+    from cairn.render import export_view
+    from cairn.render.model import RenderResult
+    import pytest
+
+    result = RenderResult(profile="x", language="en", format="markdown", body="hi")
+    with pytest.raises(NotImplementedError, match="No exporter registered"):
+        export_view(result, "docx")
+
+
+def test_manifest_lists_render_plan():
+    from cairn.manifest import build_manifest
+
+    m = build_manifest()
+    names = [c.name for c in m.capabilities]
+    assert "render_plan" in names

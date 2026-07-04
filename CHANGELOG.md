@@ -1,5 +1,21 @@
 ## [Unreleased]
 
+## [0.4.1] — 2026-07-05
+
+- **`cairn.render` continued:** `audit` profile (SPEC §3.1), French (`fr`) phrasing,
+  `max_depth` / `sections` filters, PLAN envelope header in views, operator phase
+  parsing (unnumbered titles), `register_exporter` / `export_view` hooks for docx/PDF
+  plugins, `cairn-render` CLI.
+
+## [0.4.0] — 2026-07-05
+
+- **`cairn.render` / `render_plan`:** simplified view generator — narrative_steps,
+  simple_prose, operator, executive profiles; markdown/text/json/mermaid output;
+  en/es phrasing; optional YAML stylesheets (`[render]` extra); Keturah manifest
+  capability. See [docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).
+
+## [Unreleased] (spec / examples — prior)
+
 - **SPEC §4.6** — PLAN interpretation: step state machine, handler dispatch, trace.
 - Added **`STEP_STATUSES`** to conformance validation.
 - Tirzah: `answer_query` unified via retrieve/synthesize phases; `plan_executions` resume store.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cairn-lang"
-version = "0.4.0"
+version = "0.4.1"
 description = "Cairn — process meta-language: spec, grammar, and a machine-readable plan-conformance surface (distribution cairn-lang; import name cairn)."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -26,6 +26,9 @@ classifiers = [
 dependencies = [
     "keturah>=0.1",  # LLM-interface manifest (build_manifest / to_mcp)
 ]
+
+[project.scripts]
+cairn-render = "cairn.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]

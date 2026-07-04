@@ -9,6 +9,14 @@ from cairn.render.model import ProcessDocument, RenderResult, StepNode
 from cairn.render.phrasing import SUB_BLOCK_LABELS, phrase_construct
 
 
+def _steps_for_profile(doc: ProcessDocument, profile: str) -> list[StepNode]:
+    if profile == "operator" and doc.operator_steps:
+        return doc.operator_steps
+    if profile in {"narrative_steps", "narrative"} and doc.narrative_steps and not doc.steps:
+        return doc.narrative_steps
+    return doc.steps
+
+
 class RenderProfile(ABC):
     name: str
 
@@ -28,6 +36,27 @@ def _render_step_line(node: StepNode, language: str, depth: int, options: dict[s
     lines = [line]
     if include_tags and node.tags:
         lines.append(f"{_indent(depth)}   _(tags: {', '.join(node.tags)})_")
+    return lines
+
+
+def _plan_header(doc: ProcessDocument, language: str) -> list[str]:
+    if not doc.plan:
+        return []
+    plan = doc.plan
+    lines: list[str] = []
+    if language == "fr":
+        lines.append(f"**Plan:** {plan.get('plan_id', '')} (révision {plan.get('revision', '?')})")
+        lines.append(f"**Statut:** {plan.get('status', '')}")
+    elif language == "es":
+        lines.append(f"**Plan:** {plan.get('plan_id', '')} (revisión {plan.get('revision', '?')})")
+        lines.append(f"**Estado:** {plan.get('status', '')}")
+    else:
+        lines.append(f"**Plan:** {plan.get('plan_id', '')} (revision {plan.get('revision', '?')})")
+        lines.append(f"**Status:** {plan.get('status', '')}")
+    if plan.get("objective"):
+        obj = "Objectif" if language == "fr" else "Objetivo" if language == "es" else "Objective"
+        lines.append(f"**{obj}:** {plan['objective']}")
+    lines.append("")
     return lines
 
 
@@ -65,10 +94,12 @@ class NarrativeStepsProfile(RenderProfile):
         if doc.title:
             lines.append(f"## {doc.title}")
             lines.append("")
+        lines.extend(_plan_header(doc, language))
 
-        step_lines = _walk_steps(doc.steps, language, 0, options)
+        steps = _steps_for_profile(doc, self.name)
+        step_lines = _walk_steps(steps, language, 0, options)
         if options.get("boxed"):
-            for node in doc.steps:
+            for node in steps:
                 block = _render_step_line(node, language, 0, options)
                 block.extend(_walk_steps(node.children, language, 1, options))
                 lines.extend(_boxed(f"Step {node.number}", block))
@@ -101,12 +132,14 @@ class SimpleProseProfile(RenderProfile):
             parts.append(doc.plan.get("objective", "This process"))
 
         actions = []
-        for node in doc.steps:
+        for node in _steps_for_profile(doc, self.name):
             actions.append(phrase_construct(node.construct, node.text, language).rstrip("."))
 
         if actions:
             if language == "es":
                 parts.append("El flujo consiste en: " + "; luego, ".join(actions) + ".")
+            elif language == "fr":
+                parts.append("Le flux procède ainsi : " + " ; puis, ".join(actions) + ".")
             else:
                 parts.append("The flow proceeds by: " + "; then, ".join(actions) + ".")
 
@@ -132,11 +165,23 @@ class OperatorProfile(RenderProfile):
             lines.append(f"# {doc.title}")
             lines.append("")
 
-        for node in doc.steps:
+        for node in _steps_for_profile(doc, self.name):
             title = node.text.split(".")[0][:60] if node.text else f"Step {node.number}"
             block: list[str] = []
             purpose = node.purpose or node.text
-            if language == "es":
+            if language == "fr":
+                block.append(f"**Objectif :** {purpose}")
+                if node.owner:
+                    block.append(f"**Responsable :** {node.owner}")
+                if node.assisted_by:
+                    block.append(f"**Assisté par :** {node.assisted_by}")
+                if node.outputs:
+                    block.append(f"**Sorties :** {', '.join(node.outputs)}")
+                if node.iterate_until:
+                    block.append(f"**Répéter jusqu'à :** {node.iterate_until}")
+                if node.next_phase:
+                    block.append(f"**Suivant :** {node.next_phase}")
+            elif language == "es":
                 block.append(f"**Propósito:** {purpose}")
                 if node.owner:
                     block.append(f"**Responsable:** {node.owner}")
@@ -181,26 +226,32 @@ class ExecutiveProfile(RenderProfile):
 
     def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
         lines: list[str] = []
-        heading = "Resumen ejecutivo" if language == "es" else "Executive overview"
+        heading = (
+            "Aperçu exécutif"
+            if language == "fr"
+            else "Resumen ejecutivo"
+            if language == "es"
+            else "Executive overview"
+        )
         lines.append(f"## {heading}")
         lines.append("")
 
         objective = doc.plan.get("objective") if doc.plan else doc.title
         if objective:
-            label = "Objetivo" if language == "es" else "Objective"
+            label = "Objectif" if language == "fr" else "Objetivo" if language == "es" else "Objective"
             lines.append(f"**{label}:** {objective}")
             lines.append("")
 
-        milestone_label = "Hitos" if language == "es" else "Milestones"
+        milestone_label = "Jalons" if language == "fr" else "Hitos" if language == "es" else "Milestones"
         lines.append(f"### {milestone_label}")
-        for node in doc.steps:
+        for node in _steps_for_profile(doc, self.name):
             if node.construct == "MILESTONE" or not node.children:
                 summary = node.purpose or phrase_construct(node.construct, node.text, language)
                 owner = f" ({node.owner})" if node.owner else ""
                 lines.append(f"- **{node.number}** {summary}{owner}")
 
         if doc.outcomes:
-            label = "Resultados" if language == "es" else "Outcomes"
+            label = "Résultats" if language == "fr" else "Resultados" if language == "es" else "Outcomes"
             lines.append("")
             lines.append(f"### {label}")
             for outcome in doc.outcomes:
@@ -215,11 +266,51 @@ class ExecutiveProfile(RenderProfile):
         )
 
 
+class AuditProfile(RenderProfile):
+    name = "audit"
+
+    def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
+        lines: list[str] = []
+        title = "Registre d'audit" if language == "fr" else "Registro de auditoría" if language == "es" else "Audit record"
+        lines.append(f"## {title}")
+        lines.append("")
+        lines.extend(_plan_header(doc, language))
+
+        if doc.requirements:
+            req = "Exigences" if language == "fr" else "Requisitos" if language == "es" else "Requirements"
+            lines.append(f"### {req}")
+            for req_line in doc.requirements:
+                lines.append(f"- {req_line}")
+            lines.append("")
+
+        def walk(nodes: list[StepNode], depth: int) -> None:
+            for node in nodes:
+                construct = f" [{node.construct}]" if node.construct else ""
+                tag_str = f" tags={node.tags}" if node.tags else ""
+                lines.append(f"{'  ' * depth}- **{node.number}**{construct}{tag_str} {node.text}")
+                for key, value in node.sub_blocks.items():
+                    lines.append(f"{'  ' * (depth + 1)}- {key}: {value}")
+                walk(node.children, depth + 1)
+
+        walk(doc.steps, 0)
+        footnotes = [f"Requirement: {r}" for r in doc.requirements[:20]] if doc.requirements else []
+
+        return RenderResult(
+            profile=self.name,
+            language=language,
+            format=options.get("output_format", "markdown"),
+            body="\n".join(lines).strip(),
+            footnotes=footnotes,
+            metadata={"warnings": doc.warnings},
+        )
+
+
 _PROFILES: dict[str, RenderProfile] = {
     "narrative_steps": NarrativeStepsProfile(),
     "simple_prose": SimpleProseProfile(),
     "operator": OperatorProfile(),
     "executive": ExecutiveProfile(),
+    "audit": AuditProfile(),
     # SPEC v0.9 aliases
     "narrative": NarrativeStepsProfile(),
 }

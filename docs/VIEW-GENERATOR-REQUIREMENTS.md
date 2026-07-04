@@ -67,17 +67,19 @@ from cairn import render_plan
 view_text = render_plan(input_cairn, profile="narrative_steps", language="en", options={...})
 ```
 
-## Implementation status (v0.4.0)
+## Implementation status (v0.4.1)
 
 | Requirement | Status |
 |---|---|
 | PLAN dict input | Done |
 | Markdown input (lightweight parser) | Done |
 | `validate_plan` warnings | Done |
-| narrative_steps, simple_prose, operator, executive | Done |
+| narrative_steps, simple_prose, operator, executive, audit | Done |
 | boxed layout | Done |
 | markdown, text, json, mermaid | Done |
 | pluggable profiles | Done |
 | YAML/JSON stylesheet | Done (`[render]` extra) |
-| en + es | Done |
-| docx/PDF hooks | Deferred (integration points via JSON export) |
+| en + es + fr | Done |
+| max_depth / sections filters | Done |
+| `cairn-render` CLI | Done |
+| docx/PDF hooks | Done (`register_exporter` / `export_view`) |
