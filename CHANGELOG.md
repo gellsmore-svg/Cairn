@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Added **`tirzah-recursive-planning.cairn.md`** — live PLAN propose/execute/revise seam.
+- Added **`hoglah-submit.cairn.md`** (pure submitter) and **`relational-substrate.cairn.md`**.
 - Added **`tirzah-generated-output.cairn.md`** — queue → unreviewed nodes → endorse/reject.
 - Added **`tirzah-web-research.cairn.md`** — `--web` promotion and bounded search/fetch.
 - Added **`keturah.cairn.md`** (manifest + MCP) and **`galeed.cairn.md`** (trace spine).

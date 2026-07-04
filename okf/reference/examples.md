@@ -15,9 +15,13 @@ stress test of the [spec](spec.md):
 - **[`hoglah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/hoglah.cairn.md)**
   — Hoglah crash-safe bridge (SERVICE / DURABLE-BEFORE)
   ([Hoglah OKF](https://github.com/gellsmore-svg/hoglah/blob/main/okf/index.md)).
+- **[`hoglah-submit.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/hoglah-submit.cairn.md)**
+  — Hoglah pure submitter / worker daemon topology.
 - **[`tirzah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah.cairn.md)**
   — Tirzah ask (direct · agentic · deep retrieval modes)
   ([Tirzah OKF](https://github.com/gellsmore-svg/tirzah/blob/main/okf/index.md)).
+- **[`tirzah-recursive-planning.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-recursive-planning.cairn.md)**
+  — Tirzah live PLAN propose → execute → revise (recursive LLM work).
 - **[`tirzah-ingest.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-ingest.cairn.md)**
   — Tirzah source ingestion, dead-letter, profile backfill.
 - **[`tirzah-semantic-review.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-semantic-review.cairn.md)**
@@ -45,6 +49,8 @@ stress test of the [spec](spec.md):
 - **[`milcah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/milcah.cairn.md)**
   — Milcah's recursive coherence-pressure rounds
   ([Milcah process doc](https://github.com/gellsmore-svg/Milcah/blob/main/docs/process.cairn.md)).
+- **[`relational-substrate.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/relational-substrate.cairn.md)**
+  — Relational Substrate grammar sandbox and coherence sweep (non-agentic contrast).
 
 Each exercises the [constructs](../concepts/constructs.md), [tags](../concepts/tags.md),
 and [modes](../concepts/document-modes.md) on a genuine agentic process — gaps

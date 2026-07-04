@@ -8,6 +8,7 @@ Related: [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) (corpus),
 [`tirzah-semantic-review.cairn.md`](tirzah-semantic-review.cairn.md) (graph review),
 [`tirzah-web-research.cairn.md`](tirzah-web-research.cairn.md) (`--web` override),
 [`tirzah-generated-output.cairn.md`](tirzah-generated-output.cairn.md) (trust gate),
+[`tirzah-recursive-planning.cairn.md`](tirzah-recursive-planning.cairn.md) (live PLAN),
 [`tirzah-system.cairn.md`](tirzah-system.cairn.md) (composition).
 
 ---
