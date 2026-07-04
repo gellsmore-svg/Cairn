@@ -1,10 +1,11 @@
-# Hoglah in Cairn — crash-safe bridge job lifecycle (representative slice)
+# Hoglah in Cairn — crash-safe bridge job lifecycle (v2)
 
 A Cairn description of **Hoglah as it currently stands**, for the slice that best
-exercises the constructs Tirzah didn't: the **crash-safe messaging-bridge job
-lifecycle** — consume a job request from a broker, enqueue it durably, process it
-on a serial worker, and publish the result via a transactional outbox, with
-poison handling and restart recovery.
+exercises **v0.9 durable-system constructs**: `SERVICE` / `CONCURRENT`,
+`DURABLE-BEFORE`, `RECOVERY`, and idempotency keyed on `correlation_id`.
+
+This revision replaces the v1 `PARALLEL … MERGE: none` pattern with the spec's
+intended long-running-service model (see stress-test notes at the end).
 
 Hoglah is a local-first job queue for Ollama. A bridge (Kafka / RabbitMQ / Redis
 Streams) optionally feeds the durable store; the design below is broker-neutral.
@@ -13,39 +14,37 @@ Streams) optionally feeds the durable store; the design below is broker-neutral.
 
 ## CONTEXT
 
-- **Store** — the durable job queue (SQLite default, or Mongo). The single source
-  of truth: jobs, their status, a UNIQUE `correlation_id`, and a `published` flag.
-- **broker** — an external message system the operator already runs; Hoglah
-  bridges it without owning it.
-- **correlation_id** — a unique key on each request; the idempotency key.
-- **terminal** — a job in `COMPLETED` or `FAILED` (a result exists).
-- **dead-letter** — where un-processable ("poison") messages go so they never
-  block the queue.
+- **Store** — the durable job queue (SQLite default, or Mongo). Single source of
+  truth: jobs, status, UNIQUE `correlation_id`, `published` flag.
+- **broker** — external message system Hoglah bridges without owning.
+- **correlation_id** — idempotency key for ingress and consumer-side dedup.
+- **terminal** — `COMPLETED` or `FAILED` with a stored result.
+- **dead-letter** — poison or unprocessable messages routed out of the hot path.
 
 ## REQUIREMENTS
 
 ```
-R1. No loss: a request the broker considers delivered SHALL eventually reach a
-    terminal result.                                                       [MUST]
-    ACCEPTANCE: the broker offset is committed only AFTER a durable enqueue.
-R2. No duplicate execution: redelivery of an already-enqueued request SHALL be a
-    no-op.                                                                  [MUST]
-    ACCEPTANCE: enqueue is idempotent on correlation_id (UNIQUE).
-R3. Exactly-once effect: each terminal result SHALL be published exactly once.   [MUST]
-    ACCEPTANCE: published is set only after a confirmed broker ack (outbox).
-R4. Poison messages SHALL NOT block the queue.                              [MUST]
-    ACCEPTANCE: an unparseable message is dead-lettered, then acked.
-R5. Each job SHALL execute once even with multiple workers.                 [MUST]
-    ACCEPTANCE: claim is an atomic QUEUED → PROCESSING transition.
-R6. The system SHALL survive restarts.                                      [MUST]
-    ACCEPTANCE: interrupted jobs are re-queued; computed-but-unpublished
-    results are re-emitted on startup.
+R1. No loss: a broker-delivered request SHALL eventually reach a terminal result. [MUST]
+    ACCEPTANCE: broker offset acked only AFTER durable enqueue.
+R2. No duplicate execution: redelivery of an already-enqueued request SHALL be a no-op. [MUST]
+    ACCEPTANCE: enqueue idempotent on correlation_id (UNIQUE).
+R3. Exactly-once effect: each terminal result SHALL be published exactly once. [MUST]
+    ACCEPTANCE: published set only after confirmed broker ack; consumer dedups on correlation_id.
+R4. Poison messages SHALL NOT block the queue. [MUST]
+R5. Each job SHALL execute once even with multiple workers. [MUST]
+    ACCEPTANCE: atomic QUEUED → PROCESSING claim.
+R6. The system SHALL survive restarts. [MUST]
+    ACCEPTANCE: interrupted jobs re-queued; unpublished terminal results re-emitted.
 ```
 
 ## OUTCOMES
 
-Every accepted request yields exactly one delivered result (or a dead-letter
-entry). No loss, no duplicated effect, across crashes and restarts.
+Every accepted request yields exactly one delivered result (or a dead-letter entry).
+No loss, no duplicated effect, across crashes and restarts.
+
+**EMERGENT [SATISFIES: R3]** — exactly-once *effect* arises from Ingest steps 3–4
+(durable-before-ack), Egress steps 2–3 (outbox), and the downstream consumer deduping
+on `correlation_id` — not from any single step alone.
 
 ---
 
@@ -53,49 +52,51 @@ entry). No loss, no duplicated effect, across crashes and restarts.
 
 ```
 PROCESS RunBridge (INPUT: broker, Store; OUTPUT: —)
-  CONTEXT: three long-running services share the durable Store and run concurrently.
   STATE
-    Store   [scope: global; dir: read/write]  ref: H1   # the durable queue (shared)
+    Store   [scope: global; dir: read/write]  ref: H1
 
-  1. On startup, CALL RecoverOnStartup(Store, broker).        [CODE, DETERMINISTIC] [SATISFIES: R6]
-  2. PARALLEL [STATE: shared via Store; MERGE: none — runs until stop]
-     2a. Ingest:  ITERATE [UNTIL: stop] → CALL Ingest(broker, Store)
-     2b. Work:    ITERATE [UNTIL: stop] → CALL Work(Store)
-     2c. Egress:  ITERATE [UNTIL: stop] → CALL Egress(Store, broker)
+  1. On startup, CALL RecoverOnStartup(Store, broker).     [CODE, DETERMINISTIC] [SATISFIES: R6]
+  2. CONCURRENT [STATE: shared via Store; UNTIL: stop]
+       SERVICE IngestLoop  → ITERATE [UNTIL: stop] → CALL Ingest(broker, Store)
+       SERVICE WorkLoop    → ITERATE [UNTIL: stop] → CALL Work(Store)
+       SERVICE EgressLoop  → ITERATE [UNTIL: stop] → CALL Egress(Store, broker)
 
-PROCESS Ingest (INPUT: broker, Store; OUTPUT: —)   # idempotent consumer
-  1. Consume the next message from the broker.                [EXTERNAL, ASYNC, BLOCKING]
-  2. Parse / validate it into a JobRequest.                   [CODE, DETERMINISTIC]
-     ERROR [ON: unparseable; THEN: fallback → dead-letter the message, then ack it] [SATISFIES: R4]
-  3. Enqueue durably, keyed on correlation_id.                [CODE, IDEMPOTENT, SIDE-EFFECT] [SATISFIES: R2]
+PROCESS Ingest (INPUT: broker, Store; OUTPUT: —)
+  1. Consume the next message from the broker.              [EXTERNAL, ASYNC, BLOCKING]
+  2. Parse / validate into a JobRequest.                  [CODE, DETERMINISTIC]
+     ERROR [ON: unparseable; THEN: fallback → dead-letter, then ack] [SATISFIES: R4]
+  3. Enqueue durably in Store.                              [CODE, IDEMPOTENT, SIDE-EFFECT] [SATISFIES: R2]
+     IDEMPOTENT [KEY: correlation_id]
      STATE UPDATE: Store += job (no-op if correlation_id already present)
-  4. Ack / commit the broker offset — ONLY after step 3 is durable. [EXTERNAL] [SATISFIES: R1]
-     CONSTRAINTS: ordering is safety-critical. A crash between 3 and 4 → the
-     broker redelivers → step 3 is a no-op → it is acked. No loss, no dup.
+     RECOVERY: broker redelivery → step 3 is a no-op → proceed to ack
+  4. Ack / commit the broker offset.                        [EXTERNAL]
+     DURABLE-BEFORE: step 3
+     [SATISFIES: R1]
 
-PROCESS Work (INPUT: Store; OUTPUT: —)             # the serial worker
+PROCESS Work (INPUT: Store; OUTPUT: —)
   QUEUE [ORDER: PRIORITY then FIFO; ONE_AT_A_TIME]
-  1. Claim the next QUEUED job: atomic QUEUED → PROCESSING.   [CODE, DETERMINISTIC] [SATISFIES: R5]
-     BREAK [IF: no job available]   # idle; the loop in RunBridge re-enters
+  1. Claim next QUEUED job: atomic QUEUED → PROCESSING.     [CODE, ATOMIC] [SATISFIES: R5]
+     BREAK [IF: no job available]
   2. RETRY [MAX: max_attempts; BACKOFF: exponential]
-     2.1 Execute the model call, within the timeout.          [EXTERNAL, ASYNC]
-         ERROR [ON: timeout; THEN: fallback → mark FAILED (terminal), free the slot]
+     2.1 Execute the model call within timeout.             [EXTERNAL, ASYNC]
+         ERROR [ON: timeout; THEN: fallback → mark FAILED (terminal)]
          ERROR [ON: transient; THEN: handle → retry per RETRY]
-  3. Write the terminal result (COMPLETED / FAILED); leave it unpublished. [CODE, SIDE-EFFECT]
+  3. Write terminal result; leave published=false.          [CODE, SIDE-EFFECT]
      STATE UPDATE: Store[job].result, status=terminal, published=false
 
-PROCESS Egress (INPUT: Store, broker; OUTPUT: —)   # transactional outbox
-  1. Take the next terminal-but-unpublished result.           [CODE, DETERMINISTIC]
+PROCESS Egress (INPUT: Store, broker; OUTPUT: —)
+  1. Take next terminal-but-unpublished result.            [CODE, DETERMINISTIC]
      BREAK [IF: none]
-  2. Produce the result to the broker (results stream, or the request's reply_to). [EXTERNAL, ASYNC]
+  2. Produce result to broker (results stream or reply_to). [EXTERNAL, ASYNC]
      ERROR [ON: nack/unconfirmed; THEN: fallback → leave unpublished; retry next pass]
-  3. Mark published — ONLY after a confirmed broker ack.      [CODE, SIDE-EFFECT] [SATISFIES: R3]
-     CONSTRAINTS: a crash between 2 and 3 → on restart the result is still
-     unpublished → it is re-emitted (R6). The consumer de-dups on correlation_id.
+  3. Mark published=true in Store.                        [CODE, SIDE-EFFECT]
+     DURABLE-BEFORE: step 2 broker ack confirmed
+     RECOVERY: crash before step 3 → job stays unpublished → RecoverOnStartup re-emits
+     [contributes to EMERGENT R3]
 
 PROCESS RecoverOnStartup (INPUT: Store, broker; OUTPUT: —)
-  1. Re-queue any job left PROCESSING by a crash (respecting max_attempts).  [CODE] [SATISFIES: R6]
-  2. Re-emit every terminal-but-unpublished result (drain the outbox).       [CODE] [SATISFIES: R6]
+  1. Re-queue jobs left PROCESSING by a crash (respect max_attempts). [CODE] [SATISFIES: R6]
+  2. CALL Egress for each unpublished terminal result (drain outbox). [CODE] [SATISFIES: R6]
 ```
 
 ## PROCESS — Narrative (same backbone)
@@ -103,74 +104,49 @@ PROCESS RecoverOnStartup (INPUT: Store, broker; OUTPUT: —)
 ```
 PROCESS — RunBridge: bridge a broker to the durable queue.
 
-  1. On startup, recover: re-queue jobs a crash left half-done, and re-send any
-     results that were computed but never published.
-  2. Then run three services at once over the shared queue, until stopped:
-     2a. Ingest — pull requests off the broker into the queue.
-     2b. Work — process queued jobs, one at a time.
-     2c. Egress — publish finished results back to the broker.
+  1. Recover anything a crash left half-done.
+  2. Run three long-lived services concurrently over the shared Store until stopped:
+     — Ingest pulls broker messages into the queue.
+     — Work runs jobs one at a time.
+     — Egress publishes finished results via the transactional outbox.
 
-PROCESS — Ingest: take one message safely into the queue.
-  1. Read the next message from the broker.
-  2. Parse it into a job. If it can't be parsed, send it to the dead-letter
-     destination and acknowledge it — never let a bad message block the queue.
-  3. Add the job to the durable queue, keyed by its correlation id; if that id is
-     already present, this does nothing.
-  4. Only now acknowledge the broker. (Ordering matters: if we crash between 3
-     and 4, the broker resends, step 3 no-ops, and we acknowledge — nothing is
-     lost or duplicated.)
+PROCESS — Ingest: one safe message into the queue.
+  Read → parse (or dead-letter poison) → enqueue keyed by correlation_id (idempotent)
+  → only then ack the broker. If we crash between enqueue and ack, redelivery is harmless.
 
-PROCESS — Work: process one job, serially.
-  1. Atomically claim the next queued job (so two workers can't take the same
-     one). If none is waiting, stop this pass.
-  2. Run the model call within the timeout, retrying on transient errors up to the
-     limit; on timeout, fail the job cleanly and free the slot.
-  3. Save the final result and leave it marked "not yet published."
+PROCESS — Work: one job, serially.
+  Atomically claim → retry model call on transient errors → save terminal result unpublished.
 
-PROCESS — Egress: publish one finished result, exactly once.
-  1. Take the next finished, unpublished result (stop if there are none).
-  2. Send it to the broker (the results stream, or the reply address on the
-     request). If the broker doesn't confirm, leave it unpublished and try again
-     next pass.
-  3. Mark it published only after a confirmed acknowledgement. (If we crash
-     between sending and marking, it stays "unpublished" and is re-sent on
-     restart; the consumer removes the duplicate by correlation id.)
+PROCESS — Egress: publish one result, exactly once.
+  Take unpublished terminal → produce to broker → mark published only after ack.
+  Crash between produce and mark → restart re-emits; consumer dedups.
 ```
 
 ---
 
 ## STATE REFERENCE (stub)
 
-- **H1 Store** — the durable job queue: each job `{correlation_id (UNIQUE),
-  request, status, result, published}`. The single source of truth, shared by
-  Ingest / Work / Egress / recovery. Backed by SQLite (default) or Mongo; the
-  atomic claim (R5) is a conditional `QUEUED → PROCESSING` update.
+- **H1 Store** — `{correlation_id (UNIQUE), request, status, result, published}`.
+  Shared by all SERVICEs and recovery. Claim is conditional `QUEUED → PROCESSING`.
 
 ---
 
-## Stress-test notes (gaps surfaced for the spec)
+## Stress-test notes
 
-What worked: `QUEUE`, `RETRY`, the new `ERROR THEN: fallback → <target>`,
-`BREAK [IF: …]`, `[IDEMPOTENT]`/`[ASYNC]` tags, shared-Store `STATE`, and the
-crash-safety guarantees as `REQUIREMENTS` with `ACCEPTANCE` mapped very cleanly —
-this domain fit Cairn better than Tirzah did.
+**v2 changes (exercises SPEC v0.9):**
 
-New gaps to feed back:
-1. **Long-running concurrent services with no join.** `PARALLEL … MERGE` assumes a
-   join, but Ingest/Work/Egress are perpetual loops over shared state. I used
-   `MERGE: none — runs until stop`; the spec should bless a **SERVICE / DAEMON**
-   notion (concurrent, non-joining, shared-state) rather than overloading
-   PARALLEL.
-2. **Crash-window / recovery semantics are first-class here but unsupported.** The
-   whole design is about "if a crash happens *between step 3 and step 4*, then …".
-   Cairn can only put this in `CONSTRAINTS` prose. A crash-safe spec language
-   wants a way to mark a **safety-critical ordering / atomic boundary** between
-   two steps and state the **recovery** if interrupted there (e.g. `ATOMIC`/
-   `DURABLE-BEFORE`, or a `RECOVERY:` annotation).
-3. **Idempotency is a property of a step's *effect*, not just a tag.** `[IDEMPOTENT]`
-   flags it, but "keyed on correlation_id" (the *what*) lives in prose. Consider an
-   `IDEMPOTENT [KEY: correlation_id]` form.
-4. **"Exactly-once effect"** is an end-to-end property spanning Ingest + Egress +
-   consumer de-dup — it satisfies R3 across *three* processes. Cairn ties one step
-   to a requirement via `[SATISFIES]`, but has no clean way to say "this guarantee
-   emerges from steps X, Y, Z together."
+| v1 gap | v2 treatment |
+|--------|----------------|
+| `PARALLEL … MERGE: none` for perpetual loops | `CONCURRENT { SERVICE … }` |
+| Crash windows in CONSTRAINTS prose | `DURABLE-BEFORE` + `RECOVERY` on Ingest/Egress |
+| `[IDEMPOTENT]` without key | `IDEMPOTENT [KEY: correlation_id]` |
+| R3 spans Ingest+Egress+consumer | `EMERGENT [SATISFIES: R3]` at OUTCOMES |
+
+**Still open for the spec:**
+
+1. **`EMERGENT [SATISFIES: …]`** — used here for end-to-end guarantees; not yet a
+   first-class grammar production (only illustrated).
+2. **SERVICE stop/join** — `UNTIL: stop` is named but graceful shutdown semantics
+   (drain in-flight, final outbox pass) remain operator prose.
+3. **Transport-specific poison paths** — Rabbit DLX vs Kafka manual DLT vs Redis
+   PEL recovery differ; this example stays broker-neutral at the PROCESS level.

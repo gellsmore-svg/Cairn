@@ -2,6 +2,9 @@
 
 - Added Cairn stress-test examples for **Mahlah** (three-channel conversational
   ask UI) and **Milcah** (recursive coherence-pressure rounds).
+- Added **`tirzah-ingest.cairn.md`** — ingestion pipeline, dead-letter, profile backfill.
+- Rewrote **`hoglah.cairn.md` v2** — `CONCURRENT`/`SERVICE`, `DURABLE-BEFORE`,
+  `RECOVERY`, `IDEMPOTENT [KEY: …]`, `EMERGENT [SATISFIES: …]` illustration.
 - Updated `examples/README.md` and OKF examples reference; fixed README SPEC
   version line (v0.9).
 

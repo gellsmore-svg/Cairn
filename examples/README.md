@@ -5,7 +5,8 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | Example | System | Slice |
 |---------|--------|-------|
 | [`tirzah.cairn.md`](tirzah.cairn.md) | Tirzah | Agentic retrieval `ask` |
-| [`hoglah.cairn.md`](hoglah.cairn.md) | Hoglah | Crash-safe bridge job lifecycle |
+| [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) | Tirzah | Source ingestion, dead-letter, profile backfill |
+| [`hoglah.cairn.md`](hoglah.cairn.md) | Hoglah | Crash-safe bridge (v2: SERVICE, DURABLE-BEFORE) |
 | [`mahalath.cairn.md`](mahalath.cairn.md) | Mahalath | Ingest → debate → ontology |
 | [`mahlah.cairn.md`](mahlah.cairn.md) | Mahlah | Three-channel conversational UI |
 | [`milcah.cairn.md`](milcah.cairn.md) | Milcah | Recursive coherence-pressure rounds |
