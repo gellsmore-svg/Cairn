@@ -163,8 +163,8 @@ Rough edges:
    Legacy `pre_built_answer` packages still persist without a second adapter call.
 2. **Construct subset** — v1 expands direct-body `ITERATE`/`DECISION`; unselected
    branch descendants are cascade-skipped; `BREAK`/`CONTINUE` with `IF:` conditions
-   exit iterate rounds. Nested `DECISION` inside an active `ITERATE` body still
-   selects branches without inline branch execution in the same round.
+   exit iterate rounds. `DECISION` inside an active `ITERATE` body runs selected
+   branch CALLs inline in the same round (nested `DECISION` branches recurse).
 3. **Resume after restart** — `plan_executions` collection persists running state;
    interpreter reloads completed steps + artifacts and continues from `pending`.
 4. **PLAN revision mid-flight** — concurrent revision + interpretation ordering
