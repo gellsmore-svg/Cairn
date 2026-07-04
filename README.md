@@ -132,6 +132,9 @@ cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC Â
 Tirzah's recursive planner is tested against `cairn.validate_plan` so its output
 cannot drift from the grammar.
 
+Works the same on native Linux and WSL. Requires `keturah` in the same environment
+(local editable install or PyPI once published).
+
 ```bash
 pip install -e ".[dev]" && pytest
 ```
