@@ -149,6 +149,11 @@ walks the plan in `depends_on` order — `tirzah_retrieval` → `retrieve_for_an
 [`tirzah-plan-interpreter.cairn.md`](tirzah-plan-interpreter.cairn.md) and SPEC §4.6.
 Deep mode pre-synthesizes during retrieval; the synthesis step persists only.
 
+**Planner template:** initial and revision prompts include a preferred backbone —
+STEP → `tirzah_retrieval` CALL → `answer_adapter` CALL → RECURSE. If the planner
+omits synthesis after retrieval, Tirzah inserts an `answer_adapter` CALL and rewires
+RECURSE `depends_on` before validation.
+
 ---
 
 ## Stress-test notes
