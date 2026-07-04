@@ -2,11 +2,13 @@
 
 Worked Cairn descriptions of real systems, used to stress-test the spec.
 
-Planned (in progress):
-
-- `tirzah.cairn.md` — Tirzah, a local graph-memory retrieval layer.
-- `hoglah.cairn.md` — Hoglah, a local-first job queue for Ollama.
-- `mahalath.cairn.md` — Mahalath, a self-sustaining ontology builder.
+| Example | System | Slice |
+|---------|--------|-------|
+| [`tirzah.cairn.md`](tirzah.cairn.md) | Tirzah | Agentic retrieval `ask` |
+| [`hoglah.cairn.md`](hoglah.cairn.md) | Hoglah | Crash-safe bridge job lifecycle |
+| [`mahalath.cairn.md`](mahalath.cairn.md) | Mahalath | Ingest → debate → ontology |
+| [`mahlah.cairn.md`](mahlah.cairn.md) | Mahlah | Three-channel conversational UI |
+| [`milcah.cairn.md`](milcah.cairn.md) | Milcah | Recursive coherence-pressure rounds |
 
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that

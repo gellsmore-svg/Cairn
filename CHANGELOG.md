@@ -1,3 +1,10 @@
+## [Unreleased]
+
+- Added Cairn stress-test examples for **Mahlah** (three-channel conversational
+  ask UI) and **Milcah** (recursive coherence-pressure rounds).
+- Updated `examples/README.md` and OKF examples reference; fixed README SPEC
+  version line (v0.9).
+
 ## [0.9] — 2026-06-24
 
 - Added the `PLAN` revision envelope for live recursive process instances,
