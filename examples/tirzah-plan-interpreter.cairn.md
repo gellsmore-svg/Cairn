@@ -134,6 +134,7 @@ whole request PLAN.
 |-----------|----------------------|
 | `PARALLEL` | Run every direct branch body sequentially; store `parallel:{step_id}` |
 | `MERGE` | Join branch artifacts; `merge:context_bundle` appends branch tool results |
+| `RETRY` | Re-run direct body steps until success or `MAX:` attempts exhausted |
 
 Granular tools accumulate into `context_bundle`; synthesis builds an agentic
 envelope from the bundle when no monolithic `retrieval_package` exists.
@@ -177,5 +178,8 @@ Rough edges:
    revised plans while `revision_decision` remains `revise` (bounded by
    `planning_max_revisions`).
 5. **PARALLEL/MERGE** — v1 runs branch bodies sequentially (deterministic fan-out);
-   `MERGE merge:context_bundle` folds branch `tool_result` entries into the shared
-   `context_bundle`. True concurrent isolation is not modelled yet.
+   `STATE: isolated` snapshots per-branch `context_bundle` without mutating the
+   parent; `MERGE merge:context_bundle` folds isolated or shared branch results.
+   True concurrent execution is not modelled yet.
+6. **RETRY** — direct-body steps re-run on `blocked` until `MAX:` attempts;
+   `BACKOFF` is not modelled yet.
