@@ -113,5 +113,5 @@ Rough edges:
    as `[BATCH]` step per SPEC §5 STEP.
 2. **Relation to ask** — accepted edges influence later retrieval paths; emergent
    link to `RetrieveAgentically` not drawn here (cross-PROCESS SATISFIES).
-3. **Endorsement of generated outputs** — separate queue; could be a sibling
-   PROCESS `ReviewGeneratedOutput`.
+3. **Endorsement of generated outputs** — sibling PROCESS in
+   `tirzah-generated-output.cairn.md`.

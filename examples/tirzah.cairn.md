@@ -6,6 +6,8 @@ each mode has its own retrieval sub-process before the shared answer + persist s
 
 Related: [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) (corpus),
 [`tirzah-semantic-review.cairn.md`](tirzah-semantic-review.cairn.md) (graph review),
+[`tirzah-web-research.cairn.md`](tirzah-web-research.cairn.md) (`--web` override),
+[`tirzah-generated-output.cairn.md`](tirzah-generated-output.cairn.md) (trust gate),
 [`tirzah-system.cairn.md`](tirzah-system.cairn.md) (composition).
 
 ---
@@ -193,7 +195,8 @@ Still open:
 
 1. **Low-intent override** — runtime may downgrade agentic → direct; express as
    `MODE:` override annotation on step 2.
-2. **Web research promotion** — `--web` forces agentic; cross-cutting modifier.
+2. **Web research promotion** — documented in `tirzah-web-research.cairn.md` as `MODE`
+   override promoting non-agentic → agentic.
 3. **STATE at CALL boundary** — `gathered` return contract is explicit; sub-process
    STATE remains private (recommended pattern).
 4. **Deep answer double-invocation** — deep flow may call the model inside

@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Added **`tirzah-generated-output.cairn.md`** — queue → unreviewed nodes → endorse/reject.
+- Added **`tirzah-web-research.cairn.md`** — `--web` promotion and bounded search/fetch.
+- Added **`keturah.cairn.md`** (manifest + MCP) and **`galeed.cairn.md`** (trace spine).
+- Updated **`tirzah-system.cairn.md`** composition map (TRUST milestone, web, Galeed).
 - Added Cairn stress-test examples for **Mahlah** (three-channel conversational
   ask UI) and **Milcah** (recursive coherence-pressure rounds).
 - Added **`tirzah-ingest.cairn.md`** — ingestion pipeline, dead-letter, profile backfill.

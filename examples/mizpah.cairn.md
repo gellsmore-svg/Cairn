@@ -6,9 +6,9 @@ conversation you are in.
 
 Mizpah pairs with [Mahlah](mahlah.cairn.md): Mahlah's dev-log popup shows the
 **current** session inline; Mizpah lists **all** sessions and inspects any one's
-full lifecycle. Both read Tirzah's trace API today (`tirzah/trace/` is still
-single-sourced in Tirzah; extraction to Mizpah is deferred until a second emitter
-needs it).
+full lifecycle. Both read Tirzah's trace API today, which persists
+[Galeed](galeed.cairn.md) events (`tirzah/trace/` is still single-sourced in
+Tirzah; extraction to Mizpah is deferred until a second emitter needs it).
 
 ---
 

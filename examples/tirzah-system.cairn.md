@@ -8,9 +8,12 @@ processes and UIs.
 Referenced slices:
 
 - [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) — corpus build
-- [`tirzah.cairn.md`](tirzah.cairn.md) — agentic ask
+- [`tirzah.cairn.md`](tirzah.cairn.md) — ask (direct · agentic · deep)
+- [`tirzah-web-research.cairn.md`](tirzah-web-research.cairn.md) — optional `--web` override
+- [`tirzah-generated-output.cairn.md`](tirzah-generated-output.cairn.md) — generated-output trust gate
 - [`mahlah.cairn.md`](mahlah.cairn.md) — conversational UI (one session)
 - [`mizpah.cairn.md`](mizpah.cairn.md) — trace watchtower (all sessions)
+- [`galeed.cairn.md`](galeed.cairn.md) — trace spine emitters read/write
 
 ---
 
@@ -63,10 +66,13 @@ PROCESS TirzahWorkbench (INPUT: sources, questions; OUTPUT: operating_corpus)
       CALL ReviewSemanticEdges(scope=corpus) → review_summary  # tirzah-semantic-review.cairn.md
   3. MILESTONE ASK — query memory in a session.
      PURPOSE: answer from retrieved context; branch on retrieval_mode (direct/agentic/deep).
-     PURPOSE: answer from retrieved context, not whole documents.
      ITERATE [OVER: operator questions]
-       CALL Ask(user_query, session_id) → answer, process_trace  # see tirzah.cairn.md
+       DECISION [ON: external evidence needed]
+         3a. local only → CALL Ask(user_query, session_id, retrieval_mode) → answer, process_trace
+         3b. --web      → CALL AskWithWebResearch(user_query, session_id, web_enabled=true)
        STATE UPDATE: sessions += exchange; process_trace persisted [SATISFIES: R2, R3]
+  3b. MILESTONE TRUST (optional) — review generated answers before trusting memory.
+      CALL ReviewGeneratedOutput(scope=session) → review_summary  # tirzah-generated-output.cairn.md
   4. MILESTONE OBSERVE — inspect what happened.
      DECISION [ON: observation surface]
        4a. CALL Mahlah.HandleUserTurn / OpenDevLog              # current session UX
@@ -118,8 +124,10 @@ PROCESS — TirzahWorkbench: the local memory workbench, end to end.
 | PROFILE | `ProfileBackfill` | `tirzah-ingest.cairn.md` |
 | GRAPH (optional) | `ReviewSemanticEdges` | `tirzah-semantic-review.cairn.md` |
 | ASK | `Ask`, `RetrieveDirect` / `Agentically` / `Deep`, `PLAN` | `tirzah.cairn.md` |
+| ASK (+web) | `AskWithWebResearch`, `ExecuteWebTool` | `tirzah-web-research.cairn.md` |
+| TRUST (optional) | `ReviewGeneratedOutput`, `EndorseGeneratedNode` | `tirzah-generated-output.cairn.md` |
 | OBSERVE (live) | `HandleUserTurn`, `OpenDevLog` | `mahlah.cairn.md` |
-| OBSERVE (audit) | `BrowseAndInspect` | `mizpah.cairn.md` |
+| OBSERVE (audit) | `BrowseAndInspect`, `QueryTrace` | `mizpah.cairn.md` + `galeed.cairn.md` |
 
 ---
 
@@ -133,5 +141,6 @@ Rough edges:
 
 1. **Direct / deep retrieval modes** — composition hard-codes agentic ask; a
    `DECISION [ON: retrieval_mode]` branch would bloat this doc (keep in `tirzah.cairn.md`).
-2. **Generated-output endorsement** — separate from semantic-edge review; not expanded here.
+2. **Generated-output endorsement** — now in `tirzah-generated-output.cairn.md`; optional
+   TRUST milestone after ASK.
 3. **Machine composition** — no validator checks that `CALL` targets exist across files.
