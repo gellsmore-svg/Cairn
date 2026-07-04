@@ -143,12 +143,11 @@ Cairn has no single `AGENTIC` tag. Agentic *potential* shows up as:
 Steps tagged `[CODE, DETERMINISTIC]` (validate, save, execute wrapper) are
 **not** agentic — Python owns them regardless of what the plan says.
 
-**Interpretive mode (v1):** when `plan_interpretive_execution_enabled` is true,
-Tirzah walks the plan in `depends_on` order and dispatches `CALL` steps through a
-handler registry — see [`tirzah-plan-interpreter.cairn.md`](tirzah-plan-interpreter.cairn.md)
-and Cairn SPEC §4.6. The `tirzah_retrieval` handler still invokes the full ask
-pipeline (degenerate single-step case); splitting retrieve vs synthesize is the
-next refactor inside `interaction.py`.
+**Interpretive mode:** when `plan_interpretive_execution_enabled` is true, Tirzah
+walks the plan in `depends_on` order — `tirzah_retrieval` → `retrieve_for_answer`,
+`answer_adapter` → `synthesize_from_retrieval` — see
+[`tirzah-plan-interpreter.cairn.md`](tirzah-plan-interpreter.cairn.md) and SPEC §4.6.
+Deep mode pre-synthesizes during retrieval; the synthesis step persists only.
 
 ---
 

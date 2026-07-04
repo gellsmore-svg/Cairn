@@ -115,8 +115,8 @@ whole request PLAN.
 
 | Tool | Handler behaviour |
 |------|-------------------|
-| `tirzah_retrieval` | Runs full `answer_query` pipeline; stores `retrieval_result` |
-| `answer_adapter` | Returns existing result or triggers synthesis path |
+| `tirzah_retrieval` | `retrieve_for_answer` — context only, no LLM answer / persist |
+| `answer_adapter` | `synthesize_from_retrieval` — adapter + `save_exchange` |
 | `coherence_check`, `milcah`, … | `run_planned_specialist` for matching step |
 | `web_search`, `web_fetch` | Delegates to agentic web tools when enabled |
 
@@ -143,8 +143,8 @@ What worked: SPEC §4.6 state machine maps to JSON `step.status`; `depends_on` D
 
 Rough edges:
 
-1. **Monolithic retrieval handler** — v1 `tirzah_retrieval` still runs the whole
-   ask pipeline; splitting retrieve vs synthesize needs interaction.py refactor.
+1. **Deep mode** — retrieval pre-synthesizes inside `run_deep_answer`; synthesis
+   step persists only (no second adapter call).
 2. **Construct subset** — `ITERATE`/`DECISION` inside machine plans → `blocked` until
    the interpreter expands them.
 3. **Resume after restart** — spec allows resuming at first `pending`; persistence
