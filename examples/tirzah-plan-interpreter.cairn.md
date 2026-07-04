@@ -158,8 +158,9 @@ What worked: SPEC §4.6 state machine maps to JSON `step.status`; `depends_on` D
 
 Rough edges:
 
-1. **Deep mode** — retrieval pre-synthesizes inside `run_deep_answer`; synthesis
-   step persists only (no second adapter call).
+1. **Deep mode** — `tirzah_retrieval` runs `run_deep_retrieval` (chunks only);
+   `answer_adapter` runs `synthesize_answer` over `useful_chunks` and persists.
+   Legacy `pre_built_answer` packages still persist without a second adapter call.
 2. **Construct subset** — v1 expands direct-body `ITERATE`/`DECISION` only; nested
    branch trees and BREAK/CONTINUE are not modelled yet.
 3. **Resume after restart** — `plan_executions` collection persists running state;
