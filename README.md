@@ -124,11 +124,22 @@ embedding a private dialect:
 
 ```python
 import cairn
+
+# Runtime PLAN dict conformance (SPEC §4.5)
 errors = cairn.validate_plan(plan_dict)   # [] when conformant
-view = cairn.render_plan(plan_dict, profile="narrative_steps")  # simplified view
+
+# Structural grammar (GRAMMAR.md EBNF + SPEC §12 well-formedness)
+doc = cairn.parse_document(cairn_text_or_markdown)
+errors = cairn.validate_document(doc)   # [] when well-formed
+plan = cairn.document_to_plan(doc)        # first PLAN or PROCESS → plan dict
+
+# Simplified human-readable views
+view = cairn.render_plan(cairn_text_or_markdown, profile="narrative_steps")
 cairn.CANONICAL_PLAN                       # an executable known-good fixture
 cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC §5)
 ```
+
+CLI: `cairn-validate examples/hoglah.cairn.md` · `cairn-render examples/hoglah.cairn.md`
 
 Simplified human-readable views (narrative, operator, executive, Mermaid, multilingual):
 see [docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).

@@ -72,6 +72,32 @@ def build_manifest() -> Manifest:
                 tags=["render", "plan"],
             ),
             capability(
+                "parse_document",
+                "Parse a Cairn markdown or skeleton text file into a structural AST (GRAMMAR.md EBNF).",
+                input_schema={
+                    "type": "object",
+                    "properties": {"text": {"type": "string", "description": "Cairn markdown or skeleton text"}},
+                    "required": ["text"],
+                },
+                output_schema={"type": "object", "properties": {"process_count": {"type": "integer"}}},
+                tags=["grammar", "parse"],
+            ),
+            capability(
+                "validate_document",
+                "Validate a Cairn description for GRAMMAR.md structure and SPEC §12 well-formedness; "
+                "returns errors (empty = well-formed).",
+                input_schema={
+                    "type": "object",
+                    "properties": {"text": {"type": "string"}},
+                    "required": ["text"],
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {"errors": {"type": "array", "items": {"type": "string"}}},
+                },
+                tags=["grammar", "validation"],
+            ),
+            capability(
                 "plan_schema",
                 "The Cairn plan contract: required fields ("
                 + ", ".join(REQUIRED_PLAN_FIELDS)

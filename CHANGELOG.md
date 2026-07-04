@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-05
+
+- **`cairn.grammar`:** executable GRAMMAR.md EBNF parser — `parse_document`,
+  `validate_document` (SPEC §12 well-formedness), `document_to_plan`,
+  markdown `.cairn.md` extraction, AST bridge to `cairn.render`.
+- **`cairn-validate` CLI** and Keturah manifest capabilities `parse_document` /
+  `validate_document`.
+- **`scripts/validate_examples.py`** now uses the grammar parser (zero syntax
+  errors required across `examples/*.cairn.md`).
+
 ## [0.4.1] — 2026-07-05
 
 - **`cairn.render` continued:** `audit` profile (SPEC §3.1), French (`fr`) phrasing,

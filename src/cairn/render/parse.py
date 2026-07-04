@@ -200,7 +200,23 @@ def parse_plan_dict(plan: dict[str, Any]) -> ProcessDocument:
     return doc
 
 
-def normalize_input(input_cairn: str | dict[str, Any]) -> ProcessDocument:
+def parse_with_grammar(text: str) -> ProcessDocument:
+    """Parse via the structural grammar and project into ProcessDocument."""
+    from cairn.grammar import parse_document, validate_document
+    from cairn.grammar.bridge import document_to_render_model
+
+    doc = parse_document(text)
+    render_doc = document_to_render_model(doc)
+    render_doc.warnings.extend(validate_document(doc))
+    return render_doc
+
+
+def normalize_input(input_cairn: str | dict[str, Any], *, use_grammar: bool = True) -> ProcessDocument:
     if isinstance(input_cairn, dict):
         return parse_plan_dict(input_cairn)
+    if use_grammar:
+        try:
+            return parse_with_grammar(input_cairn)
+        except Exception:
+            pass
     return parse_markdown(input_cairn)
