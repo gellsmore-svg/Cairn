@@ -135,6 +135,7 @@ whole request PLAN.
 | `PARALLEL` | Run every direct branch body sequentially; store `parallel:{step_id}` |
 | `MERGE` | Join branch artifacts; `merge:context_bundle` appends branch tool results |
 | `RETRY` | Re-run direct body steps until success or `MAX:` attempts exhausted |
+| `ERROR` | Guard body steps; on matching `ON:` failure apply `THEN: propagate|handle|fallback` |
 
 Granular tools accumulate into `context_bundle`; synthesis builds an agentic
 envelope from the bundle when no monolithic `retrieval_package` exists.
@@ -183,3 +184,6 @@ Rough edges:
    True concurrent execution is not modelled yet.
 6. **RETRY** — direct-body steps re-run on `blocked` until `MAX:` attempts;
    `BACKOFF` is not modelled yet.
+7. **ERROR** — guarded body steps trigger `plan.error.triggered` on matching
+   `ON:` reasons; `fallback:<step_id>` runs a recovery CALL; `AWAIT` is not
+   modelled yet.
