@@ -130,6 +130,11 @@ whole request PLAN.
 | `coherence_check`, `milcah`, … | `run_planned_specialist` for matching step |
 | `web_search`, `web_fetch` | Bounded web research when enabled; fetch uses latest search URL |
 
+| Construct | Interpreter behaviour |
+|-----------|----------------------|
+| `PARALLEL` | Run every direct branch body sequentially; store `parallel:{step_id}` |
+| `MERGE` | Join branch artifacts; `merge:context_bundle` appends branch tool results |
+
 Granular tools accumulate into `context_bundle`; synthesis builds an agentic
 envelope from the bundle when no monolithic `retrieval_package` exists.
 Ask responses may include `context_bundle_summary` and `plan_execution` (compact
@@ -171,3 +176,6 @@ Rough edges:
    execution, proposes the next revision from execution evidence, then interprets
    revised plans while `revision_decision` remains `revise` (bounded by
    `planning_max_revisions`).
+5. **PARALLEL/MERGE** — v1 runs branch bodies sequentially (deterministic fan-out);
+   `MERGE merge:context_bundle` folds branch `tool_result` entries into the shared
+   `context_bundle`. True concurrent isolation is not modelled yet.
