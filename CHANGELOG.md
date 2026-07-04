@@ -2,6 +2,7 @@
 
 - **SPEC §4.6** — PLAN interpretation: step state machine, handler dispatch, trace.
 - Added **`STEP_STATUSES`** to conformance validation.
+- Tirzah: `answer_query` unified via retrieve/synthesize phases; `plan_executions` resume store.
 - Tirzah: split `retrieve_for_answer` / `synthesize_from_retrieval` for interpretive handlers.
 - Added **`tirzah-plan-interpreter.cairn.md`** — interpretive execution target + Tirzah v1 handlers.
 - Added **`tirzah-recursive-planning.cairn.md`** — live PLAN propose/execute/revise seam.

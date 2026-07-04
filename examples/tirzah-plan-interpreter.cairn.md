@@ -147,7 +147,7 @@ Rough edges:
    step persists only (no second adapter call).
 2. **Construct subset** — `ITERATE`/`DECISION` inside machine plans → `blocked` until
    the interpreter expands them.
-3. **Resume after restart** — spec allows resuming at first `pending`; persistence
-   of partial interpretation not yet modelled.
+3. **Resume after restart** — `plan_executions` collection persists running state;
+   interpreter reloads completed steps + artifacts and continues from `pending`.
 4. **PLAN revision mid-flight** — concurrent revision + interpretation ordering
    is implementation-defined; safest rule: finish current step, then apply revision.
