@@ -15,8 +15,10 @@ from cairn.grammar.ast import (
 from cairn.grammar.tags import has_llm_actor, modifier_keys, tag_dimensions
 
 _STATE_REF = re.compile(r"^(\w+)")
+_CALL_TARGET = re.compile(r"(?:^|[\s→])CALL\s+(\w+)\b")
 _LOOP_CONSTRUCTS = frozenset({"ITERATE", "RECURSE", "QUEUE"})
 _BOUND_CONSTRUCTS = frozenset({"ITERATE", "RECURSE"})
+_BOUND_KEYS = frozenset({"MAX", "MAX_DEPTH", "UNTIL", "OVER"})
 
 
 def validate_document(doc: CairnDocument) -> list[str]:
@@ -32,49 +34,177 @@ def validate_document(doc: CairnDocument) -> list[str]:
     ):
         errors.append("document must contain at least one CONTEXT, REQUIREMENTS/OUTCOMES, or PROCESS block")
 
+    all_states = _collect_state_names(doc)
+    context_keys = _collect_context_keys(doc)
+    loop_call_targets = _collect_loop_call_targets(doc)
+
     for proc in doc.processes:
-        errors.extend(_validate_process(proc))
+        in_loop = proc.name in loop_call_targets
+        errors.extend(
+            _validate_process(
+                proc,
+                declared_states=all_states | context_keys,
+                loop_call_target=in_loop,
+            )
+        )
 
     for plan in doc.plans:
-        errors.extend(_validate_plan(plan))
+        errors.extend(_validate_plan(plan, declared_states=all_states | context_keys, loop_call_targets=loop_call_targets))
 
     return errors
 
 
-def _validate_process(proc: Process, *, plan_context: bool = False) -> list[str]:
-    errors: list[str] = []
-    if not proc.name or proc.name == "unnamed":
-        errors.append(f"PROCESS at line {proc.lineno} must have a name")
-    if proc.signature:
-        if not proc.signature.inputs.strip():
-            errors.append(f"PROCESS {proc.name!r} at line {proc.lineno}: INPUT must be declared")
-        if not proc.signature.outputs.strip():
-            errors.append(f"PROCESS {proc.name!r} at line {proc.lineno}: OUTPUT must be declared")
+def _collect_state_names(doc: CairnDocument) -> set[str]:
+    names: set[str] = set()
+    for proc in doc.processes:
+        if proc.state:
+            names.update(d.name for d in proc.state.declarations)
+    for plan in doc.plans:
+        if plan.process and plan.process.state:
+            names.update(d.name for d in plan.process.state.declarations)
+    return names
 
-    declared_states = {d.name for d in proc.state.declarations} if proc.state else set()
 
-    loop_depth = 0
+def _collect_context_keys(doc: CairnDocument) -> set[str]:
+    keys: set[str] = set()
+    for block in doc.context_blocks:
+        for line in block.lines:
+            if " — " in line:
+                keys.add(line.split(" — ", 1)[0].strip())
+            elif " - " in line:
+                keys.add(line.split(" - ", 1)[0].strip())
+    for proc in doc.processes:
+        if proc.context:
+            for line in proc.context.lines:
+                if " — " in line:
+                    keys.add(line.split(" — ", 1)[0].strip())
+    return keys
+
+
+def _collect_loop_call_targets(doc: CairnDocument) -> set[str]:
+    targets: set[str] = set()
+    for proc in doc.processes:
+        _walk_loop_calls(proc, targets)
+    for plan in doc.plans:
+        if plan.process:
+            _walk_loop_calls(plan.process, targets)
+    return targets
+
+
+def _walk_loop_calls(proc: Process, targets: set[str], *, loop_depth: int = 0) -> None:
+    proc_loop = loop_depth
     for element in proc.elements:
-        if isinstance(element, ConstructLine) and element.construct in _LOOP_CONSTRUCTS:
-            loop_depth = max(loop_depth, 1)
-            errors.extend(_validate_construct_line(element, declared_states, loop_depth=0))
+        if not isinstance(element, ConstructLine):
+            continue
+        blob = f"{element.text} {element.arrow_target or ''}"
+        if element.construct in _LOOP_CONSTRUCTS or re.search(r"\bITERATE\b", blob):
+            proc_loop = max(proc_loop, loop_depth + 1)
+        if proc_loop > 0:
+            for name in _calls_from_construct_line(element):
+                targets.add(name)
 
     for step in proc.steps:
-        errors.extend(_validate_step_tree(step, declared_states, loop_depth=loop_depth))
-
-    return errors
+        _walk_step_loop_calls(step, targets, loop_depth=proc_loop)
 
 
-def _validate_plan(plan: Plan) -> list[str]:
+def _walk_step_loop_calls(step: Step, targets: set[str], *, loop_depth: int) -> None:
+    active_loop = loop_depth
+
+    if step.construct in _LOOP_CONSTRUCTS:
+        active_loop = max(active_loop, loop_depth + 1)
+
+    if active_loop > 0:
+        for name in _calls_from_text(step.text):
+            targets.add(name)
+
+    for cline in step.construct_lines:
+        blob = f"{cline.text} {cline.arrow_target or ''}"
+        if cline.construct in _LOOP_CONSTRUCTS or re.search(r"\bITERATE\b", blob):
+            active_loop = max(active_loop, loop_depth + 1)
+        if active_loop > 0:
+            for name in _calls_from_construct_line(cline):
+                targets.add(name)
+
+    child_loop = active_loop if step.construct in _LOOP_CONSTRUCTS else loop_depth
+    if step.construct in _LOOP_CONSTRUCTS:
+        child_loop = loop_depth + 1
+
+    for child in step.children:
+        _walk_step_loop_calls(child, targets, loop_depth=child_loop)
+
+
+def _calls_from_construct_line(cline: ConstructLine) -> list[str]:
+    names: list[str] = []
+    for blob in (cline.text, cline.arrow_target or ""):
+        names.extend(_calls_from_text(blob))
+    if cline.construct == "CALL":
+        match = re.match(r"^(\w+)", cline.text.strip())
+        if match:
+            names.append(match.group(1))
+    return names
+
+
+def _calls_from_text(text: str) -> list[str]:
+    names = [m.group(1) for m in _CALL_TARGET.finditer(text)]
+    for segment in text.split("→"):
+        names.extend(m.group(1) for m in _CALL_TARGET.finditer(segment))
+    return names
+
+
+def _validate_plan(
+    plan: Plan,
+    *,
+    declared_states: set[str],
+    loop_call_targets: set[str],
+) -> list[str]:
     errors: list[str] = []
     if not plan.request.strip():
         errors.append(f"PLAN {plan.plan_id!r} at line {plan.lineno}: REQUEST is required")
     if not plan.trigger.strip():
         errors.append(f"PLAN {plan.plan_id!r} at line {plan.lineno}: TRIGGER is required")
     if plan.process:
-        errors.extend(_validate_process(plan.process, plan_context=True))
+        errors.extend(
+            _validate_process(
+                plan.process,
+                declared_states=declared_states,
+                loop_call_target=plan.process.name in loop_call_targets,
+            )
+        )
     else:
         errors.append(f"PLAN {plan.plan_id!r} at line {plan.lineno}: must contain a PROCESS backbone")
+    return errors
+
+
+def _validate_process(
+    proc: Process,
+    *,
+    declared_states: set[str],
+    loop_call_target: bool = False,
+) -> list[str]:
+    errors: list[str] = []
+    if not proc.name or proc.name == "unnamed":
+        errors.append(f"PROCESS at line {proc.lineno} must have a name")
+    proc_states = set(declared_states)
+    if proc.signature:
+        for blob in (proc.signature.inputs, proc.signature.outputs):
+            for token in re.split(r"[,;]\s*", blob):
+                token = token.strip()
+                if token and token != "—":
+                    proc_states.add(token)
+        if proc.signature.outputs.strip() not in ("", "—"):
+            proc_states.add("result")
+    proc_states |= _ephemeral_state_names(proc)
+    declared_states = proc_states
+
+    loop_depth = 1 if loop_call_target else 0
+    for element in proc.elements:
+        if isinstance(element, ConstructLine) and element.construct in _LOOP_CONSTRUCTS:
+            loop_depth = max(loop_depth, 1)
+            errors.extend(_validate_construct_line(element, loop_depth=loop_depth, require_llm_bound=False))
+
+    for step in proc.steps:
+        errors.extend(_validate_step_tree(step, declared_states, loop_depth=loop_depth))
+
     return errors
 
 
@@ -104,11 +234,20 @@ def _validate_step_tree(
     new_loop_depth = loop_depth
     if construct in _LOOP_CONSTRUCTS:
         new_loop_depth = loop_depth + 1
-        if construct in _BOUND_CONSTRUCTS or has_llm_actor(step.tags):
+        if has_llm_actor(step.tags) or _step_has_llm_descendant(step):
             errors.extend(_check_iteration_bound(step, step.lineno))
 
     for cline in step.construct_lines:
-        errors.extend(_validate_construct_line(cline, declared_states, loop_depth=new_loop_depth))
+        cline_loop = new_loop_depth
+        if cline.construct in _LOOP_CONSTRUCTS:
+            cline_loop = loop_depth + 1
+        errors.extend(
+            _validate_construct_line(
+                cline,
+                loop_depth=cline_loop,
+                require_llm_bound=has_llm_actor(step.tags),
+            )
+        )
 
     for child in step.children:
         errors.extend(
@@ -123,11 +262,20 @@ def _validate_step_tree(
     return errors
 
 
+def _step_has_llm_descendant(step: Step) -> bool:
+    if has_llm_actor(step.tags):
+        return True
+    for child in step.children:
+        if _step_has_llm_descendant(child):
+            return True
+    return False
+
+
 def _validate_construct_line(
     cline: ConstructLine,
-    declared_states: set[str],
     *,
     loop_depth: int,
+    require_llm_bound: bool,
 ) -> list[str]:
     errors: list[str] = []
     if cline.construct in {"BREAK", "CONTINUE"} and loop_depth == 0:
@@ -135,18 +283,13 @@ def _validate_construct_line(
             f"line {cline.lineno}: {cline.construct} must appear inside ITERATE, RECURSE, or QUEUE"
         )
     if cline.construct == "AWAIT":
-        keys = modifier_keys(cline.modifiers)
-        if "TIMEOUT" not in keys:
+        keys = _bound_keys_from(cline.modifiers, cline.text, [])
+        if "TIMEOUT" not in keys and not re.search(r"\bTIMEOUT\s*:", cline.text, re.I):
             errors.append(f"line {cline.lineno}: AWAIT must declare TIMEOUT")
-    if cline.construct in _BOUND_CONSTRUCTS:
-        keys = modifier_keys(cline.modifiers)
-        key_name = "MAX_DEPTH" if cline.construct == "RECURSE" else "MAX"
-        if key_name not in keys and "UNTIL" not in keys:
+    if cline.construct in _BOUND_CONSTRUCTS and require_llm_bound:
+        if not _has_iteration_bound(cline.modifiers, cline.text, []):
+            key_name = "MAX_DEPTH" if cline.construct == "RECURSE" else "MAX"
             errors.append(f"line {cline.lineno}: {cline.construct} should declare {key_name} or UNTIL")
-    if cline.construct in _LOOP_CONSTRUCTS:
-        inner_depth = loop_depth + 1
-    else:
-        inner_depth = loop_depth
     return errors
 
 
@@ -165,10 +308,25 @@ def _validate_annotations(annotations: list[Annotation], declared_states: set[st
 def _validate_tags(tags: list[str], lineno: int) -> list[str]:
     errors: list[str] = []
     dims = tag_dimensions(tags)
-    for dim in ("actor", "determinism", "timing", "effect", "control"):
+    flat = " ".join(tags).upper()
+
+    effects = dims.get("effect", [])
+    if len(effects) > 1:
+        normalized = {e.split("[", 1)[0].strip().upper() for e in effects}
+        if not (normalized <= {"SIDE-EFFECT", "IDEMPOTENT"}):
+            errors.append(f"line {lineno}: multiple effect tags: {effects!r}")
+
+    actors = dims.get("actor", [])
+    if len(actors) > 1:
+        actor_roots = {a.split(":", 1)[0].strip().upper() for a in actors}
+        if not ("GATED" in flat and actor_roots <= {"CODE", "HUMAN"}):
+            errors.append(f"line {lineno}: multiple actor tags: {actors!r}")
+
+    for dim in ("determinism", "timing", "control"):
         values = dims.get(dim, [])
         if len(values) > 1:
             errors.append(f"line {lineno}: multiple {dim} tags: {values!r}")
+
     for custom in dims.get("custom", []):
         if not re.match(r"^[a-z][\w-]*:\S+", custom):
             errors.append(f"line {lineno}: custom tag must be namespaced (ns:word): {custom!r}")
@@ -180,9 +338,7 @@ def _check_nesting(parent: str, child: str, lineno: int) -> list[str]:
         return []
     parent_parts = parent.split(".")
     child_parts = child.rstrip("abcdefghijklmnopqrstuvwxyz").split(".")
-    child_letter = ""
     if child and child[-1].isalpha():
-        child_letter = child[-1]
         child_parts = child[:-1].split(".")
 
     if len(child_parts) == len(parent_parts):
@@ -201,27 +357,53 @@ def _check_nesting(parent: str, child: str, lineno: int) -> list[str]:
     return []
 
 
-def _check_iteration_bound(step: Step, lineno: int) -> list[str]:
-    errors: list[str] = []
-    keys = set()
-    for bracket in step.tags:
-        for part in bracket.split(";"):
+def _bound_keys_from(modifiers: list[str], text: str, tags: list[str]) -> set[str]:
+    keys = set(modifier_keys(modifiers))
+    for bracket in tags:
+        for part in re.split(r"[;|]", bracket):
+            part = part.strip()
             if ":" in part:
                 keys.add(part.split(":", 1)[0].strip().upper())
-    body_keys = set()
-    for token in re.findall(r"\b(MAX|MAX_DEPTH|UNTIL)\s*:", step.text, re.I):
-        body_keys.add(token.upper())
-    need = "MAX_DEPTH" if step.construct == "RECURSE" else "MAX"
-    if need not in keys and need not in body_keys and "UNTIL" not in keys and "UNTIL" not in body_keys:
-        if has_llm_actor(step.tags) or step.construct in _BOUND_CONSTRUCTS:
-            errors.append(f"line {lineno}: {step.construct} with LLM involvement must declare {need} or UNTIL")
-    return errors
+    for token in re.findall(r"\b(MAX|MAX_DEPTH|UNTIL|OVER|TIMEOUT)\s*:", text, re.I):
+        keys.add(token.upper())
+    return keys
 
 
-def _check_await_timeout(step: Step, lineno: int) -> list[str]:
-    if re.search(r"\bTIMEOUT\s*:", step.text, re.I):
-        return []
-    for bracket in step.tags:
-        if "TIMEOUT" in bracket.upper():
+def _has_iteration_bound(modifiers: list[str], text: str, tags: list[str]) -> bool:
+    keys = _bound_keys_from(modifiers, text, tags)
+    return bool(keys & _BOUND_KEYS)
+
+
+def _check_iteration_bound(step: Step, lineno: int) -> list[str]:
+    for cline in step.construct_lines:
+        if _has_iteration_bound(cline.modifiers, cline.text, []):
             return []
-    return [f"line {lineno}: AWAIT must declare TIMEOUT"]
+    if _has_iteration_bound([], step.text, step.tags):
+        return []
+    need = "MAX_DEPTH" if step.construct == "RECURSE" else "MAX"
+    return [f"line {lineno}: {step.construct} with LLM involvement must declare {need} or UNTIL"]
+
+
+def _ephemeral_state_names(proc: Process) -> set[str]:
+    names: set[str] = set()
+
+    def walk(step: Step) -> None:
+        for blob in (step.text,):
+            for match in re.finditer(r"\(([^)]*)\)", blob):
+                for arg in match.group(1).split(","):
+                    token = arg.strip().split("=")[0].strip()
+                    if token.isidentifier():
+                        names.add(token)
+        for cline in step.construct_lines:
+            for blob in (cline.text, cline.arrow_target or ""):
+                for match in re.finditer(r"\(([^)]*)\)", blob):
+                    for arg in match.group(1).split(","):
+                        token = arg.strip().split("=")[0].strip()
+                        if token.isidentifier():
+                            names.add(token)
+        for child in step.children:
+            walk(child)
+
+    for step in proc.steps:
+        walk(step)
+    return names

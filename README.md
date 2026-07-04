@@ -141,8 +141,8 @@ cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC Â
 
 CLI: `cairn-validate examples/hoglah.cairn.md` Â· `cairn-render examples/hoglah.cairn.md`
 
-Simplified human-readable views (narrative, operator, executive, Mermaid, multilingual):
-see [docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).
+Grammar parser: [docs/GRAMMAR-PARSER.md](docs/GRAMMAR-PARSER.md). Simplified views:
+[docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).
 
 Tirzah's recursive planner is tested against `cairn.validate_plan` so its output
 cannot drift from the grammar.

@@ -120,3 +120,48 @@ def test_well_formedness_rules(snippet: str, needle: str) -> None:
     doc = parse_document(snippet)
     errors = validate_document(doc)
     assert not any(needle in e and "must declare" in e for e in errors)
+
+
+def test_cross_process_state_is_visible() -> None:
+    text = """\
+PROCESS Parent (INPUT: x; OUTPUT: —)
+  STATE
+    Store [scope: global; dir: read/write]
+PROCESS Child (INPUT: x; OUTPUT: —)
+  1. Write. [CODE]
+     STATE UPDATE: Store += item
+"""
+    doc = parse_document(text)
+    assert not any("undeclared state" in e for e in validate_document(doc))
+
+
+def test_break_allowed_in_call_target_of_loop() -> None:
+    text = """\
+PROCESS Runner (INPUT: x; OUTPUT: —)
+  1. Loop. [CODE]
+     ITERATE [UNTIL: stop]
+       CALL Worker(x)
+PROCESS Worker (INPUT: x; OUTPUT: —)
+  1. Poll. [CODE]
+     BREAK [IF: none]
+"""
+    doc = parse_document(text)
+    assert not any("BREAK" in e for e in validate_document(doc))
+
+
+def test_iterate_over_does_not_require_max_without_llm() -> None:
+    text = """\
+PROCESS P (INPUT: x; OUTPUT: y)
+  1. Walk host steps. [CODE]
+     ITERATE [OVER: substantive steps in the host process]
+       1.1 Emit. [CODE]
+"""
+    doc = parse_document(text)
+    assert not any("ITERATE" in e and "must declare" in e for e in validate_document(doc))
+
+
+def test_examples_well_formed() -> None:
+    for path in sorted(EXAMPLES.glob("*.cairn.md")):
+        doc = parse_document(path.read_text(encoding="utf-8"))
+        wf = [e for e in validate_document(doc) if e not in doc.parse_errors]
+        assert wf == [], f"{path.name}: {wf[:5]}"

@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.5.1] — 2026-07-05
+
+- **Grammar validation refinements:** document-wide STATE visibility, CALL-target
+  loop context for `BREAK`/`CONTINUE`, `OVER` bounds, LLM-only iteration guards,
+  `IDEMPOTENT`+`SIDE-EFFECT` and `GATED`+`HUMAN` tag pairs, process-level
+  `SERVICE`/`PARALLEL` construct lines.
+- All `examples/*.cairn.md` now pass full well-formedness validation.
+- Added [docs/GRAMMAR-PARSER.md](docs/GRAMMAR-PARSER.md).
+
 ## [0.5.0] — 2026-07-05
 
 - **`cairn.grammar`:** executable GRAMMAR.md EBNF parser — `parse_document`,

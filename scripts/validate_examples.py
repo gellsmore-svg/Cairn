@@ -23,6 +23,9 @@ def validate(path: Path) -> list[str]:
         errors.extend(f"{path.name}: {err}" for err in doc.parse_errors)
     if not doc.processes:
         errors.append(f"{path.name}: no PROCESS backbone parsed")
+    for err in validate_document(doc):
+        if err not in doc.parse_errors:
+            errors.append(f"{path.name}: {err}")
     return errors
 
 
@@ -33,18 +36,15 @@ def main() -> int:
         return 1
 
     all_errors: list[str] = []
-    wf_notes = 0
     for path in files:
         all_errors.extend(validate(path))
-        doc = parse_document(path.read_text(encoding="utf-8"))
-        wf_notes += len(validate_document(doc))
 
     if all_errors:
         for err in all_errors:
             print(err, file=sys.stderr)
         return 1
 
-    print(f"ok: {len(files)} example(s) parsed; {wf_notes} well-formedness note(s)")
+    print(f"ok: {len(files)} example(s) parsed and well-formed")
     return 0
 
 
