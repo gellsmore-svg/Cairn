@@ -65,7 +65,8 @@ PROCESS InterpretPlan (INPUT: plan, query, session_id; OUTPUT: execution_result,
                CONSTRAINTS: pick first allowed_tool with registered handler         [SATISFIES: R2]
                ERROR [ON: no handler; THEN: status ← blocked]                       [SATISFIES: R3]
            c. RECURSE → status ← skipped (outer revision loop owns recursion)
-           d. ITERATE | DECISION → status ← blocked (not expanded in v1 interpreter)
+           d. ITERATE → run direct body steps up to MAX with until: criteria
+           e. DECISION → evaluate ON: signal, skip unselected branch steps
          2.3.3 STATE UPDATE: artifacts[step.id] ← artifact; completed += step.id
                step.status ← completed | blocked | skipped                           [SATISFIES: R4]
                EMIT plan.step.completed | plan.step.blocked | plan.step.skipped
@@ -159,8 +160,8 @@ Rough edges:
 
 1. **Deep mode** — retrieval pre-synthesizes inside `run_deep_answer`; synthesis
    step persists only (no second adapter call).
-2. **Construct subset** — `ITERATE`/`DECISION` inside machine plans → `blocked` until
-   the interpreter expands them.
+2. **Construct subset** — v1 expands direct-body `ITERATE`/`DECISION` only; nested
+   branch trees and BREAK/CONTINUE are not modelled yet.
 3. **Resume after restart** — `plan_executions` collection persists running state;
    interpreter reloads completed steps + artifacts and continues from `pending`.
 4. **PLAN revision mid-flight** — concurrent revision + interpretation ordering
