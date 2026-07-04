@@ -94,7 +94,7 @@ delivery process. Evolving from real use; a structural grammar is in
 
 - [SPEC.md](SPEC.md) — the specification (v0.9).
 - [GRAMMAR.md](GRAMMAR.md) — structural EBNF for the skeleton.
-- [examples/](examples/) — real systems described in Cairn (Tirzah, Hoglah, Mahalath, Mahlah, Milcah).
+- [examples/](examples/) — real systems described in Cairn (Tirzah, Hoglah, Mahalath, Mahlah, Milcah, Mizpah); see `tirzah-system.cairn.md` for end-to-end composition.
 - [CHANGELOG.md](CHANGELOG.md) — how the spec has evolved.
 - [okf/](okf/index.md) — an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
   knowledge bundle: Cairn's concepts and reference, as linked markdown.

@@ -5,6 +5,9 @@
 - Added **`tirzah-ingest.cairn.md`** — ingestion pipeline, dead-letter, profile backfill.
 - Rewrote **`hoglah.cairn.md` v2** — `CONCURRENT`/`SERVICE`, `DURABLE-BEFORE`,
   `RECOVERY`, `IDEMPOTENT [KEY: …]`, `EMERGENT [SATISFIES: …]` illustration.
+- Added **`mizpah.cairn.md`** (cross-session trace browser) and
+  **`tirzah-system.cairn.md`** (ingest → ask → observe composition).
+- SPEC §9 — documented `EMERGENT [SATISFIES: …]` block form (equivalent to inline `via` form).
 - Updated `examples/README.md` and OKF examples reference; fixed README SPEC
   version line (v0.9).
 

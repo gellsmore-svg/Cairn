@@ -473,9 +473,16 @@ OUTCOMES
   `[SATISFIES: R#]` then means *"supports"*, not *"guarantees"*.
 - Process steps reference requirements for traceability: `4. … [SATISFIES: R2]`.
 - **A guarantee may be emergent** — satisfied by several steps together, possibly
-  across processes. Name them: `[SATISFIES: R3 — via Ingest.3 + Egress.3 + consumer de-dup]`.
-  Per-step `[SATISFIES]` is the common case; the multi-step form is for end-to-end
-  properties no single step owns.
+  across processes or even across separate UI/backend slices. Use either form:
+  - **Inline (on a step or OUTCOMES block):**
+    `[SATISFIES: R3 — via Ingest.3–4 + Egress.2–3 + consumer dedup on correlation_id]`
+  - **Block (at OUTCOMES or parent PROCESS level):**
+    ```
+    EMERGENT [SATISFIES: R3]
+      via Ingest.3–4, Egress.2–3, consumer correlation_id dedup
+    ```
+  The two forms are equivalent; the block form is easier to read for guarantees
+  that no single step owns. Per-step `[SATISFIES]` remains the common case.
 - **OUTCOMES** are the expected end-states (what "done" looks like), separate
   from the moment-to-moment OUTPUT of steps.
 

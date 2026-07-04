@@ -42,9 +42,8 @@ R6. The system SHALL survive restarts. [MUST]
 Every accepted request yields exactly one delivered result (or a dead-letter entry).
 No loss, no duplicated effect, across crashes and restarts.
 
-**EMERGENT [SATISFIES: R3]** — exactly-once *effect* arises from Ingest steps 3–4
-(durable-before-ack), Egress steps 2–3 (outbox), and the downstream consumer deduping
-on `correlation_id` — not from any single step alone.
+EMERGENT [SATISFIES: R3]
+  via Ingest.3–4 (durable-before-ack), Egress.2–3 (outbox), consumer dedup on correlation_id
 
 ---
 
@@ -140,13 +139,11 @@ PROCESS — Egress: publish one result, exactly once.
 | `PARALLEL … MERGE: none` for perpetual loops | `CONCURRENT { SERVICE … }` |
 | Crash windows in CONSTRAINTS prose | `DURABLE-BEFORE` + `RECOVERY` on Ingest/Egress |
 | `[IDEMPOTENT]` without key | `IDEMPOTENT [KEY: correlation_id]` |
-| R3 spans Ingest+Egress+consumer | `EMERGENT [SATISFIES: R3]` at OUTCOMES |
+| R3 spans Ingest+Egress+consumer | `EMERGENT [SATISFIES: R3]` block (SPEC §9) |
 
 **Still open for the spec:**
 
-1. **`EMERGENT [SATISFIES: …]`** — used here for end-to-end guarantees; not yet a
-   first-class grammar production (only illustrated).
-2. **SERVICE stop/join** — `UNTIL: stop` is named but graceful shutdown semantics
+1. **SERVICE stop/join** — `UNTIL: stop` is named but graceful shutdown semantics
    (drain in-flight, final outbox pass) remain operator prose.
 3. **Transport-specific poison paths** — Rabbit DLX vs Kafka manual DLT vs Redis
    PEL recovery differ; this example stays broker-neutral at the PROCESS level.

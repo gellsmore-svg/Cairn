@@ -65,7 +65,9 @@ sub-block       = annotation
                 | construct-line
                 | step ;                       (* nested steps *)
 annotation      = ( "STATE UPDATE:" | "OUTPUT:" | "RISKS:" | "PURPOSE:"
-                  | "CONSTRAINTS:" | "BOUNDARIES:" | "CONTEXT:" ) TEXT NL ;
+                  | "CONSTRAINTS:" | "BOUNDARIES:" | "CONTEXT:"
+                  | emergent-satisfies ) TEXT NL ;
+emergent-satisfies = "EMERGENT" satisfies NL { TEXT NL } ;   (* block at OUTCOMES/PROCESS *)
 
 (* a step may *be* a construct, or a construct may stand on its own line *)
 construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
