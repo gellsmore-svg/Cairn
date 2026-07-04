@@ -7,6 +7,9 @@
   `RECOVERY`, `IDEMPOTENT [KEY: …]`, `EMERGENT [SATISFIES: …]` illustration.
 - Added **`mizpah.cairn.md`** (cross-session trace browser) and
   **`tirzah-system.cairn.md`** (ingest → ask → observe composition).
+- Expanded **`tirzah.cairn.md`** — `DECISION` across direct/agentic/deep modes.
+- Added **`tirzah-semantic-review.cairn.md`** — enqueue → human review → graph edge.
+- Added **`scripts/validate_examples.py`** + pytest skeleton check for `*.cairn.md`.
 - SPEC §9 — documented `EMERGENT [SATISFIES: …]` block form (equivalent to inline `via` form).
 - Updated `examples/README.md` and OKF examples reference; fixed README SPEC
   version line (v0.9).

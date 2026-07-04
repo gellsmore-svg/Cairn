@@ -59,7 +59,10 @@ PROCESS TirzahWorkbench (INPUT: sources, questions; OUTPUT: operating_corpus)
      STATE UPDATE: corpus += new documents/nodes               [SATISFIES: R1]
   2. MILESTONE PROFILE — close embedding/profile gaps if needed.
      CALL ProfileBackfill(scope=corpus) → backfill_status      [SATISFIES: R5]
+  2b. MILESTONE GRAPH (optional) — human-gated semantic edges.
+      CALL ReviewSemanticEdges(scope=corpus) → review_summary  # tirzah-semantic-review.cairn.md
   3. MILESTONE ASK — query memory in a session.
+     PURPOSE: answer from retrieved context; branch on retrieval_mode (direct/agentic/deep).
      PURPOSE: answer from retrieved context, not whole documents.
      ITERATE [OVER: operator questions]
        CALL Ask(user_query, session_id) → answer, process_trace  # see tirzah.cairn.md
@@ -113,7 +116,8 @@ PROCESS — TirzahWorkbench: the local memory workbench, end to end.
 | BUILD (folder) | `IngestFolder` | `tirzah-ingest.cairn.md` |
 | BUILD (inbox) | `EnqueueInbox`, `RunIngestionWorker` | `tirzah-ingest.cairn.md` |
 | PROFILE | `ProfileBackfill` | `tirzah-ingest.cairn.md` |
-| ASK | `Ask`, `RetrieveAgentically`, `PLAN` wrapper | `tirzah.cairn.md` |
+| GRAPH (optional) | `ReviewSemanticEdges` | `tirzah-semantic-review.cairn.md` |
+| ASK | `Ask`, `RetrieveDirect` / `Agentically` / `Deep`, `PLAN` | `tirzah.cairn.md` |
 | OBSERVE (live) | `HandleUserTurn`, `OpenDevLog` | `mahlah.cairn.md` |
 | OBSERVE (audit) | `BrowseAndInspect` | `mizpah.cairn.md` |
 
@@ -129,5 +133,5 @@ Rough edges:
 
 1. **Direct / deep retrieval modes** — composition hard-codes agentic ask; a
    `DECISION [ON: retrieval_mode]` branch would bloat this doc (keep in `tirzah.cairn.md`).
-2. **Semantic review / endorsement** — post-ask governance not included (post-V1 surface).
+2. **Generated-output endorsement** — separate from semantic-edge review; not expanded here.
 3. **Machine composition** — no validator checks that `CALL` targets exist across files.

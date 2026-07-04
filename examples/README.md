@@ -5,8 +5,9 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | Example | System | Slice |
 |---------|--------|-------|
 | [`tirzah-system.cairn.md`](tirzah-system.cairn.md) | Tirzah | **Composition:** ingest → ask → observe |
-| [`tirzah.cairn.md`](tirzah.cairn.md) | Tirzah | Agentic retrieval `ask` |
+| [`tirzah.cairn.md`](tirzah.cairn.md) | Tirzah | Ask — direct · agentic · deep retrieval |
 | [`tirzah-ingest.cairn.md`](tirzah-ingest.cairn.md) | Tirzah | Source ingestion, dead-letter, profile backfill |
+| [`tirzah-semantic-review.cairn.md`](tirzah-semantic-review.cairn.md) | Tirzah | Human-gated semantic-edge review queue |
 | [`mizpah.cairn.md`](mizpah.cairn.md) | Mizpah | Cross-session trace browser |
 | [`hoglah.cairn.md`](hoglah.cairn.md) | Hoglah | Crash-safe bridge (v2: SERVICE, DURABLE-BEFORE) |
 | [`mahalath.cairn.md`](mahalath.cairn.md) | Mahalath | Ingest → debate → ontology |

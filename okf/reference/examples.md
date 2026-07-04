@@ -16,10 +16,12 @@ stress test of the [spec](spec.md):
   — Hoglah crash-safe bridge (SERVICE / DURABLE-BEFORE)
   ([Hoglah OKF](https://github.com/gellsmore-svg/hoglah/blob/main/okf/index.md)).
 - **[`tirzah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah.cairn.md)**
-  — Tirzah agentic retrieval `ask`
+  — Tirzah ask (direct · agentic · deep retrieval modes)
   ([Tirzah OKF](https://github.com/gellsmore-svg/tirzah/blob/main/okf/index.md)).
 - **[`tirzah-ingest.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-ingest.cairn.md)**
   — Tirzah source ingestion, dead-letter, profile backfill.
+- **[`tirzah-semantic-review.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-semantic-review.cairn.md)**
+  — Tirzah human-gated semantic-edge review.
 - **[`tirzah-system.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/tirzah-system.cairn.md)**
   — Tirzah end-to-end composition (ingest → ask → observe).
 - **[`mizpah.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/mizpah.cairn.md)**
