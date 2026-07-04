@@ -119,11 +119,20 @@ whole request PLAN.
 | `answer_adapter` | `synthesize_from_retrieval` or `synthesize_from_context_bundle` |
 | `search_nodes` | `execute_search_nodes_tool` → append to `context_bundle.tool_results` |
 | `compile_context` | `compile_context` on focus node or latest search hit → append to bundle |
+| `get_node_context` | Parent/child slice for resolved focus node |
+| `get_graph_edges` | Typed edges for resolved focus node |
+| `expand_proximity` | One-hop related nodes + optional compiled contexts |
+| `expand_graph_paths` | Bounded multi-hop path expansion |
+| `semantic_candidates` | Label-overlap candidate nodes (read-only) |
+| `list_documents` / `list_active_documents` | Corpus / session document indexes |
+| `get_document` / `get_document_tree` | Document metadata from compile step or kwargs |
 | `coherence_check`, `milcah`, … | `run_planned_specialist` for matching step |
 | `web_search`, `web_fetch` | Bounded web research when enabled; fetch uses latest search URL |
 
 Granular tools accumulate into `context_bundle`; synthesis builds an agentic
 envelope from the bundle when no monolithic `retrieval_package` exists.
+Ask responses may include `context_bundle_summary` and `plan_execution` (compact
+execution row) when interpretive mode persists state.
 
 Steps without a matching handler → `blocked` with `reason: no_handler`.
 
