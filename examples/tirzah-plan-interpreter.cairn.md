@@ -116,9 +116,14 @@ whole request PLAN.
 | Tool | Handler behaviour |
 |------|-------------------|
 | `tirzah_retrieval` | `retrieve_for_answer` — context only, no LLM answer / persist |
-| `answer_adapter` | `synthesize_from_retrieval` — adapter + `save_exchange` |
+| `answer_adapter` | `synthesize_from_retrieval` or `synthesize_from_context_bundle` |
+| `search_nodes` | `execute_search_nodes_tool` → append to `context_bundle.tool_results` |
+| `compile_context` | `compile_context` on focus node or latest search hit → append to bundle |
 | `coherence_check`, `milcah`, … | `run_planned_specialist` for matching step |
-| `web_search`, `web_fetch` | Delegates to agentic web tools when enabled |
+| `web_search`, `web_fetch` | Bounded web research when enabled; fetch uses latest search URL |
+
+Granular tools accumulate into `context_bundle`; synthesis builds an agentic
+envelope from the bundle when no monolithic `retrieval_package` exists.
 
 Steps without a matching handler → `blocked` with `reason: no_handler`.
 
