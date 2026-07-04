@@ -132,9 +132,12 @@ whole request PLAN.
 
 | Construct | Interpreter behaviour |
 |-----------|----------------------|
-| `PARALLEL` | Run every direct branch body sequentially; store `parallel:{step_id}` |
+| `PARALLEL` | Fan-out direct branches (sequential or `MODE: concurrent`); `STATE: isolated|shared`; store `parallel:{step_id}` |
 | `MERGE` | Join branch artifacts; `merge:context_bundle` appends branch tool results |
-| `RETRY` | Re-run direct body steps until success or `MAX:` attempts exhausted |
+| `CONCURRENT` | Non-joining fan-out like PARALLEL; store `concurrent:{step_id}` (no MERGE) |
+| `SERVICE` | One tick per interpretation over direct body steps; resume with `service_continue` |
+| `AWAIT` | Suspend with `EVENT:` until `await_signals` arrive; optional `TIMEOUT:` + `THEN:` |
+| `RETRY` | Re-run direct body steps until success or `MAX:` attempts; `BACKOFF: linear|exponential` |
 | `ERROR` | Guard body steps; on matching `ON:` failure apply `THEN: propagate|handle|fallback` |
 
 Granular tools accumulate into `context_bundle`; synthesis builds an agentic
@@ -174,16 +177,20 @@ Rough edges:
    branch CALLs inline in the same round (nested `DECISION` branches recurse).
 3. **Resume after restart** — `plan_executions` collection persists running state;
    interpreter reloads completed steps + artifacts and continues from `pending`.
-4. **PLAN revision mid-flight** — interpretive mode finishes the current revision's
-   execution, proposes the next revision from execution evidence, then interprets
-   revised plans while `revision_decision` remains `revise` (bounded by
+4. **PLAN revision mid-flight** — interpretive mode can revise after each completed
+   step (`plan_mid_revision_enabled`) and still proposes full revisions from
+   execution evidence while `revision_decision` remains `revise` (bounded by
    `planning_max_revisions`).
-5. **PARALLEL/MERGE** — v1 runs branch bodies sequentially (deterministic fan-out);
-   `STATE: isolated` snapshots per-branch `context_bundle` without mutating the
-   parent; `MERGE merge:context_bundle` folds isolated or shared branch results.
-   True concurrent execution is not modelled yet.
-6. **RETRY** — direct-body steps re-run on `blocked` until `MAX:` attempts;
-   `BACKOFF` is not modelled yet.
-7. **ERROR** — guarded body steps trigger `plan.error.triggered` on matching
-   `ON:` reasons; `fallback:<step_id>` runs a recovery CALL; `AWAIT` is not
-   modelled yet.
+5. **PARALLEL/MERGE** — branches run sequentially or `MODE: concurrent` (thread
+   pool); `STATE: isolated` snapshots per-branch `context_bundle`; shared
+   concurrent branches serialize artifact writes with a lock; `MERGE
+   merge:context_bundle` folds branch results.
+6. **CONCURRENT/SERVICE** — `CONCURRENT` fans out without MERGE; `SERVICE` runs
+   one body tick per request (resume with `service_continue` / `service_step_id`).
+7. **RETRY** — direct-body steps re-run on `blocked` until `MAX:` attempts;
+   `BACKOFF: linear|exponential` emits `plan.retry.backoff` delays.
+8. **AWAIT** — steps enter `awaiting` until `answer_kwargs.await_signals` satisfy
+   `EVENT:`; persisted executions stay `running`; resume promotes
+   `plan.await.satisfied` or `plan.await.timeout`.
+9. **ERROR** — guarded body steps trigger `plan.error.triggered` on matching
+   `ON:` reasons; `fallback:<step_id>` runs a recovery CALL.
