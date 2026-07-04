@@ -167,5 +167,7 @@ Rough edges:
    branch CALLs inline in the same round (nested `DECISION` branches recurse).
 3. **Resume after restart** — `plan_executions` collection persists running state;
    interpreter reloads completed steps + artifacts and continues from `pending`.
-4. **PLAN revision mid-flight** — concurrent revision + interpretation ordering
-   is implementation-defined; safest rule: finish current step, then apply revision.
+4. **PLAN revision mid-flight** — interpretive mode finishes the current revision's
+   execution, proposes the next revision from execution evidence, then interprets
+   revised plans while `revision_decision` remains `revise` (bounded by
+   `planning_max_revisions`).
