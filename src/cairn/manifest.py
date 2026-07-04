@@ -37,6 +37,34 @@ def build_manifest() -> Manifest:
                 tags=["validation", "plan"],
             ),
             capability(
+                "render_plan",
+                "Render a Cairn process description or PLAN dict into a simplified human-readable "
+                "view (narrative_steps, simple_prose, operator, executive).",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "input_cairn": {"description": "Markdown text or PLAN object"},
+                        "profile": {
+                            "type": "string",
+                            "enum": ["narrative_steps", "simple_prose", "operator", "executive", "narrative"],
+                        },
+                        "language": {"type": "string"},
+                        "output_format": {"type": "string", "enum": ["markdown", "text", "json", "mermaid"]},
+                        "options": {"type": "object"},
+                    },
+                    "required": ["input_cairn"],
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {
+                        "body": {"type": "string"},
+                        "profile": {"type": "string"},
+                        "language": {"type": "string"},
+                    },
+                },
+                tags=["render", "plan"],
+            ),
+            capability(
                 "plan_schema",
                 "The Cairn plan contract: required fields ("
                 + ", ".join(REQUIRED_PLAN_FIELDS)

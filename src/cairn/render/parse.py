@@ -1,0 +1,187 @@
+"""Lightweight Cairn text / PLAN-dict normalisation (not full grammar validation)."""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+from cairn.conformance import validate_plan
+from cairn.render.model import ProcessDocument, StepNode
+from cairn.render.phrasing import extract_tags
+
+_STEP_LINE = re.compile(r"^(\s*)(\d+(?:\.\d+)*)\.\s+(.+)$")
+_SUB_BLOCK = re.compile(r"^(CONSTRAINTS|OUTPUT|PURPOSE|RISKS|CONTEXT|BOUNDARIES|STATE UPDATE):\s*(.*)$", re.I)
+_CONSTRUCT_PREFIX = re.compile(
+    r"^(ITERATE|DECISION|DECIDE|CALL|RECURSE|QUEUE|PARALLEL|MERGE|SERVICE|RETRY|AWAIT|BREAK|CONTINUE|MILESTONE)\b",
+    re.I,
+)
+_OPERATOR_FIELD = re.compile(r"^(Purpose|Owner|Assisted by|Outputs|Iterate-until|Next):\s*(.+)$", re.I)
+_SECTION = re.compile(r"^##\s+(.+)$", re.M)
+_FENCE = re.compile(r"^```(?:\w*)?\s*$")
+
+
+def _detect_construct(text: str) -> tuple[str | None, str]:
+    upper = text.strip()
+    match = _CONSTRUCT_PREFIX.match(upper)
+    if not match:
+        return None, text
+    construct = match.group(1).upper()
+    if construct == "DECIDE":
+        construct = "DECISION"
+    remainder = upper[match.end() :].lstrip(" :→")
+    return construct, remainder or text
+
+
+def _parse_step_lines(lines: list[str]) -> list[StepNode]:
+    roots: list[StepNode] = []
+    stack: list[tuple[int, StepNode]] = []
+
+    for raw in lines:
+        line = raw.rstrip()
+        if not line.strip() or line.strip().startswith("#"):
+            continue
+
+        sub = _SUB_BLOCK.match(line.strip())
+        if sub and stack:
+            key = sub.group(1).upper().replace(" ", "_")
+            stack[-1][1].sub_blocks[key] = sub.group(2).strip()
+            continue
+
+        op = _OPERATOR_FIELD.match(line.strip())
+        if op and stack:
+            field = op.group(1).lower().replace(" ", "_").replace("-", "_")
+            value = op.group(2).strip()
+            node = stack[-1][1]
+            if field == "purpose":
+                node.purpose = value
+            elif field == "owner":
+                node.owner = value
+            elif field == "assisted_by":
+                node.assisted_by = value
+            elif field == "outputs":
+                node.outputs = [value]
+            elif field == "iterate_until":
+                node.iterate_until = value
+            elif field == "next":
+                node.next_phase = value
+            continue
+
+        match = _STEP_LINE.match(line)
+        if not match:
+            continue
+
+        indent = len(match.group(1).replace("\t", "    "))
+        number = match.group(2)
+        body = match.group(3).strip()
+        construct, cleaned = _detect_construct(body)
+        cleaned, tags = extract_tags(cleaned)
+
+        node = StepNode(number=number, text=cleaned, construct=construct, tags=tags)
+
+        depth = indent // 2 + number.count(".")
+        while stack and stack[-1][0] >= depth:
+            stack.pop()
+
+        if stack:
+            stack[-1][1].children.append(node)
+        else:
+            roots.append(node)
+        stack.append((depth, node))
+
+    return roots
+
+
+def _extract_fenced_blocks(text: str) -> list[tuple[str, list[str]]]:
+    blocks: list[tuple[str, list[str]]] = []
+    lines = text.splitlines()
+    section = ""
+    in_fence = False
+    buf: list[str] = []
+
+    for line in lines:
+        sec = _SECTION.match(line)
+        if sec:
+            section = sec.group(1).strip()
+        if _FENCE.match(line.strip()):
+            if in_fence:
+                blocks.append((section, buf))
+                buf = []
+                in_fence = False
+            else:
+                in_fence = True
+            continue
+        if in_fence:
+            buf.append(line)
+
+    if buf:
+        blocks.append((section, buf))
+    return blocks
+
+
+def parse_markdown(text: str) -> ProcessDocument:
+    doc = ProcessDocument()
+    doc.warnings = []
+
+    for section, lines in _extract_fenced_blocks(text):
+        lower = section.lower()
+        if lower.startswith("context"):
+            for line in lines:
+                m = re.match(r"^-\s+\*\*(.+?)\*\*\s+—\s+(.+)$", line.strip())
+                if m:
+                    doc.context[m.group(1)] = m.group(2)
+        elif lower.startswith("requirements"):
+            doc.requirements.extend(l.strip() for l in lines if l.strip() and not l.strip().startswith("```"))
+        elif lower.startswith("outcomes"):
+            doc.outcomes.extend(l.strip() for l in lines if l.strip())
+        elif "process" in lower:
+            if "operator" in lower or "render-profile: operator" in "\n".join(lines):
+                doc.mode = "operator"
+            elif "narrative" in lower:
+                doc.mode = "narrative"
+            else:
+                doc.mode = "formal"
+            if not doc.title:
+                doc.title = section.replace("PROCESS —", "").replace("PROCESS -", "").strip()
+            steps = _parse_step_lines(lines)
+            if steps:
+                doc.steps = steps
+
+    if not doc.steps:
+        doc.steps = _parse_step_lines(text.splitlines())
+        if doc.steps:
+            doc.warnings.append("parsed steps from raw text without fenced PROCESS block")
+
+    return doc
+
+
+def parse_plan_dict(plan: dict[str, Any]) -> ProcessDocument:
+    doc = ProcessDocument(title=plan.get("objective", "") or plan.get("plan_id", "PLAN"))
+    doc.plan = plan
+    doc.warnings = list(validate_plan(plan))
+
+    for index, step in enumerate(plan.get("steps", []), start=1):
+        action = str(step.get("action", ""))
+        cleaned, tags = extract_tags(action)
+        doc.steps.append(
+            StepNode(
+                number=str(index),
+                text=cleaned,
+                construct=step.get("construct"),
+                tags=tags,
+                sub_blocks={
+                    k: str(v)
+                    for k, v in step.items()
+                    if k in {"success_criteria", "allowed_tools"} and v
+                },
+            )
+        )
+
+    if plan.get("stopping_conditions"):
+        doc.outcomes.extend(str(x) for x in plan["stopping_conditions"])
+    return doc
+
+
+def normalize_input(input_cairn: str | dict[str, Any]) -> ProcessDocument:
+    if isinstance(input_cairn, dict):
+        return parse_plan_dict(input_cairn)
+    return parse_markdown(input_cairn)

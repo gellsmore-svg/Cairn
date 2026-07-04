@@ -125,9 +125,13 @@ embedding a private dialect:
 ```python
 import cairn
 errors = cairn.validate_plan(plan_dict)   # [] when conformant
+view = cairn.render_plan(plan_dict, profile="narrative_steps")  # simplified view
 cairn.CANONICAL_PLAN                       # an executable known-good fixture
 cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC §5)
 ```
+
+Simplified human-readable views (narrative, operator, executive, Mermaid, multilingual):
+see [docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).
 
 Tirzah's recursive planner is tested against `cairn.validate_plan` so its output
 cannot drift from the grammar.

@@ -1,0 +1,9 @@
+# Default stylesheet for Cairn simplified view generation (XSLT-inspired).
+profile: narrative_steps
+language: en
+output_format: markdown
+boxed: false
+include_tags: false
+include_sub_blocks: true
+include_footnotes: true
+max_depth: null
