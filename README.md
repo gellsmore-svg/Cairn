@@ -10,6 +10,10 @@ sync/async, queuing, and error handling.
 
 **The specification lives in [SPEC.md](SPEC.md) (v0.9).**
 
+Install: `pip install cairn-lang` — the distribution is named **cairn-lang**
+(the PyPI name `cairn` belongs to an unrelated project) but the import is
+unchanged: `import cairn`.
+
 ## What it looks like
 
 A small slice, in the readable **Narrative** style:

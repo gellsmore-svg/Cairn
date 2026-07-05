@@ -66,6 +66,18 @@
 - Updated `examples/README.md` and OKF examples reference; fixed README SPEC
   version line (v0.9).
 
+## [0.3.0] — 2026-07-04
+
+- **Distribution renamed to `cairn-lang`** (import name stays `cairn`): the PyPI
+  'cairn' is an unrelated project occupying 0.1.0–0.2.3, and once won a
+  find-links + index resolve. 0.3.0 also dodges its version range.
+
+## [0.2.0] — 2026-07-04
+
+- `STEP_STATUSES` conformance (SPEC §4.6 step state machine: pending/active/
+  completed/blocked/skipped) validated per step by `validate_plan`.
+- SPEC §4.6 "PLAN interpretation — live step execution" + interpreter examples.
+
 ## [0.9] — 2026-06-24
 
 - Added the `PLAN` revision envelope for live recursive process instances,
