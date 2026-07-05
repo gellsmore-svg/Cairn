@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from cairn import document_to_plan, parse_document, validate_document, validate_plan
+import json
+
+from cairn import document_to_dict, document_to_plan, parse_document, validate_document, validate_plan
 from cairn.grammar.bridge import document_to_render_model
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -158,6 +160,14 @@ PROCESS P (INPUT: x; OUTPUT: y)
 """
     doc = parse_document(text)
     assert not any("ITERATE" in e and "must declare" in e for e in validate_document(doc))
+
+
+def test_document_to_dict_is_json_serializable() -> None:
+    doc = parse_document(HOGLAH_FORMAL)
+    payload = document_to_dict(doc)
+    text = json.dumps(payload)
+    assert "RunBridge" in text
+    assert payload["processes"][0]["name"] == "RunBridge"
 
 
 def test_examples_well_formed() -> None:

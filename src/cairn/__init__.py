@@ -19,6 +19,7 @@ from cairn.conformance import (
 )
 from cairn.grammar import (
     CairnDocument,
+    document_to_dict,
     document_to_plan,
     extract_cairn_source,
     parse_document,
@@ -36,6 +37,7 @@ __all__ = [
     "REQUIRED_STEP_FIELDS",
     "REVISION_DECISIONS",
     "STEP_STATUSES",
+    "document_to_dict",
     "document_to_plan",
     "extract_cairn_source",
     "is_conformant",

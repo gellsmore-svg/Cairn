@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from cairn.grammar import document_to_plan, parse_document, validate_document
+from cairn.grammar import document_to_dict, document_to_plan, parse_document, validate_document
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -18,6 +18,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("input", nargs="?", help="Path to .cairn.md or raw Cairn text (stdin with '-')")
     parser.add_argument("--json", action="store_true", help="Emit JSON report")
     parser.add_argument("--export-plan", action="store_true", help="Print document_to_plan JSON on success")
+    parser.add_argument("--export-ast", action="store_true", help="Print document_to_dict JSON AST")
     parser.add_argument("--strict", action="store_true", help="Exit non-zero on any well-formedness warning")
 
     args = parser.parse_args(argv)
@@ -50,7 +51,9 @@ def main(argv: list[str] | None = None) -> int:
                 f"{report['plan_count']} plan(s), source={report['source_kind']}"
             )
 
-    if args.export_plan and not errors:
+    if args.export_ast:
+        print(json.dumps(document_to_dict(doc), indent=2))
+    elif args.export_plan and not errors:
         print(json.dumps(document_to_plan(doc), indent=2))
 
     if errors or (args.strict and report["well_formedness_errors"]):

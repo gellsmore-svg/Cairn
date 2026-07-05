@@ -80,7 +80,7 @@ result = render_plan(md, output_format="json")  # or build RenderResult internal
 ## Scope
 
 - View generation / transformation only
-- Uses `validate_plan()` for warnings on PLAN dicts; not a full grammar parser
+- Uses `cairn.grammar` by default for markdown/Cairn text; `validate_plan()` for PLAN dicts
 - Cairn v0.9 render-profile alignment (`operator`, `executive`)
 
 Full requirements: [VIEW-GENERATOR-REQUIREMENTS.md](VIEW-GENERATOR-REQUIREMENTS.md).

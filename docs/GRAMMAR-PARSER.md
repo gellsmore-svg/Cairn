@@ -29,6 +29,7 @@ CLI:
 cairn-validate examples/hoglah.cairn.md
 cairn-validate examples/hoglah.cairn.md --json
 cairn-validate plan.cairn.md --export-plan
+cairn-validate examples/hoglah.cairn.md --export-ast
 ```
 
 ## API
@@ -38,6 +39,7 @@ cairn-validate plan.cairn.md --export-plan
 | `parse_document(text)` | `CairnDocument` | Parse raw Cairn or `.cairn.md` markdown wrapper |
 | `validate_document(doc)` | `list[str]` | SPEC §12 well-formedness (`[]` = well-formed) |
 | `document_to_plan(doc)` | `dict` | Export first `PLAN` or first `PROCESS` as a runtime plan |
+| `document_to_dict(doc)` | `dict` | JSON-serializable AST (for tooling / inspection) |
 | `extract_cairn_source(text)` | `(str, kind)` | Strip markdown sections/fences to skeleton text |
 
 `cairn.validate_plan(plan_dict)` remains the runtime PLAN contract (JSON dicts

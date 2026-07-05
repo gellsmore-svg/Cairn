@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.5.2] — 2026-07-05
+
+- **`document_to_dict`:** JSON-serializable AST export; `cairn-validate --export-ast`.
+- **GitHub Actions CI** (Python 3.11/3.12): pytest + `validate_examples.py`.
+- Docs: VIEW-GENERATOR grammar integration note; OKF grammar reference links parser.
+
 ## [0.5.1] — 2026-07-05
 
 - **Grammar validation refinements:** document-wide STATE visibility, CALL-target

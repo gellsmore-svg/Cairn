@@ -12,4 +12,7 @@ def test_manifest_conforms_and_lists_grammar():
     # constructs are listed from the contract, not duplicated
     for construct in PLAN_CONSTRUCTS:
         assert construct in vp.description
-    assert "validate_plan" in [t["name"] for t in m.to_mcp()["tools"]]
+    tool_names = [t["name"] for t in m.to_mcp()["tools"]]
+    assert "validate_plan" in tool_names
+    assert "parse_document" in tool_names
+    assert "validate_document" in tool_names

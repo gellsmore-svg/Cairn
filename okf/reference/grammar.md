@@ -19,3 +19,8 @@ The grammar covers only the **`ai`/formal** projection; the narrative and other
 [render profiles](../concepts/backbone-and-render-profiles.md) are lossy
 projections of the same backbone and are not separately grammared. Validity is the
 **structural conformance** of [SPEC §12](spec.md).
+
+## Executable parser
+
+The `cairn` package implements this grammar in Python (`cairn.parse_document`,
+`cairn.validate_document`). See [docs/GRAMMAR-PARSER.md](../../docs/GRAMMAR-PARSER.md).
