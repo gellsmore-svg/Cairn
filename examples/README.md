@@ -21,6 +21,7 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | [`mahlah.cairn.md`](mahlah.cairn.md) | Mahlah | Three-channel conversational UI |
 | [`milcah.cairn.md`](milcah.cairn.md) | Milcah | Recursive coherence-pressure rounds |
 | [`relational-substrate.cairn.md`](relational-substrate.cairn.md) | Relational Substrate | Grammar sandbox, sequence traces, sweep |
+| [`round-robin-debate.cairn.md`](round-robin-debate.cairn.md) | (pattern) | QUEUE ROUND_ROBIN — turn-based multi-LLM debate |
 
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that
