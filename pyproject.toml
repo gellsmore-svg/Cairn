@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cairn-lang"
-version = "0.5.2"
+version = "0.6.0"
 description = "Cairn — process meta-language: spec, grammar, and a machine-readable plan-conformance surface (distribution cairn-lang; import name cairn)."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -30,6 +30,7 @@ dependencies = [
 [project.scripts]
 cairn-render = "cairn.cli:main"
 cairn-validate = "cairn.validate_cli:main"
+cairn-serve = "cairn.web:main"
 
 [project.urls]
 Homepage = "https://github.com/gellsmore-svg/Cairn"
@@ -37,8 +38,9 @@ Repository = "https://github.com/gellsmore-svg/Cairn"
 Issues = "https://github.com/gellsmore-svg/Cairn/issues"
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "fastapi>=0.110", "uvicorn>=0.29", "httpx", "pyyaml>=6.0"]
 render = ["pyyaml>=6.0"]
+web = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

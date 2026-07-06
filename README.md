@@ -145,6 +145,22 @@ cairn.PLAN_CONSTRUCTS                      # the allowed step constructs (SPEC Â
 
 CLI: `cairn-validate examples/hoglah.cairn.md` Â· `cairn-render examples/hoglah.cairn.md`
 
+### View composer (`cairn-serve`)
+
+An interactive, local composer for building a transformation view of a process
+and **saving the recipe as a named template**:
+
+```bash
+pip install 'cairn-lang[web]'
+cairn-serve            # http://127.0.0.1:8795
+```
+
+Paste a Cairn process, pick a profile and options (language, format, depth,
+sections, layout), watch the view update live, then **Save as template**. A
+template is persisted as a stylesheet under `~/.cairn/templates/<name>.json`,
+so it is directly reusable on the CLI:
+`cairn-render --stylesheet ~/.cairn/templates/<name>.json input.cairn.md`.
+
 Grammar parser: [docs/GRAMMAR-PARSER.md](docs/GRAMMAR-PARSER.md). Simplified views:
 [docs/VIEW-GENERATOR.md](docs/VIEW-GENERATOR.md).
 
