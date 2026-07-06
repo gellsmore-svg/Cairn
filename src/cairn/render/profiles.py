@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from cairn.render.model import ProcessDocument, RenderResult, StepNode
-from cairn.render.phrasing import SUB_BLOCK_LABELS, phrase_construct
+from cairn.render.phrasing import SUB_BLOCK_LABELS, describe_queue, phrase_construct
 
 
 def _steps_for_profile(doc: ProcessDocument, profile: str) -> list[StepNode]:
@@ -31,7 +31,7 @@ def _indent(depth: int) -> str:
 
 def _render_step_line(node: StepNode, language: str, depth: int, options: dict[str, Any]) -> list[str]:
     include_tags = options.get("include_tags", False)
-    text = phrase_construct(node.construct, node.text, language)
+    text = phrase_construct(node.construct, node.text, language, node.tags)
     line = f"{_indent(depth)}{node.number}. {text}"
     lines = [line]
     if include_tags and node.tags:
@@ -133,7 +133,7 @@ class SimpleProseProfile(RenderProfile):
 
         actions = []
         for node in _steps_for_profile(doc, self.name):
-            actions.append(phrase_construct(node.construct, node.text, language).rstrip("."))
+            actions.append(phrase_construct(node.construct, node.text, language, node.tags).rstrip("."))
 
         if actions:
             if language == "es":
@@ -166,9 +166,12 @@ class OperatorProfile(RenderProfile):
             lines.append("")
 
         for node in _steps_for_profile(doc, self.name):
-            title = node.text.split(".")[0][:60] if node.text else f"Step {node.number}"
+            body_text = node.text
+            if not body_text.strip() and node.construct == "QUEUE":
+                body_text = describe_queue(node.tags, language)
+            title = body_text.split(".")[0][:60] if body_text else f"Step {node.number}"
             block: list[str] = []
-            purpose = node.purpose or node.text
+            purpose = node.purpose or body_text
             if language == "fr":
                 block.append(f"**Objectif :** {purpose}")
                 if node.owner:
@@ -246,7 +249,7 @@ class ExecutiveProfile(RenderProfile):
         lines.append(f"### {milestone_label}")
         for node in _steps_for_profile(doc, self.name):
             if node.construct == "MILESTONE" or not node.children:
-                summary = node.purpose or phrase_construct(node.construct, node.text, language)
+                summary = node.purpose or phrase_construct(node.construct, node.text, language, node.tags)
                 owner = f" ({node.owner})" if node.owner else ""
                 lines.append(f"- **{node.number}** {summary}{owner}")
 

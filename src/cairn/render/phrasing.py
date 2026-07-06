@@ -92,9 +92,84 @@ def extract_tags(text: str) -> tuple[str, list[str]]:
     return cleaned, tags
 
 
-def phrase_construct(construct: str | None, text: str, language: str = "en") -> str:
+# QUEUE parameters live in the step's bracket annotation, e.g.
+# ``[ORDER: ROUND_ROBIN; ONE_AT_A_TIME; ROUNDS: 5; UNTIL: consensus]``. These
+# patterns lift them back out so the turn-based / round-robin meaning can be
+# phrased, instead of the view showing a bare "Queue:".
+_Q_ORDER = re.compile(r"ORDER\s*:\s*([A-Za-z_]+)", re.I)
+_Q_ROUNDS = re.compile(r"(?:ROUNDS|MAX)\s*:\s*(\d+)", re.I)
+_Q_UNTIL = re.compile(r"UNTIL\s*:\s*([^;\]]+)", re.I)
+_Q_SERIAL = re.compile(r"ONE[ _]AT[ _]A[ _]TIME|SERIAL", re.I)
+
+# Localised fragments for composing the QUEUE description.
+_QUEUE_PHRASING: dict[str, dict[str, str]] = {
+    "en": {
+        "subject": "Queue the participants",
+        "ROUND_ROBIN": "round-robin", "PRIORITY": "by priority",
+        "FIFO": "in turn", "_default": "in turn",
+        "serial": ", one at a time",
+        "rounds_1": ", for up to {n} round", "rounds_n": ", for up to {n} rounds",
+        "until": ", until {u}",
+    },
+    "fr": {
+        "subject": "Mettre les participants en file",
+        "ROUND_ROBIN": "à tour de rôle", "PRIORITY": "par priorité",
+        "FIFO": "dans l'ordre", "_default": "dans l'ordre",
+        "serial": ", un à la fois",
+        "rounds_1": ", pour un maximum de {n} tour", "rounds_n": ", pour un maximum de {n} tours",
+        "until": ", jusqu'à {u}",
+    },
+    "es": {
+        "subject": "Encolar a los participantes",
+        "ROUND_ROBIN": "por turnos rotativos", "PRIORITY": "por prioridad",
+        "FIFO": "en orden", "_default": "en orden",
+        "serial": ", uno a la vez",
+        "rounds_1": ", hasta {n} ronda", "rounds_n": ", hasta {n} rondas",
+        "until": ", hasta {u}",
+    },
+}
+
+
+def parse_queue_params(tags: list[str] | None) -> dict[str, str | bool]:
+    """Pull ORDER / ROUNDS / UNTIL / one-at-a-time out of a QUEUE step's tags."""
+    blob = "; ".join(tags or [])
+    params: dict[str, str | bool] = {}
+    if (m := _Q_ORDER.search(blob)):
+        params["order"] = m.group(1).upper()
+    if (m := _Q_ROUNDS.search(blob)):
+        params["rounds"] = m.group(1)
+    if (m := _Q_UNTIL.search(blob)):
+        params["until"] = m.group(1).strip()
+    if _Q_SERIAL.search(blob):
+        params["serial"] = True
+    return params
+
+
+def describe_queue(tags: list[str] | None, language: str = "en") -> str:
+    """A readable, localised description of a QUEUE step from its parameters."""
+    words = _QUEUE_PHRASING.get(language, _QUEUE_PHRASING["en"])
+    params = parse_queue_params(tags)
+    order = str(params.get("order", "")) or "_default"
+    parts = [words["subject"], " ", words.get(order, words["_default"])]
+    if params.get("serial"):
+        parts.append(words["serial"])
+    if params.get("rounds"):
+        n = str(params["rounds"])
+        key = "rounds_1" if n == "1" else "rounds_n"
+        parts.append(words[key].format(n=n))
+    if params.get("until"):
+        parts.append(words["until"].format(u=params["until"]))
+    return "".join(parts)
+
+
+def phrase_construct(
+    construct: str | None, text: str, language: str = "en", tags: list[str] | None = None
+) -> str:
     if not construct or construct == "STEP":
         return text
+    if construct == "QUEUE":
+        desc = describe_queue(tags, language)
+        return f"{desc} — {text}" if text.strip() else desc
     glossary = CONSTRUCT_PHRASES.get(language, CONSTRUCT_PHRASES["en"])
     prefix = glossary.get(construct, construct)
     if construct == "ITERATE":
