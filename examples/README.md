@@ -25,6 +25,26 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | [`relational-substrate.cairn.md`](relational-substrate.cairn.md) | Relational Substrate | Grammar sandbox, sequence traces, sweep |
 | [`round-robin-debate.cairn.md`](round-robin-debate.cairn.md) | (pattern) | QUEUE ROUND_ROBIN — turn-based multi-LLM debate |
 
+## Psychological Process Examples
+- [`psych-gross-emotion-regulation.cairn.md`](psych-gross-emotion-regulation.cairn.md) — Emotion regulation via Gross process model (situation selection through response modulation).
+- [`psych-attachment-regulation.cairn.md`](psych-attachment-regulation.cairn.md) — Attachment system activation, proximity seeking, and co/self-regulation.
+- [`psych-cognitive-dissonance.cairn.md`](psych-cognitive-dissonance.cairn.md) — Cognitive dissonance detection and reduction strategies.
+- [`psych-dual-process-decision.cairn.md`](psych-dual-process-decision.cairn.md) — System 1 vs System 2 decision making under affect.
+- [`psych-metacognition.cairn.md`](psych-metacognition.cairn.md) — Metacognitive monitoring and control in learning/problem-solving.
+
+## High-Level Organisational Process Examples
+- [`org-kotter-8step-change.cairn.md`](org-kotter-8step-change.cairn.md) — Kotter's 8-step model for leading organisational transformation.
+- [`org-adkar-individual-change.cairn.md`](org-adkar-individual-change.cairn.md) — ADKAR model for the individual journey in change (Awareness to Reinforcement).
+- [`org-lewin-change.cairn.md`](org-lewin-change.cairn.md) — Lewin's Unfreeze-Change-Refreeze model.
+- [`org-mckinsey-7s.cairn.md`](org-mckinsey-7s.cairn.md) — McKinsey 7-S alignment for organisational effectiveness.
+- [`org-stakeholder-engagement.cairn.md`](org-stakeholder-engagement.cairn.md) — Stakeholder power mapping and tailored engagement.
+
+## Sociological Process Examples
+- [`socio-symbolic-interaction.cairn.md`](socio-symbolic-interaction.cairn.md) — Symbolic interactionism: meaning-making, role-taking, and self-formation.
+- [`socio-socialization.cairn.md`](socio-socialization.cairn.md) — Primary and secondary socialization of norms, values, and roles.
+- [`socio-conflict-resolution.cairn.md`](socio-conflict-resolution.cairn.md) — Social conflict processes and pathways to resolution.
+- [`socio-norm-formation.cairn.md`](socio-norm-formation.cairn.md) — Emergence, institutionalization, and enforcement of social norms.
+
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that
 feed back into [../SPEC.md](../SPEC.md).

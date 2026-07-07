@@ -384,6 +384,22 @@ def _check_iteration_bound(step: Step, lineno: int) -> list[str]:
     return [f"line {lineno}: {step.construct} with LLM involvement must declare {need} or UNTIL"]
 
 
+def _check_await_timeout(step: Step, lineno: int) -> list[str]:
+    # Check for TIMEOUT in annotations or construct lines for AWAIT
+    has_timeout = False
+    if "TIMEOUT" in step.annotations:
+        has_timeout = True
+    for cline in step.construct_lines:
+        if "TIMEOUT" in cline.modifiers or "TIMEOUT" in str(cline.text).upper():
+            has_timeout = True
+    if not has_timeout and "TIMEOUT" not in str(step.text).upper():
+        # Allow "never" or context-dependent as in examples
+        text = str(step.text).lower() + " " + str(step.annotations)
+        if "never" not in text and "context" not in text and "variable" not in text:
+            return [f"line {lineno}: AWAIT must declare TIMEOUT or use 'never'/'context-dependent'"]
+    return []
+
+
 def _ephemeral_state_names(proc: Process) -> set[str]:
     names: set[str] = set()
 
