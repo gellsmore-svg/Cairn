@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from cairn.observation_contract import OBSERVATION_KINDS
+
 
 def galeed_event_to_observation(event: dict[str, Any]) -> dict[str, Any]:
     """Convert one Galeed trace event dict into a Cairn observation event."""
@@ -13,7 +15,7 @@ def galeed_event_to_observation(event: dict[str, Any]) -> dict[str, Any]:
     observation = {
         "ts": event.get("timestamp"),
         "source": event.get("source") or "galeed",
-        "kind": _kind_for_event(event_type),
+        "kind": _kind_for_event(event_type, metadata),
         "severity": event.get("severity") or _severity_from_status(event.get("status")),
         "message": event.get("summary") or event_type,
         "tags": tags,
@@ -71,7 +73,10 @@ def galeed_records_to_observations(
     return [galeed_event_to_observation(record) for record in records]
 
 
-def _kind_for_event(event_type: str) -> str:
+def _kind_for_event(event_type: str, metadata: dict[str, Any] | None = None) -> str:
+    cairn_kind = str((metadata or {}).get("cairn_kind") or "")
+    if cairn_kind in OBSERVATION_KINDS:
+        return cairn_kind
     if event_type.startswith("message.") or event_type.startswith("feedback."):
         return "feedback" if event_type.startswith("feedback.") else "ui_event"
     if event_type.startswith("job."):

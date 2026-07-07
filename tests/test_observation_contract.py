@@ -67,3 +67,30 @@ def test_observation_round_trip_preserves_non_special_tags():
     assert "waiting" in converted["tags"]
     assert "audit reasoning" in converted["human_systems"]
     assert "vigilance" in converted["human_systems"]
+
+
+def test_observation_round_trip_preserves_explicit_cairn_kind():
+    review = observation_event(
+        ts="2026-07-07T21:17:00Z",
+        source="observer-agent",
+        kind="agent_output_review",
+        message="Answer lacks cited authority.",
+        tags=["unsupported_output"],
+        human_systems=["trust calibration"],
+        correlation={"trace_id": "trace_1"},
+    )
+    recovery = observation_event(
+        ts="2026-07-07T21:18:00Z",
+        source="tirzah-agent",
+        kind="recovery_event",
+        message="Requested missing invoice authority from the user.",
+        tags=["repair_turn"],
+        human_systems=["uncertainty management"],
+        correlation={"trace_id": "trace_1"},
+    )
+
+    converted_review = galeed_event_to_observation(observation_to_galeed_trace_event(review))
+    converted_recovery = galeed_event_to_observation(observation_to_galeed_trace_event(recovery))
+
+    assert converted_review["kind"] == "agent_output_review"
+    assert converted_recovery["kind"] == "recovery_event"
