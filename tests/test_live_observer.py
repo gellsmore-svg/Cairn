@@ -46,3 +46,21 @@ def test_live_observer_cli_reads_jsonl(tmp_path):
     text = output.read_text(encoding="utf-8")
     assert "Noa sample" in text
     assert "HUMAN_RISK" in text
+
+
+def test_analyze_live_observations_finds_queue_vigilance_load():
+    observations = [
+        {
+            "source": "hoglah",
+            "kind": "queue_event",
+            "message": f"job {idx} started",
+            "tags": ["job_started", "waiting"],
+            "human_systems": ["vigilance"],
+        }
+        for idx in range(3)
+    ]
+
+    report = analyze_live_observations(observations, title="Queue sample")
+
+    factors = {(finding.family, finding.factor) for finding in report.findings}
+    assert ("human_load", "queue vigilance load") in factors

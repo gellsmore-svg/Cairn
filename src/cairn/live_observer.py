@@ -139,6 +139,21 @@ def _findings(
             )
         )
 
+    queue_waiting_events = [
+        event for event in events if event.get("kind") == "queue_event" and _has_tag(event, "waiting")
+    ]
+    if len(queue_waiting_events) >= 3:
+        findings.append(
+            LiveObservationFinding(
+                family="human_load",
+                factor="queue vigilance load",
+                reason=f"Observed {len(queue_waiting_events)} queue event(s) that keep work in a waiting or in-progress state.",
+                mitigation="Expose queue position, expected completion, stalled state, and completion handoff so users do not have to monitor the process manually.",
+                probability="medium",
+                impact="medium",
+            )
+        )
+
     if any(_has_tag(event, "context_switch") for event in events):
         findings.append(
             LiveObservationFinding(
