@@ -12,6 +12,7 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | [`tirzah-semantic-review.cairn.md`](tirzah-semantic-review.cairn.md) | Tirzah | Human-gated semantic-edge review queue |
 | [`tirzah-generated-output.cairn.md`](tirzah-generated-output.cairn.md) | Tirzah | Generated-output queue → endorse/reject |
 | [`tirzah-web-research.cairn.md`](tirzah-web-research.cairn.md) | Tirzah | `--web` search/fetch override on agentic ask |
+| [`codex-review-gate.cairn.md`](codex-review-gate.cairn.md) | Codex + family stack | `codex exec --json` with Cairn/Milcah acceptance gate |
 | [`galeed.cairn.md`](galeed.cairn.md) | Galeed | Cross-project trace spine (emit + query) |
 | [`keturah.cairn.md`](keturah.cairn.md) | Keturah | LLM interface manifest + MCP projection |
 | [`mizpah.cairn.md`](mizpah.cairn.md) | Mizpah | Cross-session trace browser |
