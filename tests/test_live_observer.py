@@ -64,3 +64,29 @@ def test_analyze_live_observations_finds_queue_vigilance_load():
 
     factors = {(finding.family, finding.factor) for finding in report.findings}
     assert ("human_load", "queue vigilance load") in factors
+
+
+def test_analyze_live_observations_finds_long_queue_lifecycle_from_timestamps():
+    observations = [
+        {
+            "ts": "2026-07-07T09:00:00+00:00",
+            "source": "hoglah",
+            "kind": "queue_event",
+            "message": "job started",
+            "tags": ["job_started", "waiting"],
+            "correlation": {"job_id": "job_1"},
+        },
+        {
+            "ts": "2026-07-07T09:01:15+00:00",
+            "source": "hoglah",
+            "kind": "queue_event",
+            "message": "job completed",
+            "tags": ["job_completed"],
+            "correlation": {"job_id": "job_1"},
+        },
+    ]
+
+    report = analyze_live_observations(observations, title="Queue sample")
+
+    factors = {(finding.family, finding.factor) for finding in report.findings}
+    assert ("system_reliability", "long queue lifecycle") in factors

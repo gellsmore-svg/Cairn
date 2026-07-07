@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from dataclasses import asdict, dataclass, field
 from typing import Any, Iterable
 from collections import Counter, defaultdict
@@ -149,6 +150,23 @@ def _findings(
                 factor="queue vigilance load",
                 reason=f"Observed {len(queue_waiting_events)} queue event(s) that keep work in a waiting or in-progress state.",
                 mitigation="Expose queue position, expected completion, stalled state, and completion handoff so users do not have to monitor the process manually.",
+                probability="medium",
+                impact="medium",
+            )
+        )
+
+    long_queue_lifecycles = _queue_lifecycle_durations_ms(events, threshold_ms=30_000)
+    if long_queue_lifecycles:
+        longest_ms = max(long_queue_lifecycles)
+        findings.append(
+            LiveObservationFinding(
+                family="system_reliability",
+                factor="long queue lifecycle",
+                reason=(
+                    f"Observed {len(long_queue_lifecycles)} queue lifecycle(s) at or above 30000 ms; "
+                    f"longest was about {round(longest_ms / 1000)} seconds."
+                ),
+                mitigation="Record queue/run duration explicitly and surface progress, expected completion, and timeout thresholds in the user-facing workflow.",
                 probability="medium",
                 impact="medium",
             )
@@ -302,6 +320,41 @@ def _duration_ms(event: dict[str, Any]) -> int:
         return int(event.get("duration_ms") or 0)
     except (TypeError, ValueError):
         return 0
+
+
+def _queue_lifecycle_durations_ms(events: list[dict[str, Any]], *, threshold_ms: int) -> list[int]:
+    by_id: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for event in events:
+        if event.get("kind") != "queue_event":
+            continue
+        correlation = dict(event.get("correlation") or {})
+        key = correlation.get("job_id") or correlation.get("trace_id")
+        if key:
+            by_id[str(key)].append(event)
+
+    durations: list[int] = []
+    for group in by_id.values():
+        starts = [_event_time(event) for event in group if _has_tag(event, "job_started")]
+        starts.extend(_event_time(event) for event in group if _has_tag(event, "job_queued"))
+        completes = [_event_time(event) for event in group if _has_tag(event, "job_completed")]
+        starts = [item for item in starts if item is not None]
+        completes = [item for item in completes if item is not None]
+        if not starts or not completes:
+            continue
+        duration_ms = int((max(completes) - min(starts)).total_seconds() * 1000)
+        if duration_ms >= threshold_ms:
+            durations.append(duration_ms)
+    return durations
+
+
+def _event_time(event: dict[str, Any]) -> datetime | None:
+    raw = str(event.get("ts") or "")
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def _score(probability: str, impact: str) -> str:
