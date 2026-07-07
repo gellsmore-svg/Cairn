@@ -75,3 +75,29 @@ def test_galeed_observe_cli_writes_report_and_observations(tmp_path):
     converted = _load_observations(observations.read_text(encoding="utf-8"))
     assert len(converted) == 5
     assert any("missing_evidence" in item.get("tags", []) for item in converted)
+
+
+def test_galeed_observe_cli_accepts_pretty_json_array_export(tmp_path):
+    source = ROOT / "docs" / "galeed" / "sample-trace-events.jsonl"
+    records = [json.loads(line) for line in source.read_text(encoding="utf-8").splitlines()]
+    export = tmp_path / "galeed-events.json"
+    report = tmp_path / "report.md"
+    observations = tmp_path / "observations.jsonl"
+    export.write_text(json.dumps(records, indent=2), encoding="utf-8")
+
+    rc = galeed_observe_main(
+        [
+            str(export),
+            "--title",
+            "Galeed JSON export test",
+            "--observations-output",
+            str(observations),
+            "-o",
+            str(report),
+        ]
+    )
+
+    assert rc == 0
+    assert "Galeed JSON export test" in report.read_text(encoding="utf-8")
+    converted = _load_observations(observations.read_text(encoding="utf-8"))
+    assert len(converted) == len(records)
