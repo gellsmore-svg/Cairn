@@ -30,6 +30,16 @@ cairn-ui-sim docs/scenarios/mahlah-human-load.json \
 
 The report is written to the scenario's `output` path unless `--output` is supplied. Relative output paths are resolved from the scenario file, not from the target project.
 
+After running the browser simulation, summarise it as human-load evidence:
+
+```bash
+cairn-ui-evidence docs/analysis/mahlah-ui-sim-report.json \
+  --output docs/analysis/mahlah-ui-evidence.md
+```
+
+This second step turns mechanical observations into suggested Cairn blocks such
+as `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`.
+
 ## Scenario Actions
 
 Supported actions in the prototype:
@@ -60,3 +70,20 @@ The report records:
 - Findings: estimated risks, impacts, and mitigations supplied by the scenario author or later by an LLM.
 
 The next layer is an LLM reviewer that consumes this report together with a Cairn process description and asks: "what human systems are plausibly present in this process step, and where does the interface create avoidable load?"
+
+## Where This Goes Next
+
+The intended stack is:
+
+```text
+Playwright scenario
+  -> UI simulation report
+  -> deterministic human-load evidence
+  -> optional LLM role-play / critique
+  -> revised Cairn process annotations
+```
+
+The LLM layer should not pretend to be a real user study. Its job is to simulate
+plausible user experience, search for missing context, and initiate better
+questions for the developer or process owner. The deterministic evidence layer
+keeps that conversation grounded in what the interface actually required.
