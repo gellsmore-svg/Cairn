@@ -48,19 +48,19 @@ _ANNOTATION = re.compile(
     r"^(STATE UPDATE|OUTPUT|RISKS|PURPOSE|CONSTRAINTS|BOUNDARIES|CONTEXT):\s*(.*)$",
     re.I,
 )
-_EMERGENT = re.compile(r"^EMERGENT\s+(\[SATISFIES:\s*[^\]]+\])\s*$", re.I)
+_EMERGENT = re.compile(r"^EMERGENT\s+(\[.*?\])\s*$", re.I)
 _CONSTRUCT_LINE = re.compile(
     r"^(MILESTONE|ITERATE|RECURSE|QUEUE|PARALLEL|SERVICE|CONCURRENT|DECISION|RETRY|ERROR|"
     r"AWAIT|CALL|MERGE|BREAK|CONTINUE|ATOMIC|STEP|REGULATION|APPRAISAL|DUAL_PROCESS|"
     r"METACOGNITION|ALIGN|COALITION|RESISTANCE|REINFORCEMENT|CASCADE|VISION|SOCIALIZE|"
-    r"INSTITUTIONALIZE|SYMBOLIC_INTERACTION|CONFLICT|ACCOMMODATE|ASSIMILATE|ROLE)\b(.*)$",
+    r"INSTITUTIONALIZE|SYMBOLIC_INTERACTION|CONFLICT|ACCOMMODATE|ASSIMILATE|ROLE|FEEDBACK)\b(.*)$",
     re.I,
 )
 _CONSTRUCT_STEP = re.compile(
     r"^(STEP|MILESTONE|ITERATE|RECURSE|QUEUE|PARALLEL|SERVICE|DECISION|RETRY|ERROR|AWAIT|CALL|"
     r"REGULATION|APPRAISAL|DUAL_PROCESS|METACOGNITION|ALIGN|COALITION|RESISTANCE|REINFORCEMENT|"
     r"CASCADE|VISION|SOCIALIZE|INSTITUTIONALIZE|SYMBOLIC_INTERACTION|CONFLICT|ACCOMMODATE|"
-    r"ASSIMILATE|ROLE)\b(.*)$",
+    r"ASSIMILATE|ROLE|FEEDBACK)\b(.*)$",
     re.I,
 )
 
@@ -182,7 +182,9 @@ class Parser:
             emergent = _EMERGENT.match(cur.text)
             if emergent:
                 self._advance()
-                eb = EmergentBlock(satisfies=emergent.group(1), lineno=cur.lineno)
+                sat = emergent.group(1)
+                attrs = _parse_modifiers_dict([sat.strip("[]")]) if "[" in sat else {}
+                eb = EmergentBlock(satisfies=sat, attrs=attrs, lineno=cur.lineno)
                 while self._peek() and self._peek().indent > base:
                     eb.lines.append(self._advance().text)  # type: ignore[union-attr]
                 block.emergent_blocks.append(eb)
@@ -383,15 +385,22 @@ class Parser:
                 body = line.text
 
         cstep = _CONSTRUCT_STEP.match(body)
+        mods = []
         if cstep:
             construct = _CONSTRUCT_NORMALIZE.get(cstep.group(1).upper(), cstep.group(1).upper())
             body = cstep.group(2).strip()
+            # parse leading [modifiers] for the construct itself (e.g. REGULATION [STRATEGY: ...])
+            mod_match = re.match(r"^(\[[^\]]+\])\s*(.*)$", body)
+            if mod_match:
+                mods = split_tag_list(mod_match.group(1).strip("[]"))
+                body = mod_match.group(2).strip()
 
         cleaned, tags = extract_bracket_tags(body)
         if cleaned.startswith("→"):
             cleaned = cleaned.lstrip("→").strip()
 
-        step = Step(step_id=step_id, construct=construct, text=cleaned, tags=tags, lineno=line.lineno)
+        parsed_mods = _parse_modifiers_dict(mods)
+        step = Step(step_id=step_id, construct=construct, text=cleaned, tags=tags, lineno=line.lineno, modifiers=mods, parsed_modifiers=parsed_mods)
         child_indent = line.indent + 2
         while self._peek() and self._peek().indent >= child_indent:
             cur = self._peek()
@@ -418,7 +427,7 @@ class Parser:
         assert line is not None
         match = _CONSTRUCT_LINE.match(line.text)
         if not match:
-            return ConstructLine(construct="STEP", text=line.text, lineno=line.lineno)
+            return ConstructLine(construct="STEP", text=line.text, lineno=line.lineno, parsed_modifiers={})
         construct = _CONSTRUCT_NORMALIZE.get(match.group(1).upper(), match.group(1).upper())
         rest = match.group(2).strip()
         arrow_target = None
@@ -434,13 +443,31 @@ class Parser:
         cleaned, tags = extract_bracket_tags(rest)
         if tags:
             mods.extend(tags)
+        parsed_mods = _parse_modifiers_dict(mods)
         return ConstructLine(
             construct=construct,
             modifiers=mods,
+            parsed_modifiers=parsed_mods,
             arrow_target=arrow_target,
             text=cleaned,
             lineno=line.lineno,
         )
+
+
+def _parse_modifiers_dict(mods: list[str]) -> dict[str, str]:
+    """Parse modifier list like ['STRATEGY: foo', 'TARGET: bar'] or with ; into dict."""
+    result: dict[str, str] = {}
+    for m in mods:
+        # split on ; or , for compound
+        for part in m.replace(";", ",").split(","):
+            part = part.strip()
+            if not part: continue
+            if ":" in part:
+                k, v = part.split(":", 1)
+                result[k.strip().upper()] = v.strip()
+            else:
+                result[part.upper()] = "true"
+    return result
 
 
 def parse_document(text: str) -> CairnDocument:

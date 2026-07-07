@@ -30,6 +30,8 @@ class EmergentBlock:
     satisfies: str
     lines: list[str] = field(default_factory=list)
     lineno: int = 0
+    # Enhanced for domain/feedback support (e.g. [TYPE: psychological; FROM: regulation; VIA: feedback])
+    attrs: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -82,6 +84,7 @@ class Annotation:
 class ConstructLine:
     construct: str
     modifiers: list[str] = field(default_factory=list)
+    parsed_modifiers: dict[str, str] = field(default_factory=dict)
     arrow_target: str | None = None
     text: str = ""
     lineno: int = 0
@@ -97,6 +100,9 @@ class Step:
     construct_lines: list[ConstructLine] = field(default_factory=list)
     children: list[Step] = field(default_factory=list)
     lineno: int = 0
+    # For steps that are themselves domain constructs (e.g. "2. REGULATION [...]")
+    modifiers: list[str] = field(default_factory=list)
+    parsed_modifiers: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass

@@ -20,6 +20,12 @@ _LOOP_CONSTRUCTS = frozenset({"ITERATE", "RECURSE", "QUEUE"})
 _BOUND_CONSTRUCTS = frozenset({"ITERATE", "RECURSE"})
 _BOUND_KEYS = frozenset({"MAX", "MAX_DEPTH", "UNTIL", "OVER"})
 
+# Domain-specific constructs from proposals (for validation and awareness)
+_PSYCH_CONSTRUCTS = frozenset({"REGULATION", "APPRAISAL", "DUAL_PROCESS", "METACOGNITION", "FEEDBACK"})
+_ORG_CONSTRUCTS = frozenset({"ALIGN", "COALITION", "RESISTANCE", "REINFORCEMENT", "CASCADE", "VISION"})
+_SOCIO_CONSTRUCTS = frozenset({"SOCIALIZE", "INSTITUTIONALIZE", "SYMBOLIC_INTERACTION", "CONFLICT", "ACCOMMODATE", "ASSIMILATE", "ROLE"})
+_ALL_DOMAIN_CONSTRUCTS = _PSYCH_CONSTRUCTS | _ORG_CONSTRUCTS | _SOCIO_CONSTRUCTS
+
 
 def validate_document(doc: CairnDocument) -> list[str]:
     """Return well-formedness errors (empty list = well-formed per SPEC §12)."""
@@ -205,6 +211,8 @@ def _validate_process(
     for step in proc.steps:
         errors.extend(_validate_step_tree(step, declared_states, loop_depth=loop_depth))
 
+    _validate_domain_consistency(proc, errors)
+
     return errors
 
 
@@ -284,13 +292,57 @@ def _validate_construct_line(
         )
     if cline.construct == "AWAIT":
         keys = _bound_keys_from(cline.modifiers, cline.text, [])
-        if "TIMEOUT" not in keys and not re.search(r"\bTIMEOUT\s*:", cline.text, re.I):
+        parsed = getattr(cline, "parsed_modifiers", {}) or {}
+        if "TIMEOUT" not in keys and "TIMEOUT" not in parsed and not re.search(r"\bTIMEOUT\s*:", cline.text, re.I):
             errors.append(f"line {cline.lineno}: AWAIT must declare TIMEOUT")
     if cline.construct in _BOUND_CONSTRUCTS and require_llm_bound:
         if not _has_iteration_bound(cline.modifiers, cline.text, []):
             key_name = "MAX_DEPTH" if cline.construct == "RECURSE" else "MAX"
             errors.append(f"line {cline.lineno}: {cline.construct} should declare {key_name} or UNTIL")
+    # Domain construct awareness (non-blocking guidance for now, to stay human-first)
+    if cline.construct in _ALL_DOMAIN_CONSTRUCTS:
+        # Future: could add stricter rules per domain
+        pass
+    if cline.construct == "FEEDBACK":
+        keys = _bound_keys_from(cline.modifiers, cline.text, [])
+        if not keys and not cline.text:
+            errors.append(f"line {cline.lineno}: FEEDBACK should specify what is fed back (e.g. [FROM: emotion] or text)")
     return errors
+
+
+def _collect_domain_constructs(proc: Process) -> set[str]:
+    used: set[str] = set()
+    for element in proc.elements:
+        if isinstance(element, ConstructLine) and element.construct in _ALL_DOMAIN_CONSTRUCTS:
+            used.add(element.construct)
+    for step in proc.steps:
+        if step.construct in _ALL_DOMAIN_CONSTRUCTS:
+            used.add(step.construct)
+        for cline in step.construct_lines:
+            if cline.construct in _ALL_DOMAIN_CONSTRUCTS:
+                used.add(cline.construct)
+    return used
+
+
+def _validate_domain_consistency(proc: Process, errors: list[str]) -> None:
+    """Light domain-aware checks to encourage use of new constructs (non-fatal for human-first)."""
+    tags = []
+    for step in proc.steps:
+        tags.extend(step.tags)
+    tag_dims = tag_dimensions(tags)
+    all_tags = [t for sub in tag_dims.values() for t in sub] if tag_dims else []
+    psych_tags = any(t in ("EMOTIONAL", "COGNITIVE", "APPRAISAL", "REGULATION", "MOTIVATIONAL", "METACOGNITIVE", "BEHAVIORAL") for t in all_tags)
+    org_tags = any(t in ("LEADERSHIP", "STRATEGIC", "CULTURAL", "POWER", "STAKEHOLDER", "STRUCTURAL", "ALIGNMENT", "RESISTANCE") for t in all_tags)
+    socio_tags = any(t in ("SOCIAL", "GROUP", "NORM", "ROLE", "SYMBOLIC") for t in all_tags)
+
+    used = _collect_domain_constructs(proc)
+    if psych_tags and not any(c in used for c in _PSYCH_CONSTRUCTS):
+        # advisory only (to preserve human-first and not break existing examples); tooling can surface
+        pass
+    if org_tags and not any(c in used for c in _ORG_CONSTRUCTS):
+        pass
+    if socio_tags and not any(c in used for c in _SOCIO_CONSTRUCTS):
+        pass
 
 
 def _validate_annotations(annotations: list[Annotation], declared_states: set[str], lineno: int) -> list[str]:

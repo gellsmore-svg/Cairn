@@ -67,7 +67,7 @@ sub-block       = annotation
 annotation      = ( "STATE UPDATE:" | "OUTPUT:" | "RISKS:" | "PURPOSE:"
                   | "CONSTRAINTS:" | "BOUNDARIES:" | "CONTEXT:"
                   | emergent-satisfies ) TEXT NL ;
-emergent-satisfies = "EMERGENT" satisfies NL { TEXT NL } ;   (* block at OUTCOMES/PROCESS *)
+emergent-satisfies = "EMERGENT" ( satisfies | attrs ) NL { TEXT NL } ;   (* e.g. EMERGENT [TYPE: psychological; FROM: regulation] or [SATISFIES: R3]; attrs for domain/feedback *)
 
 (* a step may *be* a construct, or a construct may stand on its own line *)
 construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
@@ -77,7 +77,7 @@ construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
                 | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
                 | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
                 | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
-                | "ASSIMILATE" | "ROLE" ;
+                | "ASSIMILATE" | "ROLE" | "FEEDBACK" ;
 construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
                   | "SERVICE" | "CONCURRENT" | "DECISION" | "RETRY" | "ERROR"
                   | "AWAIT" | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC"
@@ -85,7 +85,7 @@ construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
                   | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
                   | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
                   | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
-                  | "ASSIMILATE" | "ROLE" )
+                  | "ASSIMILATE" | "ROLE" | "FEEDBACK" )
                   [ modifiers ] [ "→" TEXT ] TEXT? NL ;
 modifiers       = "[" mod { ";" mod } "]" ;
 mod             = key ":" TEXT | flag ;        (* e.g. UNTIL: …; MAX: 5 *)
@@ -130,6 +130,7 @@ Beyond grammar, a description is well-formed if:
 6. LLM-driven `ITERATE`/`RECURSE` carry a bound (`MAX`/`MAX_DEPTH`);
 7. `BREAK`/`CONTINUE` appear only inside a loop;
 8. every `AWAIT` states a `TIMEOUT`.
+9. Domain constructs (REGULATION, COALITION, SOCIALIZE, FEEDBACK, etc.) are encouraged when using matching tags for psych/org/socio work in human systems.
 
 This grammar is deliberately permissive about prose — it constrains the
 *scaffolding*, so a human stays free to write each step in plain language.
