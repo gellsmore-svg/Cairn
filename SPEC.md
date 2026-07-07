@@ -367,6 +367,40 @@ Crash-safe systems hinge on *ordering between steps* and *what happens if a cras
 lands between them*. Make that explicit instead of burying it in prose:
 - `DURABLE-BEFORE: <step>` on a step — this step's effect must be durable **before**
   `<step>` runs (e.g. "enqueue is durable before the broker offset is committed").
+
+### Domain-specific constructs (from proposals)
+
+These are first-class for richer domain modeling. They parse as constructs with optional [modifiers].
+
+**Psychological:**
+- `REGULATION [STRATEGY: reappraisal | suppression | ...] [TARGET: situation | attention | cognition | response] [GOAL: hedonic | instrumental | eudaimonic]`
+- `APPRAISAL [TYPE: primary | secondary]`
+- `DUAL_PROCESS [SYSTEM: 1 | 2]`
+- `METACOGNITION [MONITOR | CONTROL]`
+
+**Organisational:**
+- `ALIGN [ELEMENTS: strategy | structure | culture | ...]`
+- `COALITION [BUILD | SUSTAIN]`
+- `RESISTANCE [TYPE: active | passive | cultural] [OVERCOME: via ...]`
+- `REINFORCEMENT [MECHANISM: reward | ritual | metric | story]`
+- `CASCADE [DIRECTION: top-down | bottom-up] [CONTENT: vision | goals | ...]`
+- `VISION [FORM | COMMUNICATE | ANCHOR]`
+
+**Sociological:**
+- `SOCIALIZE [TYPE: primary | secondary]`
+- `INSTITUTIONALIZE`
+- `SYMBOLIC_INTERACTION [MEANING: ...]`
+- `CONFLICT`
+- `ACCOMMODATE | ASSIMILATE`
+- `ROLE [CONFLICT | TAKING]`
+
+New tags (see §7): [EMOTIONAL], [COGNITIVE], [LEADERSHIP], [STRATEGIC], [CULTURAL], [POWER], [SOCIAL], [GROUP], [NORM], [ROLE], [SYMBOLIC], etc.
+
+Use `EMERGENT [TYPE: psychological | organisational | social]` or qualified like `EMERGENT [PSYCHOLOGICAL: insight]`.
+
+Multi-level STATE: `STATE foo [scope: individual | team | org; dir: read/write]`
+
+These are additive; existing documents remain valid.
 - `ATOMIC { … }` — a group whose effect is all-or-nothing.
 - `RECOVERY: <action>` — a step/process annotation stating what happens if a crash
   interrupts here on restart (e.g. `RECOVERY: redelivery re-runs the enqueue, which
@@ -458,6 +492,11 @@ extensions** for anything custom.
 | **Timing** | `SYNC` · `ASYNC` |
 | **Effects** | `PURE` · `SIDE-EFFECT` · `IDEMPOTENT` |
 | **Control** (optional) | `BLOCKING` · `GATED` (human review) · `CACHED` |
+
+**Domain-specific extensions** (from psychological / organisational / sociological proposals):
+- Psychological: `EMOTIONAL` · `COGNITIVE` · `APPRAISAL` · `REGULATION` · `MOTIVATIONAL` · `METACOGNITIVE` · `BEHAVIORAL`
+- Organisational: `LEADERSHIP` · `STRATEGIC` · `CULTURAL` · `POWER` · `STAKEHOLDER` · `STRUCTURAL` · `ALIGNMENT` · `RESISTANCE`
+- Sociological: `SOCIAL` · `GROUP` · `NORM` · `ROLE` · `SYMBOLIC`
 
 Example: `[LLM, STOCHASTIC, SYNC, SIDE-EFFECT]`.
 

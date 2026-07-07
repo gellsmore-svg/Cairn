@@ -26,5 +26,10 @@ The constructs that build a PROCESS ([document mode](document-modes.md)):
   path. **AWAIT** — wait on an external event/result.
 - **CALL** — invoke another process by [signature](composition.md).
 
+**Domain extensions (see proposals):**
+- Psychological: `REGULATION`, `APPRAISAL`, `DUAL_PROCESS`, `METACOGNITION`
+- Organisational: `ALIGN`, `COALITION`, `RESISTANCE`, `REINFORCEMENT`, `CASCADE`, `VISION`
+- Sociological: `SOCIALIZE`, `INSTITUTIONALIZE`, `SYMBOLIC_INTERACTION`, `CONFLICT`, `ACCOMMODATE`, `ASSIMILATE`, `ROLE`
+
 Steps carry [tags](tags.md) and may read/write [STATE](state.md). The full grammar
 is in [GRAMMAR.md](../reference/grammar.md); see [worked examples](../reference/examples.md).

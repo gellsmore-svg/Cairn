@@ -72,10 +72,20 @@ emergent-satisfies = "EMERGENT" satisfies NL { TEXT NL } ;   (* block at OUTCOME
 (* a step may *be* a construct, or a construct may stand on its own line *)
 construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
                 | "PARALLEL" | "SERVICE" | "DECISION" | "RETRY"
-                | "ERROR" | "AWAIT" | "CALL" ;
+                | "ERROR" | "AWAIT" | "CALL"
+                | "REGULATION" | "APPRAISAL" | "DUAL_PROCESS" | "METACOGNITION"
+                | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
+                | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
+                | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
+                | "ASSIMILATE" | "ROLE" ;
 construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
                   | "SERVICE" | "CONCURRENT" | "DECISION" | "RETRY" | "ERROR"
-                  | "AWAIT" | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC" )
+                  | "AWAIT" | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC"
+                  | "REGULATION" | "APPRAISAL" | "DUAL_PROCESS" | "METACOGNITION"
+                  | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
+                  | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
+                  | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
+                  | "ASSIMILATE" | "ROLE" )
                   [ modifiers ] [ "→" TEXT ] TEXT? NL ;
 modifiers       = "[" mod { ";" mod } "]" ;
 mod             = key ":" TEXT | flag ;        (* e.g. UNTIL: …; MAX: 5 *)
@@ -86,7 +96,14 @@ tag             = reserved-tag [ "[" TEXT "]" ]    (* IDEMPOTENT [KEY: …], BAT
                 | assisted-by
                 | satisfies
                 | ext-tag ;
-reserved-tag    = actor | determinism | timing | effect | control ;
+reserved-tag    = actor | determinism | timing | effect | control
+                | domain-tag ;
+domain-tag      = psychological-tag | organisational-tag | sociological-tag ;
+psychological-tag = "EMOTIONAL" | "COGNITIVE" | "APPRAISAL" | "REGULATION"
+                | "MOTIVATIONAL" | "METACOGNITIVE" | "BEHAVIORAL" ;
+organisational-tag = "LEADERSHIP" | "STRATEGIC" | "CULTURAL" | "POWER"
+                | "STAKEHOLDER" | "STRUCTURAL" | "ALIGNMENT" | "RESISTANCE" ;
+sociological-tag = "SOCIAL" | "GROUP" | "NORM" | "ROLE" | "SYMBOLIC" ;
 actor           = ( "LLM" | "HUMAN" | "CODE" | "EXTERNAL" ) [ ":" role ] ;  (* HUMAN: Product Lead *)
 assisted-by     = "ASSISTED-BY:" actor { "," actor } ;
 role            = word { word } ;

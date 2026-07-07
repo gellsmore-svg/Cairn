@@ -18,6 +18,11 @@ without changing the narrative:
   stochastic).
 - **Timing** — `SYNC` vs `ASYNC`.
 
+**Domain extensions** (see proposals):
+- Psychological: `EMOTIONAL`, `COGNITIVE`, `APPRAISAL`, `REGULATION`, `MOTIVATIONAL`, `METACOGNITIVE`, `BEHAVIORAL`
+- Organisational: `LEADERSHIP`, `STRATEGIC`, `CULTURAL`, `POWER`, `STAKEHOLDER`, `STRUCTURAL`, `ALIGNMENT`, `RESISTANCE`
+- Sociological: `SOCIAL`, `GROUP`, `NORM`, `ROLE`, `SYMBOLIC`
+
 Because the dimensions are independent, a step can carry several at once. Tags are
 exposed in full by the [`ai` profile](backbone-and-render-profiles.md) and the
 `audit` profile (alongside requirement links), and compressed away in the

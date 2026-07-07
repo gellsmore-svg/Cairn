@@ -11,9 +11,16 @@ DETERMINISM = frozenset({"DETERMINISTIC", "STOCHASTIC"})
 TIMING = frozenset({"SYNC", "ASYNC"})
 EFFECT = frozenset({"PURE", "SIDE-EFFECT", "IDEMPOTENT"})
 CONTROL = frozenset({"BLOCKING", "GATED", "CACHED", "BATCH"})
-DIMENSIONS = ("actor", "determinism", "timing", "effect", "control")
+DIMENSIONS = ("actor", "determinism", "timing", "effect", "control", "domain")
 
-_RESERVED_PREFIXES = ACTORS | DETERMINISM | TIMING | EFFECT | CONTROL
+DOMAIN = frozenset({
+    "EMOTIONAL", "COGNITIVE", "APPRAISAL", "REGULATION", "MOTIVATIONAL",
+    "METACOGNITIVE", "BEHAVIORAL",
+    "LEADERSHIP", "STRATEGIC", "CULTURAL", "POWER", "STAKEHOLDER",
+    "STRUCTURAL", "ALIGNMENT", "RESISTANCE",
+    "SOCIAL", "GROUP", "NORM", "ROLE", "SYMBOLIC"
+})
+_RESERVED_PREFIXES = ACTORS | DETERMINISM | TIMING | EFFECT | CONTROL | DOMAIN
 
 
 def split_tag_list(raw: str) -> list[str]:
@@ -78,6 +85,8 @@ def classify_tag(tag: str) -> tuple[str | None, str]:
         return "effect", upper
     if root in CONTROL:
         return "control", upper
+    if root in DOMAIN:
+        return "domain", upper
     if re.match(r"^[a-z][\w-]*:\S+", upper):
         return "custom", upper
     return None, upper
