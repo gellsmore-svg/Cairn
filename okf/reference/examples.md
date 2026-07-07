@@ -54,6 +54,35 @@ stress test of the [spec](spec.md):
 - **[`relational-substrate.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/relational-substrate.cairn.md)**
   — Relational Substrate grammar sandbox and coherence sweep (non-agentic contrast).
 
+## New Domain Extensions (Psychological, Organisational, Sociological)
+
+These extend Cairn beyond technical/agentic processes into human-centric domains, with new tags/constructs proposed in `docs/proposals/`.
+
+**Psychological:**
+- [`psych-gross-emotion-regulation.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-gross-emotion-regulation.cairn.md)
+- [`psych-attachment-regulation.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-attachment-regulation.cairn.md)
+- [`psych-cognitive-dissonance.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-cognitive-dissonance.cairn.md)
+- [`psych-dual-process-decision.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-dual-process-decision.cairn.md)
+- [`psych-metacognition.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-metacognition.cairn.md)
+- [`psych-operant-conditioning.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-operant-conditioning.cairn.md)
+- [`psych-self-determination-motivation.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/psych-self-determination-motivation.cairn.md)
+
+**High-Level Organisational:**
+- [`org-kotter-8step-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-kotter-8step-change.cairn.md)
+- [`org-adkar-individual-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-adkar-individual-change.cairn.md)
+- [`org-lewin-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-lewin-change.cairn.md)
+- [`org-mckinsey-7s.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-mckinsey-7s.cairn.md)
+- [`org-stakeholder-engagement.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-stakeholder-engagement.cairn.md)
+- [`org-culture-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/org-culture-change.cairn.md)
+
+**Sociological:**
+- [`socio-symbolic-interaction.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-symbolic-interaction.cairn.md)
+- [`socio-socialization.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-socialization.cairn.md)
+- [`socio-conflict-resolution.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-conflict-resolution.cairn.md)
+- [`socio-norm-formation.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-norm-formation.cairn.md)
+- [`socio-social-movements.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-social-movements.cairn.md)
+
 Each exercises the [constructs](../concepts/constructs.md), [tags](../concepts/tags.md),
-and [modes](../concepts/document-modes.md) on a genuine agentic process — gaps
-found while writing them have fed back into the spec.
+and [modes](../concepts/document-modes.md) — with new domain-specific extensions proposed in the docs/proposals/.
+
+Gaps found while writing them have fed back into the spec.

@@ -31,6 +31,8 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 - [`psych-cognitive-dissonance.cairn.md`](psych-cognitive-dissonance.cairn.md) — Cognitive dissonance detection and reduction strategies.
 - [`psych-dual-process-decision.cairn.md`](psych-dual-process-decision.cairn.md) — System 1 vs System 2 decision making under affect.
 - [`psych-metacognition.cairn.md`](psych-metacognition.cairn.md) — Metacognitive monitoring and control in learning/problem-solving.
+- [`psych-operant-conditioning.cairn.md`](psych-operant-conditioning.cairn.md) — Operant conditioning, reinforcement schedules, and extinction.
+- [`psych-self-determination-motivation.cairn.md`](psych-self-determination-motivation.cairn.md) — SDT basic psychological needs and motivation internalization.
 
 ## High-Level Organisational Process Examples
 - [`org-kotter-8step-change.cairn.md`](org-kotter-8step-change.cairn.md) — Kotter's 8-step model for leading organisational transformation.
@@ -38,12 +40,14 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 - [`org-lewin-change.cairn.md`](org-lewin-change.cairn.md) — Lewin's Unfreeze-Change-Refreeze model.
 - [`org-mckinsey-7s.cairn.md`](org-mckinsey-7s.cairn.md) — McKinsey 7-S alignment for organisational effectiveness.
 - [`org-stakeholder-engagement.cairn.md`](org-stakeholder-engagement.cairn.md) — Stakeholder power mapping and tailored engagement.
+- [`org-culture-change.cairn.md`](org-culture-change.cairn.md) — Schein's culture levels and change process (artefacts to basic assumptions).
 
 ## Sociological Process Examples
 - [`socio-symbolic-interaction.cairn.md`](socio-symbolic-interaction.cairn.md) — Symbolic interactionism: meaning-making, role-taking, and self-formation.
 - [`socio-socialization.cairn.md`](socio-socialization.cairn.md) — Primary and secondary socialization of norms, values, and roles.
 - [`socio-conflict-resolution.cairn.md`](socio-conflict-resolution.cairn.md) — Social conflict processes and pathways to resolution.
 - [`socio-norm-formation.cairn.md`](socio-norm-formation.cairn.md) — Emergence, institutionalization, and enforcement of social norms.
+- [`socio-social-movements.cairn.md`](socio-social-movements.cairn.md) — Social movement framing, mobilization, and collective action for change.
 
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that
