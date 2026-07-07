@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from cairn.render import registered_profiles, render_plan
+from cairn.render import registered_exporters, registered_profiles, render_plan
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -24,12 +24,14 @@ def main(argv: list[str] | None = None) -> int:
         help="Render profile",
     )
     parser.add_argument("-l", "--language", default="en", help="Language code (en, es, fr)")
+    available_formats = ["markdown", "text", "json", "mermaid", "html", "docx", "pdf"]
     parser.add_argument(
         "-f",
         "--format",
         default="markdown",
-        choices=["markdown", "text", "json", "mermaid"],
+        choices=available_formats,
         dest="output_format",
+        help="Output format (docx/pdf require cairn-lang[export])",
     )
     parser.add_argument("-o", "--output", help="Write to file instead of stdout")
     parser.add_argument("--boxed", action="store_true", help="Use boxed/card layout")
@@ -62,14 +64,25 @@ def main(argv: list[str] | None = None) -> int:
     if args.sections:
         options["sections"] = [s.strip() for s in args.sections.split(",") if s.strip()]
 
-    result = render_plan(
-        source,
-        profile=args.profile,
-        language=args.language,
-        output_format=args.output_format,
-        options=options,
-        stylesheet=args.stylesheet,
-    )
+    try:
+        result = render_plan(
+            source,
+            profile=args.profile,
+            language=args.language,
+            output_format=args.output_format,
+            options=options,
+            stylesheet=args.stylesheet,
+        )
+    except ImportError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    if isinstance(result, (bytes, bytearray)):
+        if args.output:
+            Path(args.output).write_bytes(result)
+        else:
+            sys.stdout.buffer.write(result)
+        return 0
 
     if args.output_format == "json":
         out = json.dumps(result, indent=2) if isinstance(result, dict) else str(result)

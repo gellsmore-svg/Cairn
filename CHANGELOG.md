@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+- **Export story completed**: Built-in exporters for `html` (always), `docx` (python-docx), `pdf` (fpdf2) via `cairn-lang[export]` extra.
+  - `cairn-render -f docx -o out.docx` and `-f pdf`, `-f html` now supported.
+  - `export_view()` dispatches to them; nice ImportError if extra not installed.
+  - Updated docs, tests, CLI choices and render_plan.
+  - See VIEW-GENERATOR.md and export.py for usage and custom exporters.
+
 ## [0.5.2] — 2026-07-05
 
 - **`document_to_dict`:** JSON-serializable AST export; `cairn-validate --export-ast`.

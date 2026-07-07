@@ -62,19 +62,25 @@ Proof-of-concept: `en`, `es`, `fr`.
 cairn-render examples/keturah.cairn.md --profile operator --boxed
 cairn-render plan.json --profile audit --format json -o audit.json
 cairn-render process.cairn.md --max-depth 2 --sections process,outcomes
+cairn-render examples/tirzah.cairn.md -f html -o view.html   # built-in HTML export
 ```
 
 ## Export plugins (docx / PDF)
+
+Built-in "html" exporter is always available. For docx/pdf:
 
 ```python
 from cairn.render import register_exporter, export_view, render_plan
 
 def to_docx(result, options):
-    ...  # your docx builder
+    ...  # your docx builder (pip install python-docx)
     return b"..."
 
 register_exporter("docx", to_docx)
-result = render_plan(md, output_format="json")  # or build RenderResult internally
+
+# CLI now supports it:
+# cairn-render input.cairn.md -f docx -o out.docx
+bytes_out = export_view(render_plan(md), "docx")
 ```
 
 ## Scope

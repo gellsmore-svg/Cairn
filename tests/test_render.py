@@ -99,7 +99,17 @@ def test_export_view_requires_registered_exporter():
 
     result = RenderResult(profile="x", language="en", format="markdown", body="hi")
     with pytest.raises(NotImplementedError, match="No exporter registered"):
+        export_view(result, "unknown_format")
+
+    # html is built-in
+    html = export_view(result, "html")
+    assert b"<!DOCTYPE html>" in html
+
+    # docx/pdf require extra, raise ImportError when called
+    with pytest.raises(ImportError, match="python-docx is required"):
         export_view(result, "docx")
+    with pytest.raises(ImportError, match="fpdf2 is required"):
+        export_view(result, "pdf")
 
 
 def test_manifest_lists_render_plan():

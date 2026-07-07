@@ -51,7 +51,7 @@ def render_plan(
     options: dict[str, Any] | None = None,
     *,
     stylesheet: str | Path | None = None,
-) -> str | dict[str, Any]:
+) -> str | dict[str, Any] | bytes:
     """Transform a Cairn process description into a simplified human-readable view.
 
     Parameters
@@ -64,7 +64,8 @@ def render_plan(
     language:
         ``en`` or ``es`` (proof-of-concept multilingual layer).
     output_format:
-        ``markdown``, ``text``, ``json``, or ``mermaid``.
+        ``markdown``, ``text``, ``json``, ``mermaid``, ``html``, ``docx``, or ``pdf``
+        (docx/pdf require 'cairn-lang[export]').
     options:
         Per-render overrides: ``boxed``, ``include_tags``, ``include_sub_blocks``,
         ``include_footnotes``, ``max_depth``, ``sections``.
@@ -73,8 +74,8 @@ def render_plan(
 
     Returns
     -------
-    str or dict
-        Rendered view (dict when ``output_format='json'``).
+    str or dict or bytes
+        Rendered view (dict for json; bytes for export formats like html).
     """
     opts: dict[str, Any] = dict(DEFAULT_OPTIONS)
     if stylesheet is not None:
@@ -88,6 +89,10 @@ def render_plan(
     doc = apply_filters(normalize_input(input_cairn), opts)
     renderer = get_profile(profile_name)
     result = renderer.render(doc, language, opts)
+
+    # Binary export formats go through the exporter (returns bytes)
+    if output_format in ("html",) or output_format in registered_exporters():
+        return export_view(result, output_format, opts)
 
     if output_format == "json":
         return apply_format(result, doc, "json")

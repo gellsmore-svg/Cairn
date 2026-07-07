@@ -25,7 +25,7 @@ from cairn.grammar import (
     parse_document,
     validate_document,
 )
-from cairn.render import render_plan, registered_profiles
+from cairn.render import export_view, register_exporter, registered_exporters, registered_profiles, render_plan
 
 __all__ = [
     "CANONICAL_PLAN",
@@ -42,6 +42,9 @@ __all__ = [
     "extract_cairn_source",
     "is_conformant",
     "parse_document",
+    "export_view",
+    "register_exporter",
+    "registered_exporters",
     "registered_profiles",
     "render_plan",
     "validate_document",
