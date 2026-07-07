@@ -93,6 +93,19 @@ cairn-live-observe docs/observations/noa-live-observer-sample.jsonl \
   --output docs/analysis/noa-live-observer-sample.md
 ```
 
+When the source is a Galeed trace export, use the bridge command:
+
+```bash
+cairn-galeed-observe docs/galeed/sample-trace-events.jsonl \
+  --title "Galeed trace bridge sample" \
+  --observations-output docs/observations/galeed-trace-observations.jsonl \
+  --output docs/analysis/galeed-trace-observer-sample.md
+```
+
+This preserves Galeed correlation keys (`request_id`, `session_id`, `trace_id`,
+`plan_id`, `job_id`) while mapping trace events into Cairn observation kinds such
+as `agent_step`, `agent_output`, `queue_event`, `feedback`, and `system_log`.
+
 The report includes:
 
 - observation counts by source and kind,

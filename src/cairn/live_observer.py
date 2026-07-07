@@ -151,7 +151,12 @@ def _findings(
             )
         )
 
-    if any(_has_tag(event, "unsupported_output") or _has_tag(event, "overconfident_output") for event in events):
+    if any(
+        _has_tag(event, "unsupported_output")
+        or _has_tag(event, "overconfident_output")
+        or (_has_tag(event, "missing_evidence") and event.get("kind") == "agent_output")
+        for event in events
+    ):
         findings.append(
             LiveObservationFinding(
                 family="agent_effectiveness",

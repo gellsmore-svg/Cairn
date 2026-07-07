@@ -25,6 +25,7 @@ from cairn.grammar import (
     parse_document,
     validate_document,
 )
+from cairn.galeed_adapter import galeed_event_to_observation, galeed_llm_call_to_observation
 from cairn.human_factors import (
     analyze_human_factors,
     build_human_factors_prompt,
@@ -58,6 +59,8 @@ __all__ = [
     "document_to_plan",
     "discover_system",
     "extract_cairn_source",
+    "galeed_event_to_observation",
+    "galeed_llm_call_to_observation",
     "analyze_human_factors",
     "analyze_live_observations",
     "analyze_ui_simulation_report",
