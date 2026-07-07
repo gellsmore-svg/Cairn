@@ -31,6 +31,7 @@ dependencies = [
 [project.scripts]
 cairn-render = "cairn.cli:main"
 cairn-human-factors = "cairn.human_factors_cli:main"
+cairn-ui-sim = "cairn.ui_sim_cli:main"
 cairn-validate = "cairn.validate_cli:main"
 cairn-serve = "cairn.web:main"
 
@@ -47,3 +48,6 @@ export = ["python-docx>=1.0", "fpdf2>=2.7"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+cairn = ["ui_sim_runner.mjs"]
