@@ -4,9 +4,9 @@ A Cairn description of **Hoglah's decoupled submitter/worker pattern** — how
 Tirzah, Milcah, and other clients **submit** model jobs without executing them,
 while a separate worker daemon owns the queue, claims, and recovery.
 
-This complements [`hoglah.cairn.md`](hoglah.cairn.md) (messaging **bridge** with
-`SERVICE` loops). The pure submitter path is the common in-process integration
-pattern on a shared SQLite/Mongo store.
+This complements [`hoglah.cairn.md`](hoglah.cairn.md) (bridge) and the low-level worker internals in [`hoglah-execution.cairn.md`](hoglah-execution.cairn.md).
+
+The pure submitter path is the common in-process integration pattern on a shared store.
 
 ---
 

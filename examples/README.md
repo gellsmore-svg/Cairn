@@ -18,6 +18,7 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 | [`mizpah.cairn.md`](mizpah.cairn.md) | Mizpah | Cross-session trace browser |
 | [`hoglah.cairn.md`](hoglah.cairn.md) | Hoglah | Crash-safe bridge (v2: SERVICE, DURABLE-BEFORE) |
 | [`hoglah-submit.cairn.md`](hoglah-submit.cairn.md) | Hoglah | Pure submitter / worker daemon topology |
+| [`hoglah-execution.cairn.md`](hoglah-execution.cairn.md) | Hoglah | Low-level worker execution (_process_job, claim, retries, dispatch lease, adapter, deliver, recovery) — based on actual source |
 | [`mahalath.cairn.md`](mahalath.cairn.md) | Mahalath | Ingest → debate → ontology |
 | [`mahlah.cairn.md`](mahlah.cairn.md) | Mahlah | Three-channel conversational UI |
 | [`milcah.cairn.md`](milcah.cairn.md) | Milcah | Recursive coherence-pressure rounds |

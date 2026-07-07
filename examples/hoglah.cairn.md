@@ -10,8 +10,9 @@ intended long-running-service model (see stress-test notes at the end).
 Hoglah is a local-first job queue for Ollama. A bridge (Kafka / RabbitMQ / Redis
 Streams) optionally feeds the durable store; the design below is broker-neutral.
 
-For the **pure submitter** path (Tirzah/Milcah enqueue, separate daemon executes),
-see [`hoglah-submit.cairn.md`](hoglah-submit.cairn.md).
+For the **pure submitter** path see [`hoglah-submit.cairn.md`](hoglah-submit.cairn.md).
+
+For the **detailed internal execution** (worker loop, claim, retries, dispatch, adapter calls, recovery) see the low-level implementation walk-through in [`hoglah-execution.cairn.md`](hoglah-execution.cairn.md).
 
 ---
 
