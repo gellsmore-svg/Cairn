@@ -13,6 +13,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from cairn.ui_scenarios import format_scenario_validation_report, load_ui_scenario, validate_ui_scenario
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
@@ -25,8 +27,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", "-o", help="Write JSON report to this path")
     parser.add_argument("--headed", action="store_true", help="Run browser headed instead of headless")
     parser.add_argument("--timeout", type=int, default=30000, help="Default action timeout in ms")
+    parser.add_argument("--skip-validation", action="store_true", help="Run without validating the scenario first")
 
     args = parser.parse_args(argv)
+    scenario_path = Path(args.scenario).resolve()
+    if not args.skip_validation:
+        report = validate_ui_scenario(load_ui_scenario(scenario_path), path=str(scenario_path))
+        if not report.ok:
+            print(format_scenario_validation_report(report), file=sys.stderr)
+            return 2
+
     runner = Path(__file__).with_name("ui_sim_runner.mjs")
     env = dict(os.environ)
     if args.base_url:
@@ -36,7 +46,7 @@ def main(argv: list[str] | None = None) -> int:
     env["CAIRN_UI_HEADED"] = "1" if args.headed else "0"
     env["CAIRN_UI_TIMEOUT"] = str(args.timeout)
 
-    command = ["node", str(runner), str(Path(args.scenario).resolve())]
+    command = ["node", str(runner), str(scenario_path)]
     proc = subprocess.run(command, cwd=args.project_root, env=env, text=True)
     return proc.returncode
 

@@ -35,6 +35,7 @@ cairn-ui-sim = "cairn.ui_sim_cli:main"
 cairn-ui-evidence = "cairn.ui_evidence_cli:main"
 cairn-ui-roleplay = "cairn.ui_roleplay_cli:main"
 cairn-ui-annotations = "cairn.ui_annotations_cli:main"
+cairn-ui-scenario-validate = "cairn.ui_scenario_validate_cli:main"
 cairn-validate = "cairn.validate_cli:main"
 cairn-serve = "cairn.web:main"
 

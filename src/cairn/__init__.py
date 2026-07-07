@@ -40,6 +40,7 @@ from cairn.ui_evidence import (
     format_ui_human_load_report,
     interpret_ui_experience,
 )
+from cairn.ui_scenarios import format_scenario_validation_report, validate_ui_scenario
 
 __all__ = [
     "CANONICAL_PLAN",
@@ -62,6 +63,7 @@ __all__ = [
     "HoglahLLMProvider",
     "format_cairn_annotation_snippet",
     "format_human_factors_report",
+    "format_scenario_validation_report",
     "format_ui_human_load_report",
     "interpret_human_factors",
     "interpret_ui_experience",
@@ -76,4 +78,5 @@ __all__ = [
     "render_plan",
     "validate_document",
     "validate_plan",
+    "validate_ui_scenario",
 ]

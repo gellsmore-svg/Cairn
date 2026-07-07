@@ -306,6 +306,18 @@ def _findings(
             )
         )
 
+    if "uncertainty management" in systems:
+        findings.append(
+            UiEvidenceFinding(
+                family="cognitive_load",
+                factor="uncertainty load",
+                reason="The scenario declares uncertainty management as part of the user's task.",
+                mitigation="Surface missing context, assumptions, and confidence before asking the user to trust or act on the answer.",
+                probability="medium",
+                impact="high",
+            )
+        )
+
     if metrics.get("popups", 0):
         findings.append(
             UiEvidenceFinding(

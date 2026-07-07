@@ -37,6 +37,19 @@ def test_ui_simulation_report_becomes_human_load_evidence():
     assert "context_switches: 3" in report.suggested_blocks["HUMAN_LOAD"]
 
 
+def test_missing_information_report_marks_uncertainty_load():
+    raw = json.loads(
+        (ROOT / "docs" / "analysis" / "mahlah-missing-information-ui-sim-report.json").read_text(encoding="utf-8")
+    )
+    report = analyze_ui_simulation_report(raw)
+
+    factors = {(finding.family, finding.factor) for finding in report.findings}
+    assert ("cognitive_load", "uncertainty load") in factors
+    assert report.risk is not None
+    assert report.risk.score == "significant"
+    assert "uncertainty management" in report.suggested_blocks["HUMAN_LOAD"]
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)

@@ -68,6 +68,15 @@ an automatic edit: a human process owner should decide where it belongs.
 
 ## Scenario Actions
 
+Validate scenario shape before running a browser:
+
+```bash
+cairn-ui-scenario-validate docs/scenarios/mahlah-human-load.json
+```
+
+`cairn-ui-sim` runs the same validation by default. Use `--skip-validation` only
+when experimenting with runner changes.
+
 Supported actions in the prototype:
 
 - `assertVisible`
@@ -85,6 +94,23 @@ Supported actions in the prototype:
 - `finding`
 
 Most selector-based actions accept an optional zero-based `index`, which is useful when a UI has repeated controls.
+
+Each step may include `humanLoad`:
+
+```json
+{
+  "phase": "execution",
+  "systems": ["language", "working memory"],
+  "demand": "The user translates intent into a prompt while preserving the business question."
+}
+```
+
+Known phases are `awareness`, `execution`, `notification`, `inspection`,
+`feedback`, `recovery`, `adaptation`, and `organisational_pressure`.
+
+Steps may also set `contextSwitch: true` when the action moves the user into a
+different surface, mode, or mental frame. The evidence layer counts this
+separately from ordinary clicks.
 
 ## Evidence Shape
 
