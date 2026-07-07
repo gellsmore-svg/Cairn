@@ -84,6 +84,7 @@ A profile projects the backbone with rules for what to **expose**, what to
 |---|---|---|---|---|
 | `ai` | machines / execution | everything: every step, modifier, tag, state | nothing | a precise, complete skeleton |
 | `operator` | the person running it | intent, ownership, decisions, iteration, milestones, outputs | internal calls, mechanical sub-steps | a guided operational narrative |
+| `human_demand` | UX / service / change designers | awareness, action load, closure, recovery, simulation findings | technical mechanism not relevant to the human burden | a human-load review |
 | `executive` | sponsors / overview | milestones, owners, outcomes, key decisions | almost all mechanism | a one-glance status story |
 | `audit` | review / compliance | everything significant + decisions, constraints, provenance, who-did-what | low-value mechanics only | a defensible record |
 
@@ -124,6 +125,67 @@ FRAME Opportunity
 **Success criterion:** a human grasps purpose, ownership, progress, and iteration
 without reading mechanism. **Guardrail:** if removing a keyword or structure makes
 understanding *harder*, the profile is over-compressed — restore it.
+
+### 3.3 Human demand mapping
+
+Human-facing steps carry more than operational work. They ask people to notice,
+understand, decide, remember, trust, recover, and close loops. Cairn may model
+that demand directly so process design can treat human capacity as part of the
+system, not an afterthought.
+
+The recommended backbone is:
+
+- **ORIENT** - how the person becomes aware that something needs attention, and
+  what they must understand before useful action is possible.
+- **ACT** - the work, judgement, decision, correction, or delegation the person
+  performs.
+- **CLOSE** - how the person knows the work is done, what state changed, and what
+  they should expect next.
+- **RECOVER** - optional paths for confusion, missing information, overload,
+  error, reversal, or escalation.
+- **ADAPT** - optional learning, role change, trust recalibration, habit change,
+  or organisational effect from repeated use.
+
+Use `HUMAN_DEMAND:` for this arc. Add `SUPPORT:` for what the system provides to
+meet the demand, `TRUST:` for what makes reliance justified, and `CHANGE_IMPACT:`
+when the process changes skills, roles, authority, incentives, or accountability.
+
+For AI-assisted UX review, use `HUMAN_SIMULATION:` to describe an AI role-play
+pass: role, expertise, visible context, task goal, and test cases. Use
+`HUMAN_LOAD:` or `SIMULATION_FINDINGS:` to record observed load: focus actions,
+trivial actions, explicit decisions, context switches, missing-context events,
+recursions, input burden, and closure clarity. Use `HUMAN_FACTORS:` to name the
+plausible cognitive, psychological, social, organisational, behavioural-economic,
+or incentive forces present in the step. Use `HUMAN_RISK:` for qualitative
+probability, impact, confidence, score, and rationale.
+
+```
+3. Review the AI-generated invoice exception summary. [HUMAN, ASSISTED-BY: LLM, GATED]
+   HUMAN_DEMAND:
+     ORIENT: notice why this invoice needs attention.
+     ACT: compare the summary with invoice, purchase order, receipt, and policy.
+     CLOSE: record a decision and see the case leave the open queue.
+     RECOVER: request missing evidence or escalate to a manager.
+   HUMAN_LOAD:
+     business_actions: 2
+     navigation_actions: 4
+     context_switches: 5
+     uncertainty_loops: 2
+   HUMAN_FACTORS:
+     cognitive_load: context switching, working memory burden.
+     trust_automation: automation bias if recommendation appears before evidence.
+   HUMAN_RISK:
+     probability: high
+     impact: high
+     confidence: medium
+     score: critical
+     rationale: the person is accountable for a high-consequence decision while carrying uncertainty and tool overhead.
+   TRUST: show source evidence and uncertainty before approval.
+```
+
+**Success criterion:** the process makes visible what it asks of the human, why
+that demand is justified, and what support keeps the human from becoming a
+rubber stamp or hidden failure point.
 
 ---
 
@@ -171,7 +233,10 @@ A step is a line; it may carry indented sub-blocks:
 ```
 
 Sub-block keywords: `STATE UPDATE`, `OUTPUT`, `RISKS`, `CONSTRAINTS` /
-`BOUNDARIES`, `CONTEXT`, `PURPOSE`, or nested numbered steps.
+`BOUNDARIES`, `CONTEXT`, `PURPOSE`, human-demand blocks (`HUMAN_DEMAND`,
+`HUMAN_LOAD`, `HUMAN_SIMULATION`, `HUMAN_FACTORS`, `HUMAN_RISK`, `TRUST`,
+`SUPPORT`, `FAILURE_MODE`, `SIMULATION_FINDINGS`, `IMPROVEMENT`,
+`CHANGE_IMPACT`), or nested numbered steps.
 
 
 ### 4.5 PLAN — a live, revisable process instance
@@ -410,8 +475,14 @@ These are additive; existing documents remain valid.
 New profiles for human-system work:
 - `therapeutic` — emphasises regulation, appraisal, feedback.
 - `change_leader` — emphasises coalition, resistance, alignment, reinforcement.
+- `human_demand` — emphasises ORIENT / ACT / CLOSE demand, simulation findings,
+  support, trust, recovery, and change impact.
+- `human_factors` — emphasises plausible cognitive, psychological, social,
+  organisational, behavioural-economic, and incentive forces, with qualitative
+  risk estimates.
 
-Use `cairn-render ... --profile therapeutic` (or `change_leader`).
+Use `cairn-render ... --profile therapeutic`, `change_leader`, or
+`human_demand` / `human_factors`.
 - `ATOMIC { … }` — a group whose effect is all-or-nothing.
 - `RECOVERY: <action>` — a step/process annotation stating what happens if a crash
   interrupts here on restart (e.g. `RECOVERY: redelivery re-runs the enqueue, which

@@ -346,6 +346,133 @@ class ChangeLeaderProfile(RenderProfile):
         return res
 
 
+_HUMAN_DEMAND_KEYS = (
+    "HUMAN_DEMAND",
+    "HUMAN_LOAD",
+    "HUMAN_FACTORS",
+    "HUMAN_RISK",
+    "HUMAN_SIMULATION",
+    "TRUST",
+    "SUPPORT",
+    "FAILURE_MODE",
+    "SIMULATION_FINDINGS",
+    "IMPROVEMENT",
+    "CHANGE_IMPACT",
+)
+
+_HUMAN_FACTORS_KEYS = (
+    "HUMAN_FACTORS",
+    "HUMAN_RISK",
+    "SIMULATION_FINDINGS",
+    "IMPROVEMENT",
+    "SUPPORT",
+    "TRUST",
+    "CHANGE_IMPACT",
+)
+
+
+class HumanDemandProfile(RenderProfile):
+    name = "human_demand"
+
+    def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
+        lines: list[str] = []
+        if doc.title:
+            lines.append(f"# Human Demand View: {doc.title}")
+            lines.append("")
+
+        labels = SUB_BLOCK_LABELS.get(language, SUB_BLOCK_LABELS["en"])
+
+        def emit(nodes: list[StepNode], depth: int = 0) -> None:
+            for node in nodes:
+                demand_blocks = {key: node.sub_blocks[key] for key in _HUMAN_DEMAND_KEYS if key in node.sub_blocks}
+                human_touch = any(tag.upper().startswith("HUMAN") or "ASSISTED-BY" in tag.upper() for tag in node.tags)
+                if demand_blocks or human_touch:
+                    summary = phrase_construct(
+                        node.construct,
+                        node.text,
+                        language,
+                        node.tags,
+                        getattr(node, "parsed_modifiers", {}),
+                    )
+                    lines.append(f"{_indent(depth)}## {node.number}. {summary}")
+                    if node.tags:
+                        lines.append(f"{_indent(depth)}_Tags: {', '.join(node.tags)}_")
+                    purpose = node.sub_blocks.get("PURPOSE")
+                    if purpose:
+                        lines.append(f"{_indent(depth)}**Purpose:** {purpose}")
+                    for key, value in demand_blocks.items():
+                        label = labels.get(key, key.replace("_", " ").title())
+                        lines.append(f"{_indent(depth)}**{label}:**")
+                        for subline in value.splitlines() or [""]:
+                            lines.append(f"{_indent(depth)}  {subline}")
+                    lines.append("")
+                emit(node.children, depth + 1)
+
+        emit(_steps_for_profile(doc, self.name))
+        if not lines:
+            lines.append("# Human Demand View")
+            lines.append("")
+            lines.append("No human demand annotations were found.")
+
+        return RenderResult(
+            profile=self.name,
+            language=language,
+            format=options.get("output_format", "markdown"),
+            body="\n".join(lines).strip(),
+            metadata={"warnings": doc.warnings},
+        )
+
+
+class HumanFactorsProfile(RenderProfile):
+    name = "human_factors"
+
+    def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
+        lines: list[str] = []
+        if doc.title:
+            lines.append(f"# Human Factors Review: {doc.title}")
+            lines.append("")
+
+        labels = SUB_BLOCK_LABELS.get(language, SUB_BLOCK_LABELS["en"])
+
+        def emit(nodes: list[StepNode], depth: int = 0) -> None:
+            for node in nodes:
+                factor_blocks = {key: node.sub_blocks[key] for key in _HUMAN_FACTORS_KEYS if key in node.sub_blocks}
+                if factor_blocks:
+                    summary = phrase_construct(
+                        node.construct,
+                        node.text,
+                        language,
+                        node.tags,
+                        getattr(node, "parsed_modifiers", {}),
+                    )
+                    lines.append(f"{_indent(depth)}## {node.number}. {summary}")
+                    purpose = node.sub_blocks.get("PURPOSE")
+                    if purpose:
+                        lines.append(f"{_indent(depth)}**Purpose:** {purpose}")
+                    for key, value in factor_blocks.items():
+                        label = labels.get(key, key.replace("_", " ").title())
+                        lines.append(f"{_indent(depth)}**{label}:**")
+                        for subline in value.splitlines() or [""]:
+                            lines.append(f"{_indent(depth)}  {subline}")
+                    lines.append(f"{_indent(depth)}**Conversation starter:** What human-system forces are plausibly present here, and which should be redesigned first?")
+                    lines.append("")
+                emit(node.children, depth + 1)
+
+        emit(_steps_for_profile(doc, self.name))
+        if not lines:
+            lines.append("# Human Factors Review")
+            lines.append("")
+            lines.append("No human factors annotations were found.")
+
+        return RenderResult(
+            profile=self.name,
+            language=language,
+            format=options.get("output_format", "markdown"),
+            body="\n".join(lines).strip(),
+            metadata={"warnings": doc.warnings},
+        )
+
+
 _PROFILES: dict[str, RenderProfile] = {
     "narrative_steps": NarrativeStepsProfile(),
     "simple_prose": SimpleProseProfile(),
@@ -354,6 +481,8 @@ _PROFILES: dict[str, RenderProfile] = {
     "audit": AuditProfile(),
     "therapeutic": TherapeuticProfile(),
     "change_leader": ChangeLeaderProfile(),
+    "human_demand": HumanDemandProfile(),
+    "human_factors": HumanFactorsProfile(),
     # SPEC v0.9 aliases
     "narrative": NarrativeStepsProfile(),
 }

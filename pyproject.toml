@@ -30,6 +30,7 @@ dependencies = [
 
 [project.scripts]
 cairn-render = "cairn.cli:main"
+cairn-human-factors = "cairn.human_factors_cli:main"
 cairn-validate = "cairn.validate_cli:main"
 cairn-serve = "cairn.web:main"
 

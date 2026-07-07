@@ -16,3 +16,4 @@ def test_manifest_conforms_and_lists_grammar():
     assert "validate_plan" in tool_names
     assert "parse_document" in tool_names
     assert "validate_document" in tool_names
+    assert "analyze_human_factors" in tool_names

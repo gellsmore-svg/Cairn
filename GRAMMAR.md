@@ -12,7 +12,7 @@ newline.
 
 ```ebnf
 document        = { directive | block } ;
-directive       = "render-profile:" profile-name NL ;   (* ai | operator | executive | audit | custom *)
+directive       = "render-profile:" profile-name NL ;   (* ai | operator | human_demand | human_factors | executive | audit | custom *)
 block           = context-block
                 | requirements-block
                 | outcomes-block
@@ -67,6 +67,10 @@ sub-block       = annotation
                 | step ;                       (* nested steps *)
 annotation      = ( "STATE UPDATE:" | "OUTPUT:" | "RISKS:" | "PURPOSE:"
                   | "CONSTRAINTS:" | "BOUNDARIES:" | "CONTEXT:"
+                  | "HUMAN_DEMAND:" | "HUMAN_LOAD:" | "HUMAN_SIMULATION:"
+                  | "HUMAN_FACTORS:" | "HUMAN_RISK:"
+                  | "TRUST:" | "SUPPORT:" | "FAILURE_MODE:"
+                  | "SIMULATION_FINDINGS:" | "IMPROVEMENT:" | "CHANGE_IMPACT:"
                   | emergent-satisfies ) TEXT NL ;
 emergent-satisfies = "EMERGENT" ( satisfies | attrs ) NL { TEXT NL } ;   (* e.g. EMERGENT [TYPE: psychological; FROM: regulation] or [SATISFIES: R3]; attrs for domain/feedback *)
 
@@ -132,7 +136,8 @@ Beyond grammar, a description is well-formed if:
 7. `BREAK`/`CONTINUE` appear only inside a loop;
 8. every `AWAIT` states a `TIMEOUT`.
 9. Domain constructs (REGULATION, COALITION, SOCIALIZE, FEEDBACK, MACRO, etc.) are encouraged when using matching tags for psych/org/socio work in human systems.
-10. New render profiles: `therapeutic` and `change_leader` for domain-focused views.
+10. Human-facing high-load steps should expose human demand (ORIENT / ACT / CLOSE), support, trust, recovery, and change impact where relevant.
+11. New render profiles: `therapeutic`, `change_leader`, `human_demand`, and `human_factors` for domain-focused views.
 
 This grammar is deliberately permissive about prose — it constrains the
 *scaffolding*, so a human stays free to write each step in plain language.

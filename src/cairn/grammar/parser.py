@@ -45,7 +45,10 @@ _STATE_DECL = re.compile(
     re.I,
 )
 _ANNOTATION = re.compile(
-    r"^(STATE UPDATE|OUTPUT|RISKS|PURPOSE|CONSTRAINTS|BOUNDARIES|CONTEXT):\s*(.*)$",
+    r"^(STATE UPDATE|OUTPUT|RISKS|PURPOSE|CONSTRAINTS|BOUNDARIES|CONTEXT|"
+    r"HUMAN_DEMAND|HUMAN SIMULATION|HUMAN_SIMULATION|HUMAN_LOAD|"
+    r"HUMAN_FACTORS|HUMAN_RISK|TRUST|SUPPORT|FAILURE_MODE|"
+    r"SIMULATION_FINDINGS|IMPROVEMENT|CHANGE_IMPACT):\s*(.*)$",
     re.I,
 )
 _EMERGENT = re.compile(r"^EMERGENT\s+(\[.*?\])\s*$", re.I)
@@ -298,22 +301,7 @@ class Parser:
             elif upper == "CONTEXT":
                 proc.context = self._parse_context_block()
             elif _ANNOTATION.match(cur.text):
-                ann = _ANNOTATION.match(cur.text)
-                assert ann is not None
-                annotation = Annotation(
-                    keyword=ann.group(1).upper().replace(" ", "_"),
-                    text=ann.group(2).strip(),
-                    lineno=cur.lineno,
-                )
-                self._advance()
-                while self._peek() and self._peek().indent > cur.indent:
-                    sub = self._advance()
-                    assert sub is not None
-                    if _ANNOTATION.match(sub.text) or _is_block_start(sub.text) or _STEP_ID.match(sub.text):
-                        self.pos -= 1
-                        break
-                    annotation.text = f"{annotation.text} {sub.text}".strip()
-                proc.elements.append(annotation)
+                proc.elements.append(self._parse_annotation())
             elif _STEP_ID.match(cur.text):
                 proc.steps.append(self._parse_step(body_indent))
             elif _CONSTRUCT_LINE.match(cur.text):
@@ -362,6 +350,25 @@ class Parser:
             block.lines.append(self._advance().text)  # type: ignore[union-attr]
         return block
 
+    def _parse_annotation(self) -> Annotation:
+        line = self._advance()
+        assert line is not None
+        ann = _ANNOTATION.match(line.text)
+        assert ann is not None
+        annotation = Annotation(
+            keyword=ann.group(1).upper().replace(" ", "_"),
+            text=ann.group(2).strip(),
+            lineno=line.lineno,
+        )
+        while self._peek() and self._peek().indent > line.indent:
+            sub = self._peek()
+            assert sub is not None
+            if _ANNOTATION.match(sub.text) or _is_block_start(sub.text) or _STEP_ID.match(sub.text):
+                break
+            annotation.text = f"{annotation.text}\n{sub.text}".strip()
+            self._advance()
+        return annotation
+
     def _parse_step(self, parent_indent: int) -> Step:
         line = self._advance()
         assert line is not None
@@ -407,10 +414,7 @@ class Parser:
             assert cur is not None
             ann = _ANNOTATION.match(cur.text)
             if ann:
-                self._advance()
-                step.annotations.append(
-                    Annotation(keyword=ann.group(1).upper().replace(" ", "_"), text=ann.group(2).strip(), lineno=cur.lineno)
-                )
+                step.annotations.append(self._parse_annotation())
                 continue
             cline = _CONSTRUCT_LINE.match(cur.text)
             if cline and not _STEP_ID.match(cur.text):

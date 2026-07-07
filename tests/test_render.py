@@ -9,7 +9,7 @@ EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
 def test_registered_profiles_include_required_views():
     names = registered_profiles()
-    for profile in ("narrative_steps", "simple_prose", "operator", "executive"):
+    for profile in ("narrative_steps", "simple_prose", "operator", "executive", "human_demand", "human_factors"):
         assert profile in names
 
 
@@ -118,3 +118,21 @@ def test_manifest_lists_render_plan():
     m = build_manifest()
     names = [c.name for c in m.capabilities]
     assert "render_plan" in names
+
+
+def test_human_demand_profile_from_accounts_payable_example():
+    md = (EXAMPLES / "accounts-payable-exception.cairn.md").read_text(encoding="utf-8")
+    text = render_plan(md, profile="human_demand")
+    assert "Human Demand View" in text
+    assert "ORIENT: understand the AI claim" in text
+    assert "Simulation findings" in text
+    assert "context switches" in text or "context_switches" in text
+
+
+def test_human_factors_profile_from_accounts_payable_example():
+    md = (EXAMPLES / "accounts-payable-exception.cairn.md").read_text(encoding="utf-8")
+    text = render_plan(md, profile="human_factors")
+    assert "Human Factors Review" in text
+    assert "automation bias" in text
+    assert "score: critical" in text
+    assert "Conversation starter" in text

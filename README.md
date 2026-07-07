@@ -49,8 +49,17 @@ cairn-render my-process.cairn.md --profile narrative_steps
 # Domain examples:
 #   --profile therapeutic     (psychological / regulation + feedback focus)
 #   --profile change_leader   (organisational change + coalition/alignment focus)
+#   --profile human_demand    (human load, support, trust + simulation findings)
+#   --profile human_factors   (cognitive/social/org/incentive risks + mitigations)
 cairn-render my-process.cairn.md -f html -o view.html
 cairn-render my-process.cairn.md -f pdf -o plan.pdf   # requires [export]
+
+# Offline human-factors analysis
+cairn-human-factors my-process.cairn.md
+cairn-human-factors my-process.cairn.md -f json
+
+# Optional LLM interpretation through any command provider
+cairn-human-factors my-process.cairn.md --llm-command "my-llm-wrapper --model local"
 ```
 
 Or programmatically:
@@ -60,6 +69,13 @@ from cairn.render import render_plan, export_view
 
 view = render_plan(text, profile="operator")
 pdf = export_view(view, "pdf")
+
+from cairn import analyze_human_factors
+report = analyze_human_factors(text)  # pure Python; no LLM service required
+
+from cairn import CommandLLMProvider, interpret_human_factors
+provider = CommandLLMProvider("my-llm-wrapper --model local")
+interpretation = interpret_human_factors(text, provider)
 ```
 
 Interactive composer: `cairn-serve`
@@ -79,6 +95,12 @@ Interactive composer: `cairn-serve`
   dynamics.
 - New constructs for human dimensions: REGULATION, APPRAISAL, FEEDBACK, MACRO (psych), COALITION, ALIGN, VISION, RESISTANCE (org), SOCIALIZE, SYMBOLIC_INTERACTION, ROLE (socio), etc.
 - Multi-scale STATE (e.g. scope: org.team), enhanced EMERGENT with attrs, domain-aware validation.
+- Human demand mapping: ORIENT / ACT / CLOSE demand, recovery, trust, support,
+  AI role-play simulation findings, and cognitive-load metrics for human-facing
+  process steps.
+- Human factors semantics: a browsable lens library for plausible cognitive,
+  psychological, social, organisational, behavioural-economic, and incentive
+  risks, with qualitative probability/impact estimates.
 
 Put simply: Cairn treats software work, thinking work, and organisational work
 as processes embedded in human systems, not as purely mechanical flows.
@@ -124,6 +146,20 @@ alongside technical ones because governed agentic work happens inside human
 systems. These dimensions are not a separate ambition from the agentic use case;
 they are part of the operating environment that a useful agentic process must be
 able to notice, express, and review.
+
+The human-factors layer is portable by design. The OKF concept bundle supplies a
+local semantic lookup for cognitive load, trust, social pressure,
+organisational change, behavioural economics, and incentive patterns. The
+offline analyzer can run as a normal PyPI module without a service dependency;
+an LLM can later be attached as an optional interpreter that reads the same
+report and starts a richer design conversation.
+
+LLM integration is provider-neutral. A command provider receives JSON on stdin
+(`task`, `prompt`, and `context`) and returns either plain text or JSON with a
+`text` field. That means local llama.cpp/Ollama scripts, hosted-model CLIs,
+Claude/Codex wrappers, or a Hoglah queue submitter can all sit behind the same
+adapter. Hoglah is a natural fit for durable queued analysis jobs, retries, and
+audit trails, but Cairn does not require it.
 
 ### Practical and evolving
 Cairn is meant to be used "in anger" on real projects, evolving from actual needs

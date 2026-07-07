@@ -98,6 +98,26 @@ def build_manifest() -> Manifest:
                 tags=["grammar", "validation"],
             ),
             capability(
+                "analyze_human_factors",
+                "Offline analysis of a Cairn document for plausible cognitive, psychological, social, "
+                "organisational, behavioural-economic, and incentive factors. Returns qualitative risk "
+                "estimates and conversation starters; does not require an LLM service.",
+                input_schema={
+                    "type": "object",
+                    "properties": {"input_cairn": {"description": "Cairn markdown text or PLAN object"}},
+                    "required": ["input_cairn"],
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "steps": {"type": "array"},
+                        "warnings": {"type": "array", "items": {"type": "string"}},
+                    },
+                },
+                tags=["human-factors", "analysis", "offline"],
+            ),
+            capability(
                 "plan_schema",
                 "The Cairn plan contract: required fields ("
                 + ", ".join(REQUIRED_PLAN_FIELDS)

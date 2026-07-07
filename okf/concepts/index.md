@@ -15,6 +15,9 @@ All defined in [SPEC.md](https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.m
   PROCESS kept distinct (SPEC §1).
 - **[Backbone & render profiles](backbone-and-render-profiles.md)** — one canonical
   backbone projected to `ai` / `operator` / `executive` / `audit` (SPEC §3).
+- **[Human factors semantics](human-factors.md)** - cognitive, psychological,
+  social, organisational, behavioural-economic, and incentive lenses for
+  human-facing process steps.
 - **[Constructs](constructs.md)** — PROCESS, STEP, ITERATE, RECURSE, QUEUE,
   PARALLEL, SERVICE, DECISION, RETRY, ERROR, AWAIT, CALL, MILESTONE, PURPOSE,
   BREAK/CONTINUE (SPEC §5).
