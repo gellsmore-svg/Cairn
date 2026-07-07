@@ -168,7 +168,7 @@ class OperatorProfile(RenderProfile):
         for node in _steps_for_profile(doc, self.name):
             body_text = node.text
             if not body_text.strip() and node.construct == "QUEUE":
-                body_text = describe_queue(node.tags, language)
+                body_text = describe_queue(node.tags, language, node.parsed_modifiers)
             title = body_text.split(".")[0][:60] if body_text else f"Step {node.number}"
             block: list[str] = []
             purpose = node.purpose or body_text
@@ -294,7 +294,11 @@ class AuditProfile(RenderProfile):
             for node in nodes:
                 construct = f" [{node.construct}]" if node.construct else ""
                 tag_str = f" tags={node.tags}" if node.tags else ""
-                lines.append(f"{'  ' * depth}- **{node.number}**{construct}{tag_str} {node.text}")
+                mod_str = ""
+                if node.parsed_modifiers:
+                    mods = ", ".join(f"{key}:{value}" for key, value in node.parsed_modifiers.items())
+                    mod_str = f" modifiers={mods}"
+                lines.append(f"{'  ' * depth}- **{node.number}**{construct}{tag_str}{mod_str} {node.text}")
                 for key, value in node.sub_blocks.items():
                     lines.append(f"{'  ' * (depth + 1)}- {key}: {value}")
                 walk(node.children, depth + 1)
@@ -312,12 +316,44 @@ class AuditProfile(RenderProfile):
         )
 
 
+class TherapeuticProfile(RenderProfile):
+    name = "therapeutic"
+
+    def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
+        res = OperatorProfile().render(doc, language, options)
+        body = res.body
+        if language == "en":
+            body = body.replace("# ", "# Therapeutic View: ", 1) if body.startswith("# ") else "# Therapeutic View\n\n" + body
+            if "Modifiers:" in body:
+                body += "\n\n_Note: Focus on regulation, appraisal, and feedback loops for emotional/psychological work._"
+        res.body = body
+        res.profile = self.name
+        return res
+
+
+class ChangeLeaderProfile(RenderProfile):
+    name = "change_leader"
+
+    def render(self, doc: ProcessDocument, language: str, options: dict[str, Any]) -> RenderResult:
+        res = OperatorProfile().render(doc, language, options)
+        body = res.body
+        if language == "en":
+            body = body.replace("# ", "# Change Leadership View: ", 1) if body.startswith("# ") else "# Change Leadership View\n\n" + body
+            if "Modifiers:" in body:
+                body += "\n\n_Note: Emphasize coalition, resistance, reinforcement, and alignment for organisational change._"
+        res.body = body
+        res.profile = self.name
+        return res
+
+
 _PROFILES: dict[str, RenderProfile] = {
     "narrative_steps": NarrativeStepsProfile(),
     "simple_prose": SimpleProseProfile(),
     "operator": OperatorProfile(),
     "executive": ExecutiveProfile(),
     "audit": AuditProfile(),
+    "therapeutic": TherapeuticProfile(),
+    "change_leader": ChangeLeaderProfile(),
     # SPEC v0.9 aliases
     "narrative": NarrativeStepsProfile(),
 }

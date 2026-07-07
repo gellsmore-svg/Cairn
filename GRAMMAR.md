@@ -131,7 +131,8 @@ Beyond grammar, a description is well-formed if:
 6. LLM-driven `ITERATE`/`RECURSE` carry a bound (`MAX`/`MAX_DEPTH`);
 7. `BREAK`/`CONTINUE` appear only inside a loop;
 8. every `AWAIT` states a `TIMEOUT`.
-9. Domain constructs (REGULATION, COALITION, SOCIALIZE, FEEDBACK, etc.) are encouraged when using matching tags for psych/org/socio work in human systems.
+9. Domain constructs (REGULATION, COALITION, SOCIALIZE, FEEDBACK, MACRO, etc.) are encouraged when using matching tags for psych/org/socio work in human systems.
+10. New render profiles: `therapeutic` and `change_leader` for domain-focused views.
 
 This grammar is deliberately permissive about prose — it constrains the
 *scaffolding*, so a human stays free to write each step in plain language.

@@ -160,7 +160,10 @@ _QUEUE_PHRASING: dict[str, dict[str, str]] = {
 }
 
 
-def parse_queue_params(tags: list[str] | None) -> dict[str, str | bool]:
+def parse_queue_params(
+    tags: list[str] | None,
+    parsed_modifiers: dict[str, str] | None = None,
+) -> dict[str, str | bool]:
     """Pull ORDER / ROUNDS / UNTIL / one-at-a-time out of a QUEUE step's tags."""
     blob = "; ".join(tags or [])
     params: dict[str, str | bool] = {}
@@ -172,13 +175,26 @@ def parse_queue_params(tags: list[str] | None) -> dict[str, str | bool]:
         params["until"] = m.group(1).strip()
     if _Q_SERIAL.search(blob):
         params["serial"] = True
+    if parsed_modifiers:
+        if order := parsed_modifiers.get("ORDER"):
+            params["order"] = order.upper()
+        if rounds := (parsed_modifiers.get("ROUNDS") or parsed_modifiers.get("MAX")):
+            params["rounds"] = rounds
+        if until := parsed_modifiers.get("UNTIL"):
+            params["until"] = until
+        if "ONE_AT_A_TIME" in parsed_modifiers or "SERIAL" in parsed_modifiers:
+            params["serial"] = True
     return params
 
 
-def describe_queue(tags: list[str] | None, language: str = "en") -> str:
+def describe_queue(
+    tags: list[str] | None,
+    language: str = "en",
+    parsed_modifiers: dict[str, str] | None = None,
+) -> str:
     """A readable, localised description of a QUEUE step from its parameters."""
     words = _QUEUE_PHRASING.get(language, _QUEUE_PHRASING["en"])
-    params = parse_queue_params(tags)
+    params = parse_queue_params(tags, parsed_modifiers)
     order = str(params.get("order", "")) or "_default"
     parts = [words["subject"], " ", words.get(order, words["_default"])]
     if params.get("serial"):
@@ -199,7 +215,7 @@ def phrase_construct(
     if not construct or construct == "STEP":
         return text
     if construct == "QUEUE":
-        desc = describe_queue(tags, language)
+        desc = describe_queue(tags, language, parsed_modifiers)
         return f"{desc} — {text}" if text.strip() else desc
     glossary = CONSTRUCT_PHRASES.get(language, CONSTRUCT_PHRASES["en"])
     prefix = glossary.get(construct, construct)

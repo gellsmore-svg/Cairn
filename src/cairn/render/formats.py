@@ -38,7 +38,13 @@ def to_mermaid(doc: ProcessDocument, language: str = "en") -> str:
             if nid in seen:
                 continue
             seen.add(nid)
-            label = phrase_construct(node.construct, node.text, language, node.tags).replace('"', "'")[:80]
+            label = phrase_construct(
+                node.construct,
+                node.text,
+                language,
+                node.tags,
+                node.parsed_modifiers,
+            ).replace('"', "'")[:80]
             lines.append(f'  {nid}["{node.number}. {label}"]')
             if parent:
                 lines.append(f"  {parent} --> {nid}")

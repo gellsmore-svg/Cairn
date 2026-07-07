@@ -86,6 +86,8 @@ These extend Cairn beyond technical/agentic processes into human-centric domains
 - [`cross-domain-org-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/cross-domain-org-change.cairn.md) — Combined use of psych/org/socio constructs (FEEDBACK, COALITION, SOCIALIZE, etc.).
 
 Each exercises the [constructs](../concepts/constructs.md), [tags](../concepts/tags.md),
-and [modes](../concepts/document-modes.md) — with new domain-specific extensions proposed in the docs/proposals/.
+and [modes](../concepts/document-modes.md) — with new domain-specific extensions.
+
+Render with `--profile therapeutic` or `--profile change_leader` for domain-focused views.
 
 Gaps found while writing them have fed back into the spec.

@@ -404,6 +404,14 @@ Use `EMERGENT [TYPE: psychological | organisational | social]` or qualified like
 Multi-level STATE: `STATE foo [scope: individual | team | org; dir: read/write]`
 
 These are additive; existing documents remain valid.
+
+## Render Profiles for Domains
+
+New profiles for human-system work:
+- `therapeutic` — emphasises regulation, appraisal, feedback.
+- `change_leader` — emphasises coalition, resistance, alignment, reinforcement.
+
+Use `cairn-render ... --profile therapeutic` (or `change_leader`).
 - `ATOMIC { … }` — a group whose effect is all-or-nothing.
 - `RECOVERY: <action>` — a step/process annotation stating what happens if a crash
   interrupts here on restart (e.g. `RECOVERY: redelivery re-runs the enqueue, which

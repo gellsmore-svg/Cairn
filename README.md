@@ -46,6 +46,9 @@ Cairn can be turned into audience-friendly views:
 
 ```bash
 cairn-render my-process.cairn.md --profile narrative_steps
+# Domain examples:
+#   --profile therapeutic     (psychological / regulation + feedback focus)
+#   --profile change_leader   (organisational change + coalition/alignment focus)
 cairn-render my-process.cairn.md -f html -o view.html
 cairn-render my-process.cairn.md -f pdf -o plan.pdf   # requires [export]
 ```

@@ -55,3 +55,7 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that
 feed back into [../SPEC.md](../SPEC.md).
+
+New domain constructs (REGULATION, FEEDBACK, MACRO, COALITION, etc.) are exercised
+in the psych/org/socio and cross-domain examples. Use `--profile therapeutic` or
+`--profile change_leader` when rendering for human-system focused views.
