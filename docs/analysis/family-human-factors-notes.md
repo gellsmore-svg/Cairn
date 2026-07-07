@@ -61,3 +61,23 @@ demand and risk detail. The report in
 Design implication: generated-output endorsement and semantic-edge review share
 the same family pattern: a human-gated durable write whose quality depends on
 context visibility, calibrated trust, and low-friction rejection/defer paths.
+
+## Mahlah Three-Channel Conversational Ask
+
+Input: `examples/mahlah.cairn.md`
+
+Updated result: the conversational UI slice is now annotated with human demand
+and risk detail. The report in `docs/analysis/mahlah-human-factors.md`
+highlights:
+
+- clean answer presentation as a trust benefit and a possible over-reliance risk,
+- process-panel visibility as both trust calibration and extra monitoring load,
+- dev log inspection as a mode/context switch,
+- feedback as the operator's repair pathway and a source of process learning,
+- the need to keep answer, process, and diagnostic channels correlated without
+  making the operator carry the correlation in memory.
+
+Design implication: Mahlah is the first annotated example where the interface
+itself is the human system. Its success depends less on a single approval gate
+and more on channel separation, closure clarity, recovery paths, and the user's
+sense that they can inspect or correct the system without becoming its debugger.
