@@ -40,6 +40,20 @@ cairn-ui-evidence docs/analysis/mahlah-ui-sim-report.json \
 This second step turns mechanical observations into suggested Cairn blocks such
 as `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`.
 
+Then ask an LLM to role-play plausible user experience from the grounded
+evidence:
+
+```bash
+cairn-ui-roleplay docs/analysis/mahlah-ui-sim-report.json \
+  --llm-command "python scripts/my_llm_wrapper.py" \
+  --output docs/analysis/mahlah-ui-roleplay.md
+```
+
+`cairn-ui-roleplay` also supports `--hoglah-model` for queued execution. The
+LLM receives the raw browser report, the deterministic evidence summary, and a
+set of personas. Use `--persona` repeatedly to supply domain-specific
+perspectives.
+
 ## Scenario Actions
 
 Supported actions in the prototype:
@@ -87,3 +101,8 @@ The LLM layer should not pretend to be a real user study. Its job is to simulate
 plausible user experience, search for missing context, and initiate better
 questions for the developer or process owner. The deterministic evidence layer
 keeps that conversation grounded in what the interface actually required.
+
+The role-play prompt asks the LLM to separate observed evidence from inference
+and to look for awareness, execution, closure, recovery, and organisational
+pressure. This makes it useful for design conversation without treating the
+model as a substitute for real user research.

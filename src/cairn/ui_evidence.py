@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from cairn.llm_adapters import LLMProvider, LLMRequest
+
 
 @dataclass
 class UiEvidenceFinding:
@@ -37,6 +39,24 @@ class UiHumanLoadReport:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+@dataclass
+class UiRoleplayInterpretation:
+    provider: str
+    text: str
+    prompt: str
+    evidence: UiHumanLoadReport
+    personas: list[str]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "provider": self.provider,
+            "text": self.text,
+            "prompt": self.prompt,
+            "evidence": self.evidence.to_dict(),
+            "personas": self.personas,
+        }
 
 
 def analyze_ui_simulation_report(report: dict[str, Any]) -> UiHumanLoadReport:
@@ -112,6 +132,83 @@ def format_ui_human_load_report(report: UiHumanLoadReport, *, output_format: str
     return "\n".join(lines).strip()
 
 
+def build_ui_roleplay_prompt(
+    raw_report: dict[str, Any],
+    evidence: UiHumanLoadReport,
+    *,
+    personas: list[str] | None = None,
+    cairn_source: str | None = None,
+) -> str:
+    """Build an LLM prompt for simulated human-experience review of a UI run."""
+    selected_personas = personas or _default_personas()
+    persona_lines = "\n".join(f"- {persona}" for persona in selected_personas)
+    source = cairn_source or "<no Cairn source supplied>"
+    return (
+        "You are simulating plausible human experience from UI evidence.\n"
+        "This is not a real user study, clinical assessment, or performance score. "
+        "Treat the browser report as grounded evidence and your role-play as hypothesis generation.\n\n"
+        "Review the interface from these perspectives:\n"
+        f"{persona_lines}\n\n"
+        "For each perspective, reason about:\n"
+        "- awareness: how the person notices what needs doing;\n"
+        "- execution: what they must decide, remember, compare, type, or configure;\n"
+        "- notification/closure: how they know the work is complete;\n"
+        "- recovery: what happens if information is missing, wrong, delayed, or socially risky;\n"
+        "- organisational pressure: incentives, queue pressure, audit, accountability, and trust.\n\n"
+        "Return concise Markdown with these sections:\n"
+        "1. Role-play snapshots\n"
+        "2. Likely load amplifiers\n"
+        "3. Failure or recursion loops\n"
+        "4. Suggested Cairn annotations\n"
+        "5. Questions for the developer or process owner\n\n"
+        "Do not diagnose people. Do not claim statistical certainty. Distinguish observed evidence from inference.\n\n"
+        "Optional Cairn source:\n"
+        f"{source}\n\n"
+        "Deterministic UI evidence JSON:\n"
+        f"{evidence.to_dict()}\n\n"
+        "Raw UI simulation report JSON:\n"
+        f"{raw_report}\n"
+    )
+
+
+def interpret_ui_experience(
+    raw_report: dict[str, Any],
+    provider: LLMProvider,
+    *,
+    evidence: UiHumanLoadReport | None = None,
+    personas: list[str] | None = None,
+    cairn_source: str | None = None,
+) -> UiRoleplayInterpretation:
+    """Ask an LLM to role-play plausible user experience from UI evidence."""
+    base_evidence = evidence or analyze_ui_simulation_report(raw_report)
+    selected_personas = personas or _default_personas()
+    prompt = build_ui_roleplay_prompt(
+        raw_report,
+        base_evidence,
+        personas=selected_personas,
+        cairn_source=cairn_source,
+    )
+    response = provider.complete(
+        LLMRequest(
+            task="cairn.ui_experience.roleplay",
+            prompt=prompt,
+            context={
+                "ui_report": raw_report,
+                "ui_evidence": base_evidence.to_dict(),
+                "personas": selected_personas,
+                "cairn_source": cairn_source,
+            },
+        )
+    )
+    return UiRoleplayInterpretation(
+        provider=response.provider,
+        text=response.text,
+        prompt=prompt,
+        evidence=base_evidence,
+        personas=selected_personas,
+    )
+
+
 def _phase_demands(observations: list[dict[str, Any]]) -> dict[str, list[str]]:
     phases: dict[str, list[str]] = {}
     for observation in observations:
@@ -122,6 +219,14 @@ def _phase_demands(observations: list[dict[str, Any]]) -> dict[str, list[str]]:
         if demand:
             phases.setdefault(phase, []).append(demand)
     return phases
+
+
+def _default_personas() -> list[str]:
+    return [
+        "novice user who wants to complete the task without understanding system internals",
+        "experienced operator under queue pressure",
+        "developer or analyst inspecting trust, trace, and failure behaviour",
+    ]
 
 
 def _systems(observations: list[dict[str, Any]]) -> set[str]:

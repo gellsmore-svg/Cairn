@@ -33,7 +33,12 @@ from cairn.human_factors import (
 )
 from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider, LLMRequest, LLMResponse
 from cairn.render import export_view, register_exporter, registered_exporters, registered_profiles, render_plan
-from cairn.ui_evidence import analyze_ui_simulation_report, format_ui_human_load_report
+from cairn.ui_evidence import (
+    analyze_ui_simulation_report,
+    build_ui_roleplay_prompt,
+    format_ui_human_load_report,
+    interpret_ui_experience,
+)
 
 __all__ = [
     "CANONICAL_PLAN",
@@ -50,12 +55,14 @@ __all__ = [
     "extract_cairn_source",
     "analyze_human_factors",
     "analyze_ui_simulation_report",
+    "build_ui_roleplay_prompt",
     "build_human_factors_prompt",
     "CommandLLMProvider",
     "HoglahLLMProvider",
     "format_human_factors_report",
     "format_ui_human_load_report",
     "interpret_human_factors",
+    "interpret_ui_experience",
     "LLMRequest",
     "LLMResponse",
     "is_conformant",
