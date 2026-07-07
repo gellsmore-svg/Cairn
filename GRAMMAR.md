@@ -49,7 +49,8 @@ proc-element    = state-block
 state-block     = "STATE" NL INDENT { state-decl } DEDENT ;
 state-decl      = name "[" "scope:" scope ";" "dir:" dir "]"
                   [ "ref:" ref-id ] [ comment ] NL ;
-scope           = "global" | "process" | "session" | "iteration" ;
+scope           = "global" | "process" | "session" | "iteration" | multi-scale ;   (* multi-scale e.g. org.team, individual.cognitive for human systems *)
+multi-scale     = word ("." | "/") word { ("." | "/") word } ;
 dir             = "read" | "write" | "read/write" ;
 ref-id          = letter { digit } ;          (* e.g. S1, T4, M2, H1 *)
 

@@ -34,7 +34,7 @@ PROCESS ReduceCognitiveDissonance (INPUT: conflicting cognitions; OUTPUT: consis
     dissonance_level [scope: individual; dir: read/write]
 
   1. Detect inconsistency between beliefs/actions. [COGNITIVE, EMOTIONAL]
-  2. APPRAISAL of dissonance magnitude and importance.
+  2. APPRAISAL [TYPE: primary] of dissonance magnitude and importance.
   3. DECISION [ON: reduction strategy]
      change behavior
      change cognition

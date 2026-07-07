@@ -211,8 +211,6 @@ def _validate_process(
     for step in proc.steps:
         errors.extend(_validate_step_tree(step, declared_states, loop_depth=loop_depth))
 
-    _validate_domain_consistency(proc, errors)
-
     return errors
 
 
@@ -238,6 +236,20 @@ def _validate_step_tree(
         )
     if construct == "AWAIT":
         errors.extend(_check_await_timeout(step, step.lineno))
+
+    # Domain checks also for steps that are constructs
+    if construct in _ALL_DOMAIN_CONSTRUCTS:
+        parsed = getattr(step, "parsed_modifiers", {}) or {}
+        keys = set(getattr(step, "modifiers", [])) | set(parsed.keys()) | set(_bound_keys_from([], step.text, step.tags))
+        if construct == "REGULATION":
+            if "STRATEGY" not in keys and "TARGET" not in keys:
+                errors.append(f"line {step.lineno}: REGULATION should declare STRATEGY or TARGET (per psychological process model)")
+        if construct == "APPRAISAL":
+            if "TYPE" not in keys:
+                errors.append(f"line {step.lineno}: APPRAISAL should declare TYPE (primary|secondary)")
+        if construct == "FEEDBACK":
+            if not keys and not step.text:
+                errors.append(f"line {step.lineno}: FEEDBACK should specify what is fed back (e.g. [FROM: emotion] or text)")
 
     new_loop_depth = loop_depth
     if construct in _LOOP_CONSTRUCTS:
@@ -291,12 +303,13 @@ def _validate_construct_line(
             f"line {cline.lineno}: {cline.construct} must appear inside ITERATE, RECURSE, or QUEUE"
         )
     if cline.construct == "AWAIT":
-        keys = _bound_keys_from(cline.modifiers, cline.text, [])
         parsed = getattr(cline, "parsed_modifiers", {}) or {}
-        if "TIMEOUT" not in keys and "TIMEOUT" not in parsed and not re.search(r"\bTIMEOUT\s*:", cline.text, re.I):
+        keys = _bound_keys_from(cline.modifiers, cline.text, [], parsed)
+        if "TIMEOUT" not in keys and not re.search(r"\bTIMEOUT\s*:", cline.text, re.I):
             errors.append(f"line {cline.lineno}: AWAIT must declare TIMEOUT")
     if cline.construct in _BOUND_CONSTRUCTS and require_llm_bound:
-        if not _has_iteration_bound(cline.modifiers, cline.text, []):
+        parsed = getattr(cline, "parsed_modifiers", {}) or {}
+        if not _has_iteration_bound(cline.modifiers, cline.text, [], parsed):
             key_name = "MAX_DEPTH" if cline.construct == "RECURSE" else "MAX"
             errors.append(f"line {cline.lineno}: {cline.construct} should declare {key_name} or UNTIL")
     # Domain construct awareness (non-blocking guidance for now, to stay human-first)
@@ -304,45 +317,36 @@ def _validate_construct_line(
         # Future: could add stricter rules per domain
         pass
     if cline.construct == "FEEDBACK":
-        keys = _bound_keys_from(cline.modifiers, cline.text, [])
-        if not keys and not cline.text:
+        parsed = getattr(cline, "parsed_modifiers", {}) or {}
+        keys = _bound_keys_from(cline.modifiers, cline.text, [], parsed)
+        if not keys and not parsed and not cline.text:
             errors.append(f"line {cline.lineno}: FEEDBACK should specify what is fed back (e.g. [FROM: emotion] or text)")
+
+    # Domain-specific modifier validation for new constructs (core grammar improvement)
+    parsed = getattr(cline, "parsed_modifiers", {}) or {}
+    keys = _bound_keys_from(cline.modifiers, cline.text, [], parsed) | set(parsed.keys())
+    if cline.construct == "REGULATION":
+        if "STRATEGY" not in keys and "TARGET" not in keys:
+            errors.append(f"line {cline.lineno}: REGULATION should declare STRATEGY or TARGET (per psychological process model)")
+    if cline.construct == "APPRAISAL":
+        if "TYPE" not in keys:
+            errors.append(f"line {cline.lineno}: APPRAISAL should declare TYPE (primary|secondary)")
+    if cline.construct == "ALIGN":
+        if "ELEMENTS" not in keys:
+            errors.append(f"line {cline.lineno}: ALIGN should declare ELEMENTS (e.g. strategy|culture)")
+    if cline.construct == "COALITION":
+        if not keys and not cline.text:
+            errors.append(f"line {cline.lineno}: COALITION should specify BUILD or SUSTAIN or participants")
+    if cline.construct == "VISION":
+        if not keys and not cline.text:
+            errors.append(f"line {cline.lineno}: VISION should specify FORM|COMMUNICATE|ANCHOR or details")
+    if cline.construct == "SOCIALIZE":
+        if "TYPE" not in keys:
+            errors.append(f"line {cline.lineno}: SOCIALIZE should declare TYPE (primary|secondary)")
+    if cline.construct == "SYMBOLIC_INTERACTION":
+        if "MEANING" not in keys and not cline.text:
+            errors.append(f"line {cline.lineno}: SYMBOLIC_INTERACTION should declare MEANING or describe the interaction")
     return errors
-
-
-def _collect_domain_constructs(proc: Process) -> set[str]:
-    used: set[str] = set()
-    for element in proc.elements:
-        if isinstance(element, ConstructLine) and element.construct in _ALL_DOMAIN_CONSTRUCTS:
-            used.add(element.construct)
-    for step in proc.steps:
-        if step.construct in _ALL_DOMAIN_CONSTRUCTS:
-            used.add(step.construct)
-        for cline in step.construct_lines:
-            if cline.construct in _ALL_DOMAIN_CONSTRUCTS:
-                used.add(cline.construct)
-    return used
-
-
-def _validate_domain_consistency(proc: Process, errors: list[str]) -> None:
-    """Light domain-aware checks to encourage use of new constructs (non-fatal for human-first)."""
-    tags = []
-    for step in proc.steps:
-        tags.extend(step.tags)
-    tag_dims = tag_dimensions(tags)
-    all_tags = [t for sub in tag_dims.values() for t in sub] if tag_dims else []
-    psych_tags = any(t in ("EMOTIONAL", "COGNITIVE", "APPRAISAL", "REGULATION", "MOTIVATIONAL", "METACOGNITIVE", "BEHAVIORAL") for t in all_tags)
-    org_tags = any(t in ("LEADERSHIP", "STRATEGIC", "CULTURAL", "POWER", "STAKEHOLDER", "STRUCTURAL", "ALIGNMENT", "RESISTANCE") for t in all_tags)
-    socio_tags = any(t in ("SOCIAL", "GROUP", "NORM", "ROLE", "SYMBOLIC") for t in all_tags)
-
-    used = _collect_domain_constructs(proc)
-    if psych_tags and not any(c in used for c in _PSYCH_CONSTRUCTS):
-        # advisory only (to preserve human-first and not break existing examples); tooling can surface
-        pass
-    if org_tags and not any(c in used for c in _ORG_CONSTRUCTS):
-        pass
-    if socio_tags and not any(c in used for c in _SOCIO_CONSTRUCTS):
-        pass
 
 
 def _validate_annotations(annotations: list[Annotation], declared_states: set[str], lineno: int) -> list[str]:
@@ -379,6 +383,11 @@ def _validate_tags(tags: list[str], lineno: int) -> list[str]:
         if len(values) > 1:
             errors.append(f"line {lineno}: multiple {dim} tags: {values!r}")
 
+    # domain tags (new for psych/org/socio) can be multiple by design
+    domain_values = dims.get("domain", [])
+    if len(domain_values) > 4:  # arbitrary reasonable limit
+        errors.append(f"line {lineno}: too many domain tags: {domain_values!r}")
+
     for custom in dims.get("custom", []):
         if not re.match(r"^[a-z][\w-]*:\S+", custom):
             errors.append(f"line {lineno}: custom tag must be namespaced (ns:word): {custom!r}")
@@ -409,8 +418,10 @@ def _check_nesting(parent: str, child: str, lineno: int) -> list[str]:
     return []
 
 
-def _bound_keys_from(modifiers: list[str], text: str, tags: list[str]) -> set[str]:
+def _bound_keys_from(modifiers: list[str], text: str, tags: list[str], parsed_modifiers: dict = None) -> set[str]:
     keys = set(modifier_keys(modifiers))
+    if parsed_modifiers:
+        keys.update(k.upper() for k in parsed_modifiers.keys())
     for bracket in tags:
         for part in re.split(r"[;|]", bracket):
             part = part.strip()
@@ -421,14 +432,15 @@ def _bound_keys_from(modifiers: list[str], text: str, tags: list[str]) -> set[st
     return keys
 
 
-def _has_iteration_bound(modifiers: list[str], text: str, tags: list[str]) -> bool:
-    keys = _bound_keys_from(modifiers, text, tags)
+def _has_iteration_bound(modifiers: list[str], text: str, tags: list[str], parsed_modifiers: dict = None) -> bool:
+    keys = _bound_keys_from(modifiers, text, tags, parsed_modifiers)
     return bool(keys & _BOUND_KEYS)
 
 
 def _check_iteration_bound(step: Step, lineno: int) -> list[str]:
     for cline in step.construct_lines:
-        if _has_iteration_bound(cline.modifiers, cline.text, []):
+        parsed = getattr(cline, "parsed_modifiers", {}) or {}
+        if _has_iteration_bound(cline.modifiers, cline.text, [], parsed):
             return []
     if _has_iteration_bound([], step.text, step.tags):
         return []
@@ -442,7 +454,8 @@ def _check_await_timeout(step: Step, lineno: int) -> list[str]:
     if "TIMEOUT" in step.annotations:
         has_timeout = True
     for cline in step.construct_lines:
-        if "TIMEOUT" in cline.modifiers or "TIMEOUT" in str(cline.text).upper():
+        parsed = getattr(cline, "parsed_modifiers", {}) or {}
+        if "TIMEOUT" in cline.modifiers or "TIMEOUT" in str(cline.text).upper() or "TIMEOUT" in parsed:
             has_timeout = True
     if not has_timeout and "TIMEOUT" not in str(step.text).upper():
         # Allow "never" or context-dependent as in examples

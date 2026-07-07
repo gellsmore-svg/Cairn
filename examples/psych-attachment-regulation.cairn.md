@@ -30,9 +30,9 @@ EMERGENT [PSYCHOLOGICAL: updated attachment style or relational pattern]
 
 ```
 PROCESS AttachmentRegulation (INPUT: perceived threat to bond; OUTPUT: restored security)
-  1. APPRAISAL of threat and availability of attachment figure. [APPRAISAL, EMOTIONAL]
+  1. APPRAISAL [TYPE: primary] of threat and availability of attachment figure. [APPRAISAL, EMOTIONAL]
   2. Activate attachment system (protest, seek proximity, or deactivate). [BEHAVIORAL, EMOTIONAL]
-  3. REGULATION via co-regulation (with other) or self-soothing strategies. [REGULATION]
+  3. REGULATION [STRATEGY: co-regulation] via co-regulation (with other) or self-soothing strategies. [REGULATION]
   4. STATE UPDATE: working model refined based on outcome.
   5. EMERGENT [SATISFIES: R3]  # reinforced or revised relational expectations
 

@@ -25,6 +25,7 @@ def _step_to_node(step: Step) -> StepNode:
         tags=list(step.tags),
         sub_blocks=_annotation_map(step.annotations),
         children=[_step_to_node(child) for child in step.children],
+        parsed_modifiers=getattr(step, "parsed_modifiers", {}) or {},
     )
 
 

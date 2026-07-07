@@ -20,6 +20,7 @@ class StepNode:
     outputs: list[str] = field(default_factory=list)
     iterate_until: str | None = None
     next_phase: str | None = None
+    parsed_modifiers: dict[str, str] = field(default_factory=dict)  # for domain constructs like REGULATION [STRATEGY]
 
 
 @dataclass

@@ -41,7 +41,7 @@ _PLAN_HDR = re.compile(
 )
 _SIGNATURE = re.compile(r"^\(INPUT:\s*(.+?)\s*;\s*OUTPUT:\s*(.+?)\)\s*$", re.I)
 _STATE_DECL = re.compile(
-    r"^(\S+)\s+\[scope:\s*(\w+)\s*;\s*dir:\s*([\w/]+)\](?:\s+ref:\s*(\S+))?(?:\s+#(.*))?$",
+    r"^(\S+)\s+\[scope:\s*([\w./]+)\s*;\s*dir:\s*([\w/]+)\](?:\s+ref:\s*(\S+))?(?:\s+#(.*))?$",
     re.I,
 )
 _ANNOTATION = re.compile(

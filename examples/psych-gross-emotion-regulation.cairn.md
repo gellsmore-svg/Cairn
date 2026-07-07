@@ -30,13 +30,14 @@ The individual achieves a modulated emotional response aligned with goals, or ex
 
 ```
 PROCESS RegulateEmotion (INPUT: triggering situation; OUTPUT: modulated emotional response)
-  1. APPRAISAL of the situation (primary: relevance; secondary: coping options). [COGNITIVE, APPRAISAL, EMOTIONAL]
+  1. APPRAISAL [TYPE: primary] of the situation (relevance; coping options). [COGNITIVE, APPRAISAL, EMOTIONAL]
   2. DECISION [ON: whether and how to regulate]
      based on goals and context.
   3. REGULATION [STRATEGY: situation_selection | situation_modification | attentional_deployment | cognitive_change | response_modulation]
      [TARGET: attention | cognition | response]
      [GOAL: hedonic | instrumental | eudaimonic]
-  4. EMERGENT [SATISFIES: R3]  # changed emotional state or new insight
+  4. FEEDBACK [FROM: regulation; VIA: reappraisal] outcome to adjust future appraisal
+  5. EMERGENT [SATISFIES: R3]  # changed emotional state or new insight
 
   ITERATE [UNTIL: goal achieved or situation ends]
 ```

@@ -31,7 +31,7 @@ def _indent(depth: int) -> str:
 
 def _render_step_line(node: StepNode, language: str, depth: int, options: dict[str, Any]) -> list[str]:
     include_tags = options.get("include_tags", False)
-    text = phrase_construct(node.construct, node.text, language, node.tags)
+    text = phrase_construct(node.construct, node.text, language, node.tags, getattr(node, "parsed_modifiers", {}))
     line = f"{_indent(depth)}{node.number}. {text}"
     lines = [line]
     if include_tags and node.tags:
@@ -133,7 +133,7 @@ class SimpleProseProfile(RenderProfile):
 
         actions = []
         for node in _steps_for_profile(doc, self.name):
-            actions.append(phrase_construct(node.construct, node.text, language, node.tags).rstrip("."))
+            actions.append(phrase_construct(node.construct, node.text, language, node.tags, getattr(node, "parsed_modifiers", {})).rstrip("."))
 
         if actions:
             if language == "es":
@@ -249,7 +249,7 @@ class ExecutiveProfile(RenderProfile):
         lines.append(f"### {milestone_label}")
         for node in _steps_for_profile(doc, self.name):
             if node.construct == "MILESTONE" or not node.children:
-                summary = node.purpose or phrase_construct(node.construct, node.text, language, node.tags)
+                summary = node.purpose or phrase_construct(node.construct, node.text, language, node.tags, getattr(node, "parsed_modifiers", {}))
                 owner = f" ({node.owner})" if node.owner else ""
                 lines.append(f"- **{node.number}** {summary}{owner}")
 

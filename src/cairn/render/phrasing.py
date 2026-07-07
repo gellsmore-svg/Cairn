@@ -183,7 +183,8 @@ def describe_queue(tags: list[str] | None, language: str = "en") -> str:
 
 
 def phrase_construct(
-    construct: str | None, text: str, language: str = "en", tags: list[str] | None = None
+    construct: str | None, text: str, language: str = "en", tags: list[str] | None = None,
+    parsed_modifiers: dict = None
 ) -> str:
     if not construct or construct == "STEP":
         return text
@@ -198,4 +199,10 @@ def phrase_construct(
         return f"{prefix} {text}"
     if construct == "CALL":
         return f"{prefix} {text}"
+    if construct == "REGULATION" and parsed_modifiers:
+        strat = parsed_modifiers.get("STRATEGY", "")
+        return f"{prefix} ({strat}): {text}" if strat else f"{prefix}: {text}"
+    if construct == "FEEDBACK" and parsed_modifiers:
+        frm = parsed_modifiers.get("FROM", "")
+        return f"{prefix} from {frm}: {text}" if frm else f"{prefix}: {text}"
     return f"{prefix}: {text}" if prefix else text

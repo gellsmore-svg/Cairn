@@ -33,7 +33,7 @@ PROCESS SelfDetermineMotivation (INPUT: activity/context; OUTPUT: motivated enga
     needs_satisfaction [scope: individual; dir: read/write]
     motivation_type [scope: individual; dir: read/write]
 
-  1. APPRAISAL of environment support for autonomy/competence/relatedness. [APPRAISAL, EMOTIONAL]
+  1. APPRAISAL [TYPE: primary] of environment support for autonomy/competence/relatedness. [APPRAISAL, EMOTIONAL]
   2. DECISION [ON: motivation locus]
      supportive → intrinsic motivation
      controlling → extrinsic or amotivation
