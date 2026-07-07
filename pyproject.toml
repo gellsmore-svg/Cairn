@@ -8,7 +8,7 @@ version = "0.8.0"
 description = "Cairn — a human-readable process language for governed agentic work in human systems, with grammar and plan conformance."
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 license-files = ["LICENSE"]
 authors = [
     {name = "gellsmore-svg"},
