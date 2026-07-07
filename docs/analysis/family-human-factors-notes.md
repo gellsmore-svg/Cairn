@@ -25,12 +25,13 @@ a human-demand example until we model operator experiences such as:
 
 Input: `examples/tirzah-semantic-review.cairn.md`
 
-Result: the analyzer found human-gated steps but little structured human-demand
-detail. The current report therefore starts a conversation rather than producing
-rich risk estimates.
+Initial result: the analyzer found human-gated steps but little structured
+human-demand detail. We then annotated the semantic-review flow with
+`HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, `HUMAN_RISK`, `TRUST`, `SUPPORT`,
+and `IMPROVEMENT` blocks.
 
-Design implication: this is a good next candidate for manual annotation. The
-likely human-system forces are:
+Updated result: `docs/analysis/tirzah-semantic-review-human-factors.md` now
+surfaces the main review burdens:
 
 - reviewer attention and ambiguity load while inspecting candidate graph edges,
 - trust calibration around label/vector similarity suggestions,
@@ -38,6 +39,6 @@ likely human-system forces are:
 - queue fatigue when many candidates are pending,
 - closure clarity after accept/reject.
 
-Recommended next modeling step: add `HUMAN_DEMAND`, `HUMAN_FACTORS`, and
-`HUMAN_RISK` blocks to the Tirzah semantic-review example, then rerun
-`cairn-human-factors`.
+Recommended next modeling step: use this annotated example as the pattern for
+other human-gated family workflows, especially generated-output endorsement and
+Mahlah's conversational ask UI.

@@ -48,9 +48,74 @@ PROCESS ReviewSemanticEdges (INPUT: focus_node_or_scope; OUTPUT: review_summary)
   2. MILESTONE INSPECT — list pending candidates for operator review.       [CODE] [SATISFIES: R5]
      CALL ListPendingCandidates(limit, status=pending) → candidates
   3. ITERATE [OVER: candidates the operator chooses to act on]
-     3.1 Present source/target titles, relation, similarity context.
-     3.2 AWAIT [EVENT: operator accept or reject; TIMEOUT: never]          [HUMAN, GATED]
-     3.3 CALL DecideCandidate(candidate_id, action, reviewer, note) → result
+     3.1. Present source/target titles, relation, similarity context.
+         PURPOSE: give the operator enough local evidence to understand the proposed semantic link.
+         HUMAN_DEMAND:
+           ORIENT: notice what source, target, relation, and similarity signal are being proposed.
+           ACT: inspect whether the candidate meaning is plausible before choosing accept or reject.
+           CLOSE: know whether the candidate is ready for a decision or needs more context.
+           RECOVER: open surrounding node context or defer the candidate if the evidence is insufficient.
+         HUMAN_LOAD:
+           focus_actions: 4
+           business_actions: 2
+           trivial_actions: 2
+           context_switches: 3
+           ambiguity_load: medium to high when labels and vector similarity disagree.
+         HUMAN_FACTORS:
+           cognitive_load: semantic comparison requires working memory across source, target, and relation.
+           trust_automation: similarity signals can look more authoritative than they are.
+           interface_friction: missing surrounding context can force navigation before judgement.
+         HUMAN_RISK:
+           probability: medium
+           impact: medium
+           confidence: medium
+           score: significant
+           rationale: the operator is asked to judge meaning from compressed evidence, so weak context can reduce review quality.
+         SUPPORT: show source excerpt, target excerpt, relation rationale, similarity method, and nearby graph context together.
+     3.2. AWAIT [EVENT: operator accept or reject; TIMEOUT: never] operator decision. [HUMAN, GATED]
+         PURPOSE: make graph promotion depend on an explicit human judgement.
+         HUMAN_DEMAND:
+           ORIENT: understand that no graph edge is written until this decision is made.
+           ACT: choose accept, reject, defer, or inspect more context.
+           CLOSE: see the candidate leave the active decision state after action.
+           RECOVER: allow defer/skip without forcing a low-confidence accept or reject.
+         HUMAN_LOAD:
+           explicit_decisions: 1
+           uncertainty_loops: 1
+           input_burden: low if accept/reject is enough; medium when a note is required.
+           closure_clarity: medium
+         HUMAN_FACTORS:
+           trust_automation: human gate can become a rubber stamp if the suggestion appears too confident.
+           behavioural_economics: one-click accept can become the lowest-effort path.
+           social_role: reviewer is accountable for graph quality after promotion.
+         HUMAN_RISK:
+           probability: medium
+           impact: high
+           confidence: medium
+           score: significant
+           rationale: a single human decision controls durable graph writes, and review quality depends on calibrated trust in the suggestion.
+         TRUST: show why the candidate was proposed before presenting accept as an easy action.
+         SUPPORT: provide accept, reject, defer, and inspect-more-context paths with clear consequences.
+     3.3. CALL DecideCandidate(candidate_id, action, reviewer, note) → result
+         PURPOSE: record the decision with enough provenance for later audit and learning.
+         HUMAN_DEMAND:
+           ORIENT: confirm which candidate and action are being recorded.
+           ACT: provide a note when the decision is non-obvious or useful for future learning.
+           CLOSE: see accepted/rejected status and reviewer attribution on the candidate.
+           ADAPT: repeated notes can improve future candidate generation and reviewer calibration.
+         HUMAN_LOAD:
+           input_burden: medium if notes are blank free text.
+           closure_clarity: high when status and attribution are visible immediately.
+         HUMAN_FACTORS:
+           interface_friction: blank notes can discourage useful feedback.
+           organisational_change: review notes turn operator judgement into training material for future graph quality.
+         HUMAN_RISK:
+           probability: low
+           impact: medium
+           confidence: medium
+           score: moderate
+           rationale: the main decision already happened, but poor feedback capture reduces future learning.
+         IMPROVEMENT: offer editable note templates such as "good semantic relation", "too weak", "wrong relation", or "needs more context".
   OUTPUT: review_summary (accepted_count, rejected_count)
 
 PROCESS EnqueueLabelOverlapCandidates (INPUT: node_id; OUTPUT: enqueue_report)
@@ -64,6 +129,17 @@ PROCESS DecideCandidate (INPUT: candidate_id, action; OUTPUT: candidate_state)
   2. DECISION [ON: action]
      2a. reject → mark candidate rejected                                  [CODE] [SATISFIES: R3]
      2b. accept → CALL PromoteToReviewedEdge(candidate, reviewer, note)    [CODE, GATED, HUMAN] [SATISFIES: R2]
+         PURPOSE: turn an inspected candidate into a durable reviewed edge.
+         HUMAN_FACTORS:
+           social_role: reviewer attribution makes the human accountable for promoted meaning.
+           trust_automation: accepted edges may later influence retrieval, so over-trusting weak candidates has downstream effects.
+         HUMAN_RISK:
+           probability: medium
+           impact: high
+           confidence: medium
+           score: significant
+           rationale: promotion changes the graph and can affect later retrieval or reasoning paths.
+         SUPPORT: preserve source evidence and review note with the promoted edge.
   OUTPUT: candidate_state
 
 PROCESS PromoteToReviewedEdge (INPUT: candidate, reviewer; OUTPUT: edge_id)
