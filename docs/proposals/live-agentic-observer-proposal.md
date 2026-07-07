@@ -12,14 +12,14 @@ The goal is not only uptime monitoring. The observer asks:
 - Are humans being asked to trust, approve, repair, or escalate without enough evidence?
 - Which repeated issues should become product or process improvements?
 
-This proposal is a natural fit for Noah: a wrapper or orchestrating repo that runs multiple products can host one or more observer agents as a full-time operational role.
+This proposal is a natural fit for Noa as the runtime host: Noa already orchestrates the sibling products, while the observer capability itself should remain portable enough to run outside Noa when a single product or deployment needs it.
 
 ## Observation Sources
 
 A live observer can consume:
 
 - UI probes, including Playwright scenarios and screenshots.
-- Product logs, for example a Khalid-style message/log stream when available.
+- Product logs, especially Galeed's structured cross-project trace/log spine.
 - Agent traces, including prompts, tool calls, retrieval, queue events, retries, and outputs.
 - Human feedback surfaces, such as thumbs, notes, corrections, escalations, and abandoned tasks.
 - Runtime signals, such as latency, errors, restarts, queue depth, and timeouts.
@@ -69,12 +69,28 @@ Suggested tags:
 
 ## Cairn Command
 
+Before wiring observers, discover likely observation surfaces:
+
+```bash
+cairn-system-discover ../Noa --output docs/analysis/noa-system-discovery.md
+```
+
+For a sibling checkout layout, run discovery at the parent directory as well:
+
+```bash
+cairn-system-discover ~/domains --output docs/analysis/family-system-discovery.md
+```
+
+The discovery step is intentionally lightweight. It looks for runtime-host
+signals, Galeed trace/log surfaces, Playwright-capable UIs, Hoglah-style queues,
+and Cairn scenario/spec assets, then proposes an observation plan.
+
 `cairn-live-observe` reads JSON or JSONL observation events and produces a Cairn-style evidence report:
 
 ```bash
-cairn-live-observe docs/observations/noah-live-observer-sample.jsonl \
-  --title "Noah live observer sample" \
-  --output docs/analysis/noah-live-observer-sample.md
+cairn-live-observe docs/observations/noa-live-observer-sample.jsonl \
+  --title "Noa live observer sample" \
+  --output docs/analysis/noa-live-observer-sample.md
 ```
 
 The report includes:
@@ -88,7 +104,7 @@ The report includes:
 
 ## Observer Roles
 
-A mature Noah deployment could run several observers:
+A mature Noa deployment could run several observers:
 
 - Product observer: watches UI, latency, errors, and visible task completion.
 - Human-load observer: watches context switching, uncertainty, recovery loops, feedback burden, and closure clarity.
@@ -115,7 +131,7 @@ It should:
 
 ```text
 Live product
-  -> logs / UI probes / agent traces / feedback
+  -> Galeed logs / UI probes / agent traces / feedback
   -> observation JSONL
   -> cairn-live-observe
   -> Cairn evidence report
@@ -124,3 +140,52 @@ Live product
 ```
 
 This makes Cairn the shared language between runtime monitoring, human experience, and agentic-system quality.
+
+## Placement Decision
+
+The observer should be a **portable observer framework** with Noa as the natural
+deployment host, rather than a Noa-only feature.
+
+Rationale:
+
+- Noa's contract is orchestration, configuration, health, and runtime cohesion;
+  it should not vendor the observer's core analysis logic.
+- Cairn is the better home for the evidence vocabulary, human/system analysis,
+  and annotation output.
+- Galeed is the better home for durable cross-project telemetry and correlation
+  identifiers.
+- Product repos such as Mahlah or Tirzah should emit local events and expose UI
+  surfaces, but should not each reinvent holistic observation.
+- A future named observer sibling could own long-running agents, scheduling,
+  clustering, issue creation, and policy, while reusing Cairn and Galeed.
+
+In short:
+
+```text
+Cairn = observation language and analysis
+Galeed = trace/log spine
+Noa = runtime host and stack wiring
+Products = event emitters and UI targets
+Observer agent = optional long-running worker over the stack
+```
+
+This keeps the system composable. Noa can run it for the whole local stack, but a
+single product can still use the same observer tools during development or CI.
+
+## Non-Deterministic Systems
+
+Many of the family tools are stochastic or agentic: the same input can lead to
+different retrieval paths, model outputs, timings, or repair loops. The observer
+therefore should not expect one canonical execution trace.
+
+Instead it should:
+
+- observe distributions and repeated patterns,
+- preserve correlation ids across traces, jobs, sessions, and plans,
+- compare visible output against evidence sufficiency,
+- detect repair loops and missing authority,
+- treat differences between runs as signal rather than noise,
+- ask whether variance changes human load, trust, or recoverability.
+
+This is where Cairn adds value: it gives stochastic runtime behaviour a
+reviewable process language.

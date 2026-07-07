@@ -1,9 +1,9 @@
-# Live Observation Evidence: Noah live observer sample
+# Live Observation Evidence: Noa live observer sample
 
 Events: 7
 
 ## Sources
-- khalid-log: 1
+- galeed-log: 1
 - mahlah-ui: 4
 - observer-agent: 1
 - tirzah-agent: 1
@@ -36,7 +36,7 @@ Estimated from live observation counts, severities, tags, durations, and human-s
 ### OBSERVATION
 ```cairn
 event_count: 7
-sources: khalid-log, mahlah-ui, observer-agent, tirzah-agent
+sources: galeed-log, mahlah-ui, observer-agent, tirzah-agent
 kinds: agent_output_review, agent_step, system_log, ui_event
 ```
 
