@@ -1,7 +1,7 @@
 ---
 type: Project
 title: Cairn
-description: A simple, textual, human-readable meta-language for describing complex processes clearly and consistently — especially agentic / LLM-centric ones — so humans and LLMs collaborate on the same process description, independent of any language or platform.
+description: A human-readable process language for governed agentic work in human systems, giving humans and AI systems a shared way to describe, plan, interpret, and review technical, psychological, organisational, and sociological processes.
 resource: https://github.com/gellsmore-svg/Cairn
 tags: [cairn, meta-language, process, agentic, specification]
 timestamp: 2026-06-19T00:00:00Z
@@ -9,12 +9,12 @@ timestamp: 2026-06-19T00:00:00Z
 
 # Cairn
 
-Cairn is a simple, textual, human-readable **meta-language for describing complex
-processes** — especially agentic / LLM-centric ones. It lets humans and LLMs
-collaborate using the **same** description of a process, independent of any
-programming language or platform, bridging pseudocode-style clarity with modern
-agentic realities: iteration, recursion, non-determinism, sync/async, queuing, and
-error handling.
+Cairn is a human-readable **process language for governed agentic work in human
+systems**. It gives humans and AI systems a shared way to describe, plan,
+interpret, and review complex work across technical, psychological,
+organisational, and sociological dimensions, bridging pseudocode-style clarity
+with modern agentic realities: iteration, recursion, non-determinism, sync/async,
+queuing, outcome review, error handling, and human context.
 
 The specification is [SPEC.md](https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.md)
 (v0.8); this bundle is an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
@@ -35,6 +35,7 @@ description of its concepts and reference material.
   parallel.
 - Three [document modes](concepts/document-modes.md): CONTEXT, REQUIREMENTS/OUTCOMES,
   PROCESS.
-- A small set of [constructs](concepts/constructs.md) for real control flow.
+- A small set of [constructs](concepts/constructs.md) for real control flow,
+  plus domain vocabularies for human-system awareness.
 - License: Apache-2.0. Used across the family — see the
   [examples](reference/examples.md) (Tirzah, Hoglah, Mahalath).

@@ -1,12 +1,13 @@
 # Cairn
 
-Cairn is a simple, textual, human-readable meta-language for describing complex
-processes clearly and consistently — especially agentic / LLM-centric ones.
+Cairn is a human-readable process language for **governed agentic work in human
+systems**.
 
-It lets humans and LLMs collaborate using the **same** description of a process,
-independent of any programming language or platform. It bridges pseudocode-style
-clarity with modern agentic realities: iteration, recursion, non-determinism,
-sync/async, queuing, and error handling.
+It gives humans and AI systems a shared way to describe, plan, interpret, and
+review complex work across technical, psychological, organisational, and
+sociological dimensions. It bridges pseudocode-style clarity with modern
+agentic realities: iteration, recursion, non-determinism, sync/async, queuing,
+outcome review, error handling, and human context.
 
 **The specification lives in [SPEC.md](SPEC.md) (v0.9).**
 
@@ -65,14 +66,17 @@ Interactive composer: `cairn-serve`
 - Documenting **requirements** and technical specifications in design documents.
 - **Reverse-engineering** hidden or unclear processes out of existing code, AI
   systems, or legacy implementations.
-- Defining **AI-centric / agentic** processes — recursive calls, iterative
-  refinement, dynamic LLM decisions, term invention, serialized agent
-  discussions.
+- Defining **governed agentic** processes — recursive calls, iterative
+  refinement, dynamic LLM decisions, tool boundaries, serialized agent
+  discussions, trace, and outcome alignment.
 - Real-world use cases: recursive agentic workflows (chat interfaces, autonomous
   systems), low-resource queuing, semantic engines, multi-step reasoning.
-- Describing **technical and business** processes at any level — from low-level
-  code flows to high-level organisational, psychological, or sociological
-  cause-effect analysis.
+- Describing work as it actually happens: technical mechanisms embedded in
+  human contexts, including cognitive, emotional, organisational, and social
+  dynamics.
+
+Put simply: Cairn treats software work, thinking work, and organisational work
+as processes embedded in human systems, not as purely mechanical flows.
 
 ## Philosophy
 
@@ -81,6 +85,11 @@ The primary goal is **maximum human readability**. Anyone — technical or not �
 should read a Cairn description and quickly understand the process without
 wrestling with syntax, jargon, or abstraction. We remove cognitive barriers so
 attention stays on **what the process actually does**, not on decoding notation.
+
+This matters because agentic work is rarely just computation. It often includes
+judgement, uncertainty, memory, motivation, trust, conflict, change, and review.
+Cairn keeps those human dimensions describable without losing the governed
+runtime spine that lets AI systems validate and interpret plans.
 
 ### Least abstract, simplest language possible
 - Concrete, everyday words wherever they suffice.
@@ -103,6 +112,13 @@ clarity always wins.
 - One canonical backbone is projected into audience **render profiles** (precise
   `ai`, readable `operator`, and more) — serving machines and humans alike.
 - CONTEXT and CONSTRAINTS supply supporting knowledge on demand.
+
+### Human-system awareness
+Cairn can describe psychological, organisational, and sociological processes
+alongside technical ones because governed agentic work happens inside human
+systems. These dimensions are not a separate ambition from the agentic use case;
+they are part of the operating environment that a useful agentic process must be
+able to notice, express, and review.
 
 ### Practical and evolving
 Cairn is meant to be used "in anger" on real projects, evolving from actual needs

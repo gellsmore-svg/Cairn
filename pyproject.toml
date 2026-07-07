@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cairn-lang"
 version = "0.8.0"
-description = "Cairn — process meta-language: spec, grammar, and a machine-readable plan-conformance surface (distribution cairn-lang; import name cairn)."
+description = "Cairn — a human-readable process language for governed agentic work in human systems, with grammar and plan conformance."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "Apache-2.0"}
@@ -13,7 +13,7 @@ license-files = ["LICENSE"]
 authors = [
     {name = "gellsmore-svg"},
 ]
-keywords = ["process", "plan", "grammar", "conformance", "recursive", "local-first"]
+keywords = ["process", "plan", "agentic", "governance", "grammar", "conformance", "recursive", "local-first"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
