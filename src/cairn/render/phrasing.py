@@ -38,6 +38,7 @@ CONSTRUCT_PHRASES: dict[str, dict[str, str]] = {
         "ASSIMILATE": "Assimilate",
         "ROLE": "Role",
         "FEEDBACK": "Feedback",
+        "MACRO": "Macro",
     },
     "fr": {
         "STEP": "",
@@ -54,6 +55,7 @@ CONSTRUCT_PHRASES: dict[str, dict[str, str]] = {
         "SOCIALIZE": "Socialiser",
         "SYMBOLIC_INTERACTION": "Interaction symbolique",
         "FEEDBACK": "Rétroaction",
+        "MACRO": "Macro",
         "PARALLEL": "Exécuter en parallèle",
         "MERGE": "Fusionner",
         "SERVICE": "Exécuter le service",
@@ -78,6 +80,8 @@ CONSTRUCT_PHRASES: dict[str, dict[str, str]] = {
         "BREAK": "Detener cuando",
         "CONTINUE": "Continuar a",
         "MILESTONE": "Hito",
+        "FEEDBACK": "Retroalimentación",
+        "MACRO": "Macro",
     },
 }
 
@@ -207,8 +211,30 @@ def phrase_construct(
         return f"{prefix} {text}"
     if construct == "REGULATION" and parsed_modifiers:
         strat = parsed_modifiers.get("STRATEGY", "")
-        return f"{prefix} ({strat}): {text}" if strat else f"{prefix}: {text}"
+        target = parsed_modifiers.get("TARGET", "")
+        extra = f" {strat}" if strat else ""
+        if target:
+            extra += f" on {target}"
+        return f"{prefix}{extra}: {text}" if extra else f"{prefix}: {text}"
     if construct == "FEEDBACK" and parsed_modifiers:
         frm = parsed_modifiers.get("FROM", "")
-        return f"{prefix} from {frm}: {text}" if frm else f"{prefix}: {text}"
+        via = parsed_modifiers.get("VIA", "")
+        extra = f" from {frm}" if frm else ""
+        if via:
+            extra += f" via {via}"
+        return f"{prefix}{extra}: {text}" if extra else f"{prefix}: {text}"
+    if construct == "APPRAISAL" and parsed_modifiers:
+        typ = parsed_modifiers.get("TYPE", "")
+        return f"{prefix} ({typ}): {text}" if typ else f"{prefix}: {text}"
+    if construct == "COALITION" and parsed_modifiers:
+        action = parsed_modifiers.get("BUILD", "build")
+        return f"{prefix} {action}: {text}"
+    if construct == "ALIGN" and parsed_modifiers:
+        elems = parsed_modifiers.get("ELEMENTS", "")
+        return f"{prefix} ({elems}): {text}" if elems else f"{prefix}: {text}"
+    if construct == "SOCIALIZE" and parsed_modifiers:
+        typ = parsed_modifiers.get("TYPE", "")
+        return f"{prefix} ({typ}): {text}" if typ else f"{prefix}: {text}"
+    if construct == "MACRO":
+        return f"Macro: {text}"
     return f"{prefix}: {text}" if prefix else text

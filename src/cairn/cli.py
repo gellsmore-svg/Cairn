@@ -13,7 +13,7 @@ from cairn.render import registered_exporters, registered_profiles, render_plan
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="cairn-render",
-        description="Render a Cairn process description into a simplified human-readable view.",
+        description="Render a Cairn process description (tech/psych/org/socio) into a simplified human-readable view. Supports domain constructs like REGULATION, FEEDBACK, COALITION, MACRO.",
     )
     parser.add_argument("input", nargs="?", help="Path to .cairn.md file (or stdin with '-')")
     parser.add_argument(

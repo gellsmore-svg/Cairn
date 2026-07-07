@@ -24,7 +24,7 @@ _BOUND_KEYS = frozenset({"MAX", "MAX_DEPTH", "UNTIL", "OVER"})
 _PSYCH_CONSTRUCTS = frozenset({"REGULATION", "APPRAISAL", "DUAL_PROCESS", "METACOGNITION", "FEEDBACK"})
 _ORG_CONSTRUCTS = frozenset({"ALIGN", "COALITION", "RESISTANCE", "REINFORCEMENT", "CASCADE", "VISION"})
 _SOCIO_CONSTRUCTS = frozenset({"SOCIALIZE", "INSTITUTIONALIZE", "SYMBOLIC_INTERACTION", "CONFLICT", "ACCOMMODATE", "ASSIMILATE", "ROLE"})
-_ALL_DOMAIN_CONSTRUCTS = _PSYCH_CONSTRUCTS | _ORG_CONSTRUCTS | _SOCIO_CONSTRUCTS
+_ALL_DOMAIN_CONSTRUCTS = _PSYCH_CONSTRUCTS | _ORG_CONSTRUCTS | _SOCIO_CONSTRUCTS | {"MACRO"}
 
 
 def validate_document(doc: CairnDocument) -> list[str]:
@@ -375,6 +375,9 @@ def _validate_construct_line(
     if cline.construct == "SYMBOLIC_INTERACTION":
         if "MEANING" not in keys and not cline.text:
             errors.append(f"line {cline.lineno}: SYMBOLIC_INTERACTION should declare MEANING or describe the interaction")
+    if cline.construct == "MACRO":
+        if not keys and not cline.text:
+            errors.append(f"line {cline.lineno}: MACRO should name a higher-level pattern or sub-process")
     return errors
 
 

@@ -379,6 +379,7 @@ These are first-class for richer domain modeling. They parse as constructs with 
 - `METACOGNITION [MONITOR | CONTROL]`
 - `FEEDBACK [FROM: ... ; VIA: ...]`  (* for loops like emotion regulation feeding back into appraisal *)
 - `FEEDBACK` can be used to model feedback in psych/org/socio systems (e.g. outcome reflection informing next iteration).
+- `MACRO` for higher-level patterns (e.g. `MACRO VISION-CASCADE` as a reusable chunk).
 
 **Organisational:**
 - `ALIGN [ELEMENTS: strategy | structure | culture | ...]`

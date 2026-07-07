@@ -78,7 +78,7 @@ construct       = "STEP" | "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE"
                 | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
                 | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
                 | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
-                | "ASSIMILATE" | "ROLE" | "FEEDBACK" ;
+                | "ASSIMILATE" | "ROLE" | "FEEDBACK" | "MACRO" ;
 construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
                   | "SERVICE" | "CONCURRENT" | "DECISION" | "RETRY" | "ERROR"
                   | "AWAIT" | "CALL" | "MERGE" | "BREAK" | "CONTINUE" | "ATOMIC"
@@ -86,7 +86,7 @@ construct-line  = ( "MILESTONE" | "ITERATE" | "RECURSE" | "QUEUE" | "PARALLEL"
                   | "ALIGN" | "COALITION" | "RESISTANCE" | "REINFORCEMENT"
                   | "CASCADE" | "VISION" | "SOCIALIZE" | "INSTITUTIONALIZE"
                   | "SYMBOLIC_INTERACTION" | "CONFLICT" | "ACCOMMODATE"
-                  | "ASSIMILATE" | "ROLE" | "FEEDBACK" )
+                  | "ASSIMILATE" | "ROLE" | "FEEDBACK" | "MACRO" )
                   [ modifiers ] [ "→" TEXT ] TEXT? NL ;
 modifiers       = "[" mod { ";" mod } "]" ;
 mod             = key ":" TEXT | flag ;        (* e.g. UNTIL: …; MAX: 5 *)

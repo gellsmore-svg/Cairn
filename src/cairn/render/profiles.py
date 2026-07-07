@@ -209,6 +209,10 @@ class OperatorProfile(RenderProfile):
                 if node.next_phase:
                     block.append(f"**Next:** {node.next_phase}")
 
+                if getattr(node, "parsed_modifiers", {}):
+                    mods = ", ".join(f"{k}:{v}" for k,v in node.parsed_modifiers.items())
+                    block.append(f"**Modifiers:** {mods}")
+
             if options.get("boxed", True):
                 lines.extend(_boxed(title, block))
             else:
