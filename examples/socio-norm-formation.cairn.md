@@ -37,6 +37,7 @@ PROCESS NormFormation (INPUT: group interactions; OUTPUT: established and enforc
   2. DECISION [ON: what becomes expected]
   3. INSTITUTIONALIZE through communication and modeling. [NORM]
   4. Enforce via positive/negative sanctions. [POWER]
+  5. COALITION Maintain through group agreement. [LEADERSHIP]
   5. ITERATE monitoring and adjustment.
   6. EMERGENT [CULTURAL: internalized shared expectations]
 

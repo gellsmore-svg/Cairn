@@ -27,9 +27,11 @@ The constructs that build a PROCESS ([document mode](document-modes.md)):
 - **CALL** — invoke another process by [signature](composition.md).
 
 **Domain extensions (see proposals):**
-- Psychological: `REGULATION`, `APPRAISAL`, `DUAL_PROCESS`, `METACOGNITION`
+- Psychological: `REGULATION`, `APPRAISAL`, `DUAL_PROCESS`, `METACOGNITION`, `FEEDBACK`
 - Organisational: `ALIGN`, `COALITION`, `RESISTANCE`, `REINFORCEMENT`, `CASCADE`, `VISION`
 - Sociological: `SOCIALIZE`, `INSTITUTIONALIZE`, `SYMBOLIC_INTERACTION`, `CONFLICT`, `ACCOMMODATE`, `ASSIMILATE`, `ROLE`
+
+New: `FEEDBACK` for loops in human systems.
 
 Steps carry [tags](tags.md) and may read/write [STATE](state.md). The full grammar
 is in [GRAMMAR.md](../reference/grammar.md); see [worked examples](../reference/examples.md).

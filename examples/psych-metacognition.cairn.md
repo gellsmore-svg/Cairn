@@ -34,12 +34,12 @@ PROCESS MetacognitiveRegulation (INPUT: cognitive task; OUTPUT: completed task w
     monitoring [scope: individual; dir: read/write]
     strategies [scope: individual; dir: read/write]
 
-  1. Plan approach to task. [METACOGNITIVE, COGNITIVE]
-  2. Monitor progress and comprehension during execution. [METACOGNITIVE]
+  1. METACOGNITION Plan approach to task. [METACOGNITIVE, COGNITIVE]
+  2. METACOGNITION Monitor progress and comprehension during execution. [METACOGNITIVE]
   3. DECISION [ON: strategy adjustment]
      if stuck: change approach
      if successful: continue
-  4. Evaluate outcome and reflect. [REGULATION]
+  4. REGULATION [STRATEGY: evaluate] Evaluate outcome and reflect. [REGULATION]
   5. STATE UPDATE: updated strategies and self-knowledge.
   6. EMERGENT [PSYCHOLOGICAL: better future performance]
 

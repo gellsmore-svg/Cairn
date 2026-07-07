@@ -31,7 +31,7 @@ PROCESS RoundRobinDebate (INPUT: claim; OUTPUT: verdict)
     transcript  [scope: process; dir: read/write]  ref: T1
 
   1. STEP — Frame the claim and the debate rules.        [CODE, DETERMINISTIC]
-  2. QUEUE [ORDER: ROUND_ROBIN; ONE_AT_A_TIME; ROUNDS: 5; UNTIL: consensus]
+  2. QUEUE [ORDER: ROUND_ROBIN; ONE_AT_A_TIME; ROUNDS: 5; UNTIL: consensus; MAX: 10]
      2a. CALL Proposer(claim, transcript) → argument     [LLM, STOCHASTIC]
          STATE UPDATE: transcript ← argument
      2b. CALL Challenger(claim, transcript) → rebuttal   [LLM, STOCHASTIC]

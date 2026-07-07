@@ -74,6 +74,7 @@ Interactive composer: `cairn-serve`
 - Describing work as it actually happens: technical mechanisms embedded in
   human contexts, including cognitive, emotional, organisational, and social
   dynamics.
+- New constructs for human dimensions: REGULATION, FEEDBACK (psych), COALITION, ALIGN, VISION (org), SOCIALIZE, SYMBOLIC_INTERACTION (socio), etc.
 
 Put simply: Cairn treats software work, thinking work, and organisational work
 as processes embedded in human systems, not as purely mechanical flows.

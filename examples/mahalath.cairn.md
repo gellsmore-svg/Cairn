@@ -54,7 +54,7 @@ PROCESS BuildOntology (INPUT: input_folder; OUTPUT: lexicon)
   STATE
     lexicon   [scope: global; dir: read/write]  ref: M1
 
-  1. ITERATE [UNTIL: stop]                                     # watched folder
+  1. ITERATE [UNTIL: stop; MAX: 1000]                                     # watched folder
      1.1 Ingest the next document; preserve source verbatim; reject duplicates
          by SHA-256 checksum.                                  [CODE, IDEMPOTENT, SIDE-EFFECT] [SATISFIES: R1]
      1.2 Extract candidate (term, frame) pairs from the document. [LLM, STOCHASTIC]

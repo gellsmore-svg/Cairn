@@ -82,6 +82,9 @@ These extend Cairn beyond technical/agentic processes into human-centric domains
 - [`socio-norm-formation.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-norm-formation.cairn.md)
 - [`socio-social-movements.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/socio-social-movements.cairn.md)
 
+**Cross-Domain:**
+- [`cross-domain-org-change.cairn.md`](https://github.com/gellsmore-svg/Cairn/blob/main/examples/cross-domain-org-change.cairn.md) — Combined use of psych/org/socio constructs (FEEDBACK, COALITION, SOCIALIZE, etc.).
+
 Each exercises the [constructs](../concepts/constructs.md), [tags](../concepts/tags.md),
 and [modes](../concepts/document-modes.md) — with new domain-specific extensions proposed in the docs/proposals/.
 

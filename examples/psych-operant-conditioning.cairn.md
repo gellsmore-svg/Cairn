@@ -34,8 +34,8 @@ PROCESS OperantConditioning (INPUT: behavior in context; OUTPUT: learned respons
     behavior_rate [scope: individual; dir: read/write]
     reinforcement_history [scope: individual; dir: read]
 
-  1. Emit behavior in presence of discriminative stimulus. [BEHAVIORAL]
-  2. CONSEQUENCE: reinforcement or punishment delivered. [REGULATION]
+  1. BEHAVIORAL Emit behavior in presence of discriminative stimulus. [BEHAVIORAL]
+  2. REGULATION [STRATEGY: consequence] CONSEQUENCE: reinforcement or punishment delivered. [REGULATION]
      POSITIVE_REINFORCEMENT: increase behavior
      NEGATIVE_REINFORCEMENT: increase by removal
      PUNISHMENT: decrease

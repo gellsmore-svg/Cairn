@@ -36,11 +36,12 @@ PROCESS FacilitateADKARChange (INPUT: change initiative; OUTPUT: adopted new beh
     ability       [scope: individual; dir: read/write]
     reinforcement [scope: org; dir: read/write]
 
-  1. Build AWARENESS of why the change is needed. [LEADERSHIP, STAKEHOLDER]
+  1. LEADERSHIP Build AWARENESS of why the change is needed. [STAKEHOLDER]
   2. Generate DESIRE to participate and support the change. [MOTIVATIONAL, POWER]
   3. Provide KNOWLEDGE on how to change. [STRATEGIC]
   4. Develop ABILITY to implement the change. [ITERATE: training and practice]
   5. REINFORCEMENT to sustain the change. [REINFORCEMENT, CULTURAL]
+  6. COALITION Engage key stakeholders. [POWER]
 
   # EMERGENT [SATISFIES: R4]  # widespread, sustained adoption
 ```

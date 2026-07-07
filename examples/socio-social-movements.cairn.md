@@ -36,8 +36,9 @@ PROCESS SocialMovement (INPUT: structural grievance; OUTPUT: social change or de
     frames        [scope: group; dir: read/write]  ref: S2
     opportunities [scope: society; dir: read]  ref: S3
 
-  1. Frame grievances as injustice and actionable. [SYMBOLIC, SOCIAL]
+  1. SYMBOLIC_INTERACTION Frame grievances as injustice and actionable. [SYMBOLIC, SOCIAL]
   2. MOBILIZE resources and build organizations. [GROUP, POWER]
+  3. SOCIALIZE Recruit members. [SOCIAL]
   3. Exploit political opportunities.
   4. ITERATE collective action (protests, campaigns).
   5. DECISION [ON: outcomes]

@@ -34,10 +34,11 @@ PROCESS Socialization (INPUT: individual entering social world; OUTPUT: socializ
     roles        [scope: individual; dir: read/write]
     identity     [scope: individual; dir: read/write]
 
-  1. Primary SOCIALIZE via family interaction and modeling. [SOCIAL, CULTURAL]
+  1. SOCIALIZE Primary via family interaction and modeling. [SOCIAL, CULTURAL]
   2. ITERATE learning basic norms and roles.
-  3. Secondary SOCIALIZE in new contexts (school, work, etc.). [ROLE]
-  4. Internalize through repeated practice and feedback.
-  5. STATE UPDATE: integrated norms, roles, and self.
-  6. EMERGENT [SOCIAL: competent participation and cultural continuity]
+  3. SOCIALIZE Secondary in new contexts (school, work, etc.). [ROLE]
+  4. COALITION Align with group norms. [CULTURAL]
+  5. Internalize through repeated practice and feedback.
+  6. STATE UPDATE: integrated norms, roles, and self.
+  7. EMERGENT [SOCIAL: competent participation and cultural continuity]
 ```

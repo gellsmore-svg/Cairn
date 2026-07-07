@@ -35,7 +35,7 @@ PROCESS ChangeCulture (INPUT: cultural misalignment; OUTPUT: new cultural assump
     basic_assumptions [scope: org; dir: read/write]  ref: C3
 
   1. DIAGNOSE current culture (artefacts, values, assumptions). [CULTURAL, STRATEGIC]
-  2. Create disconfirming evidence or anxiety to unfreeze. [LEADERSHIP]
+  2. LEADERSHIP Create disconfirming evidence or anxiety to unfreeze. [LEADERSHIP]
   3. Provide psychological safety for learning new assumptions. [POWER, CULTURAL]
   4. ITERATE new behaviors, structures, and successes to embed.
      STATE UPDATE: basic_assumptions ← new shared beliefs  ref: C3

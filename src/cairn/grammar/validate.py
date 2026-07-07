@@ -211,6 +211,35 @@ def _validate_process(
     for step in proc.steps:
         errors.extend(_validate_step_tree(step, declared_states, loop_depth=loop_depth))
 
+    # Domain tag/construct consistency (core improvement for human systems)
+    all_step_tags = []
+    for step in proc.steps:
+        all_step_tags.extend(step.tags)
+    for element in proc.elements:
+        if isinstance(element, ConstructLine):
+            all_step_tags.extend(element.modifiers)  # rough
+    tag_set = set(t.upper() for t in all_step_tags)
+    used_constructs = set()
+    for step in proc.steps:
+        if step.construct:
+            used_constructs.add(step.construct)
+        for cline in step.construct_lines:
+            used_constructs.add(cline.construct)
+    for el in proc.elements:
+        if isinstance(el, ConstructLine):
+            used_constructs.add(el.construct)
+
+    psych_tag_set = {"EMOTIONAL", "COGNITIVE", "APPRAISAL", "REGULATION", "MOTIVATIONAL", "METACOGNITIVE", "BEHAVIORAL"}
+    org_tag_set = {"LEADERSHIP", "STRATEGIC", "CULTURAL", "POWER", "STAKEHOLDER", "STRUCTURAL", "ALIGNMENT", "RESISTANCE"}
+    socio_tag_set = {"SOCIAL", "GROUP", "NORM", "ROLE", "SYMBOLIC"}
+
+    if psych_tag_set & tag_set and not _PSYCH_CONSTRUCTS & {c.upper() for c in used_constructs}:
+        errors.append(f"PROCESS {proc.name}: has psychological tags but no corresponding constructs (REGULATION, APPRAISAL, etc.) — use them for clarity in human systems")
+    if org_tag_set & tag_set and not _ORG_CONSTRUCTS & {c.upper() for c in used_constructs}:
+        errors.append(f"PROCESS {proc.name}: has organisational tags but no corresponding constructs (COALITION, ALIGN, etc.)")
+    if socio_tag_set & tag_set and not _SOCIO_CONSTRUCTS & {c.upper() for c in used_constructs}:
+        errors.append(f"PROCESS {proc.name}: has sociological tags but no corresponding constructs (SOCIALIZE, SYMBOLIC_INTERACTION, etc.)")
+
     return errors
 
 

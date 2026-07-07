@@ -49,6 +49,9 @@ Worked Cairn descriptions of real systems, used to stress-test the spec.
 - [`socio-norm-formation.cairn.md`](socio-norm-formation.cairn.md) — Emergence, institutionalization, and enforcement of social norms.
 - [`socio-social-movements.cairn.md`](socio-social-movements.cairn.md) — Social movement framing, mobilization, and collective action for change.
 
+**Cross-Domain:**
+- [`cross-domain-org-change.cairn.md`](cross-domain-org-change.cairn.md) — Example combining psych regulation, org coalition/align, socio socialize/feedback in one process.
+
 Each describes the system **as it currently stands**, exercising CONTEXT,
 REQUIREMENTS/OUTCOMES, and PROCESS modes — and is expected to surface gaps that
 feed back into [../SPEC.md](../SPEC.md).

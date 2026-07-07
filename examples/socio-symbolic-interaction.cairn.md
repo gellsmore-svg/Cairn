@@ -40,7 +40,7 @@ PROCESS SymbolicInteraction (INPUT: social encounter; OUTPUT: updated meanings a
   1. SYMBOLIC_INTERACTION: interpret symbols and gestures in the situation. [SYMBOLIC, SOCIAL]
   2. ROLE_TAKING: imaginatively take the perspective of the other(s). [ROLE]
   3. Define the situation and act accordingly.
-  4. Reflect on responses and adjust meanings. [METACOGNITIVE]
+  4. METACOGNITION Reflect on responses and adjust meanings. [METACOGNITIVE]
   5. STATE UPDATE: self and shared meanings evolve.
   6. EMERGENT [SOCIAL: coordinated understanding or new identity]
 

@@ -39,7 +39,7 @@ PROCESS DualProcessDecision (INPUT: decision situation; OUTPUT: choice + justifi
      low resources or time pressure → use impulse
      high stakes → engage analysis
   3. SYSTEM-2 evaluates options, evidence, values. [COGNITIVE]
-  4. Integrate or override. [REGULATION]
+  4. REGULATION [STRATEGY: integrate] Integrate or override. [REGULATION]
   5. STATE UPDATE: choice made + post-decision rationalization.
   6. EMERGENT [PSYCHOLOGICAL: action + updated beliefs]
 

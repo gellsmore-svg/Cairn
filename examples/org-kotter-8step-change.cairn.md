@@ -41,13 +41,13 @@ PROCESS LeadChange (INPUT: need for transformation; OUTPUT: transformed organisa
     culture   [scope: org; dir: read/write]
 
   1. Create a sense of URGENCY. [LEADERSHIP, STRATEGIC]
-  2. BUILD a powerful GUIDING COALITION. [POWER, COALITION]
-  3. Create a VISION to help direct the change. [VISION]
-  4. COMMUNICATE the vision widely and repeatedly. [CASCADE]
-  5. EMPOWER broad-based action by removing obstacles. [RESISTANCE]
-  6. Generate SHORT-TERM WINS. [REINFORCEMENT]
+  2. COALITION BUILD a powerful GUIDING COALITION. [POWER]
+  3. VISION Create a VISION to help direct the change. [VISION]
+  4. CASCADE COMMUNICATE the vision widely and repeatedly. [CASCADE]
+  5. RESISTANCE EMPOWER broad-based action by removing obstacles. [RESISTANCE]
+  6. REINFORCEMENT Generate SHORT-TERM WINS. [REINFORCEMENT]
   7. CONSOLIDATE gains and produce more change.
-  8. ANCHOR new approaches in the culture. [CULTURE, ALIGNMENT]
+  8. ALIGN ANCHOR new approaches in the culture. [CULTURE, ALIGNMENT]
 
   # EMERGENT [SATISFIES: R6]  # sustained new performance and behaviours
 ```
