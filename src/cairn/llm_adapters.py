@@ -77,3 +77,54 @@ class CommandLLMProvider:
         if isinstance(parsed, dict) and isinstance(parsed.get("text"), str):
             text = parsed["text"]
         return LLMResponse(text=text, provider=self.name, raw=raw)
+
+
+class HoglahLLMProvider:
+    """Optional Hoglah-backed LLM provider.
+
+    This adapter imports Hoglah lazily so Cairn remains a portable package. It
+    submits the prepared prompt as a Hoglah generation job and waits for the
+    result. Use it when durable queueing, retries, and Hoglah's tracing matter.
+    """
+
+    name = "hoglah"
+
+    def __init__(
+        self,
+        *,
+        model: str,
+        config: dict | None = None,
+        use_real: bool | None = None,
+        timeout: float | None = 120,
+        start_worker: bool = True,
+        **submit_options,
+    ):
+        self.model = model
+        self.config = config
+        self.use_real = use_real
+        self.timeout = timeout
+        self.start_worker = start_worker
+        self.submit_options = submit_options
+
+    def complete(self, request: LLMRequest) -> LLMResponse:
+        try:
+            from hoglah import Hoglah
+        except ImportError as exc:
+            raise ImportError("HoglahLLMProvider requires hoglah to be installed") from exc
+
+        kwargs = {"config": self.config, "start_worker": self.start_worker}
+        if self.use_real is not None:
+            kwargs["use_real"] = self.use_real
+        with Hoglah(**kwargs) as h:
+            job_id = h.submit(
+                prompt=request.prompt,
+                model=self.model,
+                tags=["cairn", "human-factors"],
+                metadata={"task": request.task},
+                step_name=request.task,
+                **self.submit_options,
+            )
+            result = h.wait(job_id, timeout=self.timeout)
+        if result.error:
+            raise RuntimeError(f"Hoglah job {job_id} failed: {result.error}")
+        return LLMResponse(text=result.output or "", provider=self.name, raw=result.output)

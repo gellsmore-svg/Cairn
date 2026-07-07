@@ -31,7 +31,7 @@ from cairn.human_factors import (
     format_human_factors_report,
     interpret_human_factors,
 )
-from cairn.llm_adapters import CommandLLMProvider, LLMRequest, LLMResponse
+from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider, LLMRequest, LLMResponse
 from cairn.render import export_view, register_exporter, registered_exporters, registered_profiles, render_plan
 
 __all__ = [
@@ -50,6 +50,7 @@ __all__ = [
     "analyze_human_factors",
     "build_human_factors_prompt",
     "CommandLLMProvider",
+    "HoglahLLMProvider",
     "format_human_factors_report",
     "interpret_human_factors",
     "LLMRequest",

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import types
 
 from cairn import analyze_human_factors, build_human_factors_prompt, format_human_factors_report, interpret_human_factors
 from cairn.human_factors_cli import main as human_factors_main
-from cairn.llm_adapters import LLMRequest, LLMResponse
+from cairn.llm_adapters import HoglahLLMProvider, LLMRequest, LLMResponse
 
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
@@ -69,3 +70,35 @@ def test_human_factors_cli_command_provider(tmp_path, capsys):
     captured = capsys.readouterr()
     assert rc == 0
     assert "Adapter OK: cairn.human_factors.interpret" in captured.out
+
+
+def test_hoglah_provider_is_optional_and_uses_hoglah_api(monkeypatch):
+    class FakeResult:
+        output = "queued interpretation"
+        error = None
+
+    class FakeHoglah:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return None
+
+        def submit(self, **kwargs):
+            assert kwargs["model"] == "stub:1"
+            assert kwargs["metadata"]["task"] == "task"
+            return "job-1"
+
+        def wait(self, job_id, timeout=None):
+            assert job_id == "job-1"
+            assert timeout == 5
+            return FakeResult()
+
+    monkeypatch.setitem(sys.modules, "hoglah", types.SimpleNamespace(Hoglah=FakeHoglah))
+    provider = HoglahLLMProvider(model="stub:1", timeout=5)
+    response = provider.complete(LLMRequest(task="task", prompt="hello", context={}))
+    assert response.provider == "hoglah"
+    assert response.text == "queued interpretation"

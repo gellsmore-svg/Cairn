@@ -60,6 +60,11 @@ cairn-human-factors my-process.cairn.md -f json
 
 # Optional LLM interpretation through any command provider
 cairn-human-factors my-process.cairn.md --llm-command "my-llm-wrapper --model local"
+cairn-human-factors examples/accounts-payable-exception.cairn.md --llm-command "python examples/llm_command_stub.py"
+
+# Optional Hoglah-backed queued interpretation
+cairn-human-factors my-process.cairn.md --hoglah-model gemma3:1b
+cairn-human-factors my-process.cairn.md --hoglah-model gemma3:1b --hoglah-real
 ```
 
 Or programmatically:
@@ -73,9 +78,12 @@ pdf = export_view(view, "pdf")
 from cairn import analyze_human_factors
 report = analyze_human_factors(text)  # pure Python; no LLM service required
 
-from cairn import CommandLLMProvider, interpret_human_factors
+from cairn import CommandLLMProvider, HoglahLLMProvider, interpret_human_factors
 provider = CommandLLMProvider("my-llm-wrapper --model local")
 interpretation = interpret_human_factors(text, provider)
+
+queued = HoglahLLMProvider(model="gemma3:1b")
+queued_interpretation = interpret_human_factors(text, queued)
 ```
 
 Interactive composer: `cairn-serve`
@@ -159,7 +167,10 @@ LLM integration is provider-neutral. A command provider receives JSON on stdin
 `text` field. That means local llama.cpp/Ollama scripts, hosted-model CLIs,
 Claude/Codex wrappers, or a Hoglah queue submitter can all sit behind the same
 adapter. Hoglah is a natural fit for durable queued analysis jobs, retries, and
-audit trails, but Cairn does not require it.
+audit trails, and `HoglahLLMProvider` is available when `hoglah` is installed,
+but Cairn does not require it.
+
+See `examples/llm_command_stub.py` for the minimal provider contract.
 
 ### Practical and evolving
 Cairn is meant to be used "in anger" on real projects, evolving from actual needs

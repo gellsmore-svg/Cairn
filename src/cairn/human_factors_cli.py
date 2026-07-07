@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from cairn.human_factors import analyze_human_factors, format_human_factors_report, interpret_human_factors
-from cairn.llm_adapters import CommandLLMProvider
+from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,6 +30,8 @@ def main(argv: list[str] | None = None) -> int:
         "--llm-command",
         help="Optional command provider. Receives JSON on stdin and returns plain text or JSON {text: ...}.",
     )
+    parser.add_argument("--hoglah-model", help="Optional Hoglah-backed provider model name")
+    parser.add_argument("--hoglah-real", action="store_true", help="Use Hoglah's real adapter instead of its safe stub")
     parser.add_argument("--llm-timeout", type=int, default=120, help="Timeout in seconds for --llm-command")
 
     args = parser.parse_args(argv)
@@ -40,8 +42,13 @@ def main(argv: list[str] | None = None) -> int:
 
     report = analyze_human_factors(source)
     interpretation = None
+    if args.llm_command and args.hoglah_model:
+        parser.error("choose either --llm-command or --hoglah-model, not both")
     if args.llm_command:
         provider = CommandLLMProvider(args.llm_command, timeout=args.llm_timeout)
+        interpretation = interpret_human_factors(source, provider, report=report)
+    elif args.hoglah_model:
+        provider = HoglahLLMProvider(model=args.hoglah_model, use_real=args.hoglah_real, timeout=args.llm_timeout)
         interpretation = interpret_human_factors(source, provider, report=report)
 
     if args.output_format == "json":
