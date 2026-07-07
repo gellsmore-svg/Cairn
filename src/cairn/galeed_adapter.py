@@ -87,6 +87,7 @@ def _kind_for_event(event_type: str) -> str:
 
 def _tags_for_event(event_type: str, event: dict[str, Any], metadata: dict[str, Any]) -> list[str]:
     tags = [event_type.replace(".", "_")]
+    tags.extend(str(tag) for tag in metadata.get("tags", []) if str(tag).strip())
     status = str(event.get("status") or "").lower()
     severity = str(event.get("severity") or "").lower()
     if status in {"failed", "error"} or severity == "error" or event_type.endswith(".failed"):

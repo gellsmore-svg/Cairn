@@ -44,3 +44,26 @@ def test_observation_can_round_trip_through_galeed_trace_event():
     assert converted["kind"] == "agent_output"
     assert "missing_evidence" in converted["tags"]
     assert converted["duration_ms"] == 4200
+
+
+def test_observation_round_trip_preserves_non_special_tags():
+    observation = observation_event(
+        ts="2026-07-07T21:16:00Z",
+        source="mahlah-ui",
+        kind="ui_event",
+        severity="warning",
+        message="User left answer view to reconstruct missing process context.",
+        tags=["context_switch", "repair_turn", "waiting"],
+        human_systems=["audit reasoning", "vigilance"],
+        duration_ms=900,
+        correlation={"session_id": "sess_1", "trace_id": "trace_1"},
+    )
+
+    galeed_event = observation_to_galeed_trace_event(observation)
+    converted = galeed_event_to_observation(galeed_event)
+
+    assert "context_switch" in converted["tags"]
+    assert "repair_turn" in converted["tags"]
+    assert "waiting" in converted["tags"]
+    assert "audit reasoning" in converted["human_systems"]
+    assert "vigilance" in converted["human_systems"]
