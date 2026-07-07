@@ -14,6 +14,11 @@ Install: `pip install cairn-lang` — the distribution is named **cairn-lang**
 (the PyPI name `cairn` belongs to an unrelated project) but the import is
 unchanged: `import cairn`.
 
+Optional extras:
+- `pip install 'cairn-lang[render]'` — YAML stylesheets
+- `pip install 'cairn-lang[web]'` — `cairn-serve` interactive composer
+- `pip install 'cairn-lang[export]'` — HTML / DOCX / PDF export (python-docx + fpdf2)
+
 ## What it looks like
 
 A small slice, in the readable **Narrative** style:
@@ -34,6 +39,26 @@ traceability):
 ```
 
 Full worked descriptions of three real systems are in [`examples/`](examples/).
+
+### Rendering & export
+Cairn can be turned into audience-friendly views:
+
+```bash
+cairn-render my-process.cairn.md --profile narrative_steps
+cairn-render my-process.cairn.md -f html -o view.html
+cairn-render my-process.cairn.md -f pdf -o plan.pdf   # requires [export]
+```
+
+Or programmatically:
+
+```python
+from cairn.render import render_plan, export_view
+
+view = render_plan(text, profile="operator")
+pdf = export_view(view, "pdf")
+```
+
+Interactive composer: `cairn-serve`
 
 ## What it's for
 
@@ -88,11 +113,10 @@ rather than theoretical perfection.
 
 ## Status
 
-**v0.9** — adds versioned live PLAN envelopes, on top of v0.8 render profiles + ownership/assistance and the
-stress-tested v0.7. Refined by describing real systems in Cairn (Tirzah, Hoglah,
-Mahalath — see [`examples/`](examples/)) and by modelling a human-led, AI-assisted
-delivery process. Evolving from real use; a structural grammar is in
-[GRAMMAR.md](GRAMMAR.md).
+**v0.8** (current on PyPI as `cairn-lang`) — complete export support (`html`/`docx`/`pdf`), interactive `cairn-serve`, executable grammar + conformance, multiple render profiles, and real usage examples across the family stack.
+
+The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
+[GRAMMAR.md](GRAMMAR.md). Refined by describing real systems (Tirzah, Hoglah, Mahalath, etc.).
 
 ## Repository
 

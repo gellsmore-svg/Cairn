@@ -1,10 +1,15 @@
-## [Unreleased]
+## [0.8.0] — 2026-07-07
 
-- **Export story completed**: Built-in exporters for `html` (always), `docx` (python-docx), `pdf` (fpdf2) via `cairn-lang[export]` extra.
-  - `cairn-render -f docx -o out.docx` and `-f pdf`, `-f html` now supported.
-  - `export_view()` dispatches to them; nice ImportError if extra not installed.
-  - Updated docs, tests, CLI choices and render_plan.
-  - See VIEW-GENERATOR.md and export.py for usage and custom exporters.
+- **Export story completed**: Built-in exporters for `html` (always available), `docx` (via python-docx), `pdf` (via fpdf2) under the new `cairn-lang[export]` extra.
+  - `cairn-render -f html|docx|pdf -o out.ext` now works.
+  - `cairn.render.export_view()` and `register_exporter()` fully functional.
+  - Clean error messages when optional deps are missing.
+  - Updated CLI, render pipeline, tests, and documentation.
+- Packaging: Published 0.7.0 / 0.8.0 to PyPI as `cairn-lang`. Fixed license metadata for modern PyPI compatibility.
+- Version bumped to 0.8.0.
+
+## [0.7.0] — 2026-07-07
+- Initial public PyPI release (as `cairn-lang`).
 
 ## [0.5.2] — 2026-07-05
 
