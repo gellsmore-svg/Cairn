@@ -42,3 +42,22 @@ surfaces the main review burdens:
 Recommended next modeling step: use this annotated example as the pattern for
 other human-gated family workflows, especially generated-output endorsement and
 Mahlah's conversational ask UI.
+
+## Tirzah Generated Output Endorsement
+
+Input: `examples/tirzah-generated-output.cairn.md`
+
+Updated result: the generated-output trust gate is now annotated with human
+demand and risk detail. The report in
+`docs/analysis/tirzah-generated-output-human-factors.md` highlights:
+
+- context burden while comparing query, answer, provenance, and source nodes,
+- risk that fluent generated output is promoted into trusted memory too easily,
+- one-click endorsement as the lowest-effort path,
+- reviewer accountability for future retrieval behaviour,
+- provenance/note capture as the difference between auditability and opaque
+  trust changes.
+
+Design implication: generated-output endorsement and semantic-edge review share
+the same family pattern: a human-gated durable write whose quality depends on
+context visibility, calibrated trust, and low-friction rejection/defer paths.

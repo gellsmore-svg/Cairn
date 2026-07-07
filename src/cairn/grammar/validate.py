@@ -485,6 +485,9 @@ def _check_await_timeout(step: Step, lineno: int) -> list[str]:
     has_timeout = False
     if "TIMEOUT" in step.annotations:
         has_timeout = True
+    parsed_step = getattr(step, "parsed_modifiers", {}) or {}
+    if "TIMEOUT" in getattr(step, "modifiers", []) or "TIMEOUT" in parsed_step:
+        has_timeout = True
     for cline in step.construct_lines:
         parsed = getattr(cline, "parsed_modifiers", {}) or {}
         if "TIMEOUT" in cline.modifiers or "TIMEOUT" in str(cline.text).upper() or "TIMEOUT" in parsed:

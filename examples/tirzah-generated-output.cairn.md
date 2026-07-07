@@ -63,9 +63,74 @@ PROCESS ReviewGeneratedOutput (INPUT: scope; OUTPUT: review_summary)
   3. MILESTONE INSPECT — list generated-output nodes for review.            [CODE] [SATISFIES: R5]
      CALL ListGeneratedOutputNodes(endorsement_label=unreviewed, limit) → nodes
   4. ITERATE [OVER: nodes the operator chooses to act on]
-     4.1 Present query, answer preview, provenance, used_node_ids.
-     4.2 AWAIT [EVENT: operator endorse or reject; TIMEOUT: never]          [HUMAN, GATED]
-     4.3 CALL EndorseGeneratedNode(node_id, endorsement_label, reviewer, note) → result
+     4.1. Present query, answer preview, provenance, used_node_ids.
+          PURPOSE: give the operator enough context to judge whether generated output deserves trusted memory status.
+          HUMAN_DEMAND:
+            ORIENT: understand the original query, generated answer, provenance, and source nodes used.
+            ACT: compare the answer against source context and decide whether it is trustworthy enough to endorse.
+            CLOSE: know whether the node is ready for endorsement, rejection, deferment, or deeper inspection.
+            RECOVER: open the source exchange or used nodes when the preview is insufficient.
+          HUMAN_LOAD:
+            focus_actions: 6
+            business_actions: 3
+            trivial_actions: 3
+            context_switches: 4
+            ambiguity_load: high when answer quality depends on source nuance.
+          HUMAN_FACTORS:
+            cognitive_load: reviewer must hold query, answer, provenance, and source evidence together.
+            trust_automation: fluent generated answers can appear more reliable than their grounding.
+            interface_friction: weak provenance display forces manual source hunting.
+          HUMAN_RISK:
+            probability: medium
+            impact: high
+            confidence: medium
+            score: significant
+            rationale: endorsement can promote generated text into trusted retrieval memory, so weak inspection context has downstream effects.
+          TRUST: show grounding, uncertainty, and source coverage before endorsement controls.
+          SUPPORT: co-locate query, answer, used nodes, source excerpts, and process trace.
+     4.2. AWAIT [EVENT: operator endorse or reject; TIMEOUT: never] operator endorsement decision. [HUMAN, GATED]
+          PURPOSE: make trusted-memory promotion depend on explicit human endorsement or rejection.
+          HUMAN_DEMAND:
+            ORIENT: understand that endorsement changes how retrieval may treat this generated output.
+            ACT: choose explicit_endorsed, rejected, defer, or inspect more evidence.
+            CLOSE: see the endorsement label change or the item leave the active review state.
+            RECOVER: allow defer/skip without forcing a low-confidence trust decision.
+          HUMAN_LOAD:
+            explicit_decisions: 1
+            uncertainty_loops: 1
+            input_burden: medium when a note is needed to explain trust or rejection.
+            closure_clarity: medium
+          HUMAN_FACTORS:
+            trust_automation: human endorsement can become a rubber stamp for fluent model output.
+            behavioural_economics: one-click endorsement can become the lowest-effort path.
+            social_role: reviewer becomes accountable for what future retrieval treats as trusted.
+          HUMAN_RISK:
+            probability: medium
+            impact: high
+            confidence: medium
+            score: significant
+            rationale: a single review action changes memory trust status and may influence later answers.
+          SUPPORT: provide endorse, reject, defer, and inspect-source paths with clear retrieval consequences.
+     4.3. CALL EndorseGeneratedNode(node_id, endorsement_label, reviewer, note) → result
+          PURPOSE: record the endorsement decision with provenance for audit and future learning.
+          HUMAN_DEMAND:
+            ORIENT: confirm which generated-output node and label are being recorded.
+            ACT: add a reason note when the endorsement or rejection is not self-evident.
+            CLOSE: see updated endorsement label, reviewer, timestamp, and review history.
+            ADAPT: repeated review notes can improve future generation and retrieval policy.
+          HUMAN_LOAD:
+            input_burden: medium if note capture is unstructured.
+            closure_clarity: high when review history updates immediately.
+          HUMAN_FACTORS:
+            interface_friction: blank notes can reduce useful feedback.
+            organisational_change: endorsement shifts operator work from answer reading to memory governance.
+          HUMAN_RISK:
+            probability: low
+            impact: medium
+            confidence: medium
+            score: moderate
+            rationale: the trust decision already happened, but poor provenance weakens later audit and learning.
+          IMPROVEMENT: offer note templates such as "well grounded", "unsupported claim", "outdated source", or "useful but incomplete".
   OUTPUT: review_summary (ingested_count, endorsed_count, rejected_count)
 
 PROCESS ProcessNextOutputJob (INPUT: job_id?; OUTPUT: ingest_result)
@@ -81,6 +146,17 @@ PROCESS EndorseGeneratedNode (INPUT: node_id, endorsement_label; OUTPUT: node_st
   1. Validate endorsement_label ∈ allowed set.                                [CODE]
   2. Load node; reject if labels lack generated_output.                       [CODE] [SATISFIES: R3]
   3. Update endorsement_label, provenance, metadata.review_history.           [CODE, SIDE-EFFECT, GATED, HUMAN]
+     PURPOSE: make the final memory-trust state durable and attributable.
+     HUMAN_FACTORS:
+       social_role: reviewer attribution makes the human accountable for trusted generated memory.
+       trust_automation: endorsed generated output may later be retrieved as trusted context.
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       score: significant
+       rationale: durable endorsement affects future retrieval behaviour and therefore future answers.
+     SUPPORT: preserve original exchange, source evidence, label change, reviewer, timestamp, and note.
   OUTPUT: node_state
 ```
 
