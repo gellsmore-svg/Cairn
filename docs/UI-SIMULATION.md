@@ -30,6 +30,23 @@ cairn-ui-sim docs/scenarios/mahlah-human-load.json \
 
 The report is written to the scenario's `output` path unless `--output` is supplied. Relative output paths are resolved from the scenario file, not from the target project.
 
+For the complete workflow in one pass:
+
+```bash
+cairn-ui-pipeline docs/scenarios/mahlah-recovery-loop.json \
+  --project-root ../Mahlah \
+  --base-url http://localhost:5273 \
+  --llm-command scripts/codex_llm_provider.py \
+  --persona novice-repair-user \
+  --persona queue-pressure-operator
+```
+
+The pipeline validates the scenario, runs the browser simulation, writes the
+JSON report, generates the evidence summary, exports the Cairn annotation
+snippet, and runs role-play when an LLM provider is supplied. Use `--from-report`
+to regenerate evidence, annotations, or role-play from an existing report
+without opening a browser.
+
 After running the browser simulation, summarise it as human-load evidence:
 
 ```bash
