@@ -118,6 +118,24 @@ Cairn cues and produces:
 The offline analyzer is conservative scaffolding. It should be good enough to
 notice common patterns and start a review, not smart enough to replace one.
 
+## Live Observation
+
+`cairn-live-observe` is the runtime counterpart to the offline analyzer. It
+summarises JSON or JSONL observation events from UI probes, logs, agent traces,
+queue events, feedback, and output-review agents.
+
+Use it when a product wrapper or observer agent needs to ask:
+
+- What is the system doing repeatedly?
+- Where are humans waiting, switching context, repairing, or carrying hidden
+  accountability?
+- Are agentic outputs grounded, useful, and recoverable?
+- Which operational patterns should become product or process improvements?
+
+The live observer should still follow the same guardrails: score process
+conditions, not people; distinguish observation from inference; and keep human
+review responsible for final judgement.
+
 ## LLM Interpretation
 
 LLM interpretation is optional. It sits on top of the offline report:

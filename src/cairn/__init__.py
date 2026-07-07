@@ -32,6 +32,7 @@ from cairn.human_factors import (
     interpret_human_factors,
 )
 from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider, LLMRequest, LLMResponse
+from cairn.live_observer import analyze_live_observations, format_live_observation_report
 from cairn.render import export_view, register_exporter, registered_exporters, registered_profiles, render_plan
 from cairn.ui_evidence import (
     analyze_ui_simulation_report,
@@ -56,6 +57,7 @@ __all__ = [
     "document_to_plan",
     "extract_cairn_source",
     "analyze_human_factors",
+    "analyze_live_observations",
     "analyze_ui_simulation_report",
     "build_ui_roleplay_prompt",
     "build_human_factors_prompt",
@@ -63,6 +65,7 @@ __all__ = [
     "HoglahLLMProvider",
     "format_cairn_annotation_snippet",
     "format_human_factors_report",
+    "format_live_observation_report",
     "format_scenario_validation_report",
     "format_ui_human_load_report",
     "interpret_human_factors",
