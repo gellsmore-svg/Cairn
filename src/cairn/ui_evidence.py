@@ -132,6 +132,52 @@ def format_ui_human_load_report(report: UiHumanLoadReport, *, output_format: str
     return "\n".join(lines).strip()
 
 
+def format_cairn_annotation_snippet(
+    report: UiHumanLoadReport,
+    *,
+    step_title: str | None = None,
+    include_header: bool = True,
+) -> str:
+    """Return a Cairn annotation snippet from UI human-load evidence."""
+    title = step_title or f"Review UI evidence for {report.scenario}"
+    lines: list[str] = []
+    if include_header:
+        lines.extend(
+            [
+                f"## {title}",
+                "",
+                "PURPOSE:",
+                f"  Record human-load evidence observed during UI simulation `{report.scenario}`.",
+                "",
+                "EVIDENCE:",
+                f"  ui_simulation: {report.scenario}",
+                f"  clicks: {report.metrics.get('clicks', 0)}",
+                f"  fills: {report.metrics.get('fills', 0)}",
+                f"  waits: {report.metrics.get('waits', 0)}",
+                f"  context_switches: {report.metrics.get('contextSwitches', 0)}",
+                f"  popups: {report.metrics.get('popups', 0)}",
+                "",
+            ]
+        )
+
+    for block in ("HUMAN_DEMAND", "HUMAN_LOAD", "HUMAN_FACTORS", "HUMAN_RISK"):
+        value = report.suggested_blocks.get(block)
+        if not value:
+            continue
+        lines.append(f"{block}:")
+        lines.extend(f"  {line}" if line else "" for line in value.splitlines())
+        lines.append("")
+
+    lines.extend(
+        [
+            "REVIEW:",
+            "  Treat this as design evidence, not measurement of a person.",
+            "  Confirm the annotations with the process owner and representative users before adopting.",
+        ]
+    )
+    return "\n".join(lines).rstrip()
+
+
 def build_ui_roleplay_prompt(
     raw_report: dict[str, Any],
     evidence: UiHumanLoadReport,

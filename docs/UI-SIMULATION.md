@@ -54,6 +54,18 @@ LLM receives the raw browser report, the deterministic evidence summary, and a
 set of personas. Use `--persona` repeatedly to supply domain-specific
 perspectives.
 
+Finally, export a review-ready Cairn annotation snippet:
+
+```bash
+cairn-ui-annotations docs/analysis/mahlah-ui-sim-report.json \
+  --step-title "Review Mahlah UI human load" \
+  --output docs/analysis/mahlah-ui-annotations.cairn.md
+```
+
+This emits `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`
+blocks with a short evidence header. It is intentionally a snippet rather than
+an automatic edit: a human process owner should decide where it belongs.
+
 ## Scenario Actions
 
 Supported actions in the prototype:
@@ -94,6 +106,7 @@ Playwright scenario
   -> UI simulation report
   -> deterministic human-load evidence
   -> optional LLM role-play / critique
+  -> review-ready Cairn annotation snippet
   -> revised Cairn process annotations
 ```
 

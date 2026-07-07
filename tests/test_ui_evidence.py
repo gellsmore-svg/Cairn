@@ -9,9 +9,11 @@ from cairn.llm_adapters import LLMRequest, LLMResponse
 from cairn.ui_evidence import (
     analyze_ui_simulation_report,
     build_ui_roleplay_prompt,
+    format_cairn_annotation_snippet,
     format_ui_human_load_report,
     interpret_ui_experience,
 )
+from cairn.ui_annotations_cli import main as ui_annotations_main
 from cairn.ui_evidence_cli import main as ui_evidence_main
 from cairn.ui_roleplay_cli import main as ui_roleplay_main
 
@@ -48,6 +50,18 @@ def test_format_ui_human_load_report_markdown_and_json():
     assert payload["suggested_blocks"]["HUMAN_LOAD"]
 
 
+def test_format_cairn_annotation_snippet():
+    raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
+    report = analyze_ui_simulation_report(raw)
+
+    snippet = format_cairn_annotation_snippet(report, step_title="Review Mahlah UI human load")
+    assert snippet.startswith("## Review Mahlah UI human load")
+    assert "HUMAN_DEMAND:" in snippet
+    assert "HUMAN_RISK:" in snippet
+    assert "context_switches: 3" in snippet
+    assert "Treat this as design evidence" in snippet
+
+
 def test_ui_evidence_cli_writes_markdown(tmp_path):
     source = ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json"
     output = tmp_path / "ui-evidence.md"
@@ -57,6 +71,18 @@ def test_ui_evidence_cli_writes_markdown(tmp_path):
     text = output.read_text(encoding="utf-8")
     assert "Suggested Cairn Blocks" in text
     assert "HUMAN_RISK" in text
+
+
+def test_ui_annotations_cli_writes_cairn_snippet(tmp_path):
+    source = ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json"
+    output = tmp_path / "ui-annotations.cairn.md"
+    rc = ui_annotations_main([str(source), "--step-title", "Review generated UI evidence", "-o", str(output)])
+
+    assert rc == 0
+    text = output.read_text(encoding="utf-8")
+    assert "## Review generated UI evidence" in text
+    assert "HUMAN_LOAD:" in text
+    assert "context_switches: 3" in text
 
 
 class FakeRoleplayProvider:

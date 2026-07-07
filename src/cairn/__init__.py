@@ -36,6 +36,7 @@ from cairn.render import export_view, register_exporter, registered_exporters, r
 from cairn.ui_evidence import (
     analyze_ui_simulation_report,
     build_ui_roleplay_prompt,
+    format_cairn_annotation_snippet,
     format_ui_human_load_report,
     interpret_ui_experience,
 )
@@ -59,6 +60,7 @@ __all__ = [
     "build_human_factors_prompt",
     "CommandLLMProvider",
     "HoglahLLMProvider",
+    "format_cairn_annotation_snippet",
     "format_human_factors_report",
     "format_ui_human_load_report",
     "interpret_human_factors",
