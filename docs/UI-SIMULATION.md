@@ -54,6 +54,20 @@ LLM receives the raw browser report, the deterministic evidence summary, and a
 set of personas. Use `--persona` repeatedly to supply domain-specific
 perspectives.
 
+For a local Codex CLI trial, use the included command-provider wrapper:
+
+```bash
+cairn-ui-roleplay docs/analysis/mahlah-recovery-loop-ui-sim-report.json \
+  --llm-command scripts/codex_llm_provider.py \
+  --persona novice-repair-user \
+  --persona queue-pressure-operator \
+  --persona accountable-approver-without-authority-evidence \
+  --output docs/analysis/mahlah-recovery-loop-ui-roleplay.md
+```
+
+Set `CAIRN_CODEX_PROVIDER_CWD`, `CAIRN_CODEX_PROVIDER_TIMEOUT`, or
+`CAIRN_CODEX_PROVIDER_SANDBOX` to tune the wrapper.
+
 Finally, export a review-ready Cairn annotation snippet:
 
 ```bash
@@ -89,6 +103,7 @@ Supported actions in the prototype:
 - `waitForSelector`
 - `waitForText`
 - `waitForNonEmptyText`
+- `waitForCountAtLeast`
 - `popup`
 - `screenshot`
 - `finding`

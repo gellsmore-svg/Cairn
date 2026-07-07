@@ -102,6 +102,15 @@ async function runStep(step) {
       report.metrics.waits += 1
       report.observations.push({ type: 'waitForText', label, text: step.text })
       break
+    case 'waitForCountAtLeast':
+      await page.waitForFunction(
+        ({ selector, count }) => document.querySelectorAll(selector).length >= count,
+        { selector: step.selector, count: step.count },
+        { timeout: step.timeout || defaultTimeout },
+      )
+      report.metrics.waits += 1
+      report.observations.push({ type: 'waitForCountAtLeast', label, selector: step.selector, expected: step.count })
+      break
     case 'assertVisible':
       await locatorFor(step).waitFor({ state: 'visible', timeout: step.timeout || defaultTimeout })
       report.metrics.assertions += 1

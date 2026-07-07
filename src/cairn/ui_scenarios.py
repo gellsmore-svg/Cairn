@@ -20,6 +20,7 @@ ALLOWED_ACTIONS = {
     "screenshot",
     "select",
     "waitForNonEmptyText",
+    "waitForCountAtLeast",
     "waitForSelector",
     "waitForText",
 }
@@ -45,6 +46,7 @@ _SELECTOR_ACTIONS = {
     "press",
     "select",
     "waitForNonEmptyText",
+    "waitForCountAtLeast",
     "waitForSelector",
 }
 
@@ -130,7 +132,7 @@ def _validate_step(report: ScenarioValidationReport, step: Any, index: int) -> i
         _validate_required_str(report, step, "key", prefix)
     if action in {"waitForText", "assertTextIncludes"}:
         _validate_required_str(report, step, "text", prefix)
-    if action == "assertCountAtLeast":
+    if action in {"assertCountAtLeast", "waitForCountAtLeast"}:
         _validate_non_negative_int(report, step, "count", prefix)
     if action == "finding" and not isinstance(step.get("value"), dict):
         report.errors.append(f"{prefix}.value must be an object for finding actions")

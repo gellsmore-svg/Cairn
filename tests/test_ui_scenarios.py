@@ -19,6 +19,7 @@ def test_validate_example_scenarios():
     for path in [
         ROOT / "docs" / "scenarios" / "mahlah-human-load.json",
         ROOT / "docs" / "scenarios" / "mahlah-missing-information.json",
+        ROOT / "docs" / "scenarios" / "mahlah-recovery-loop.json",
     ]:
         report = validate_ui_scenario(load_ui_scenario(path), path=str(path))
 
