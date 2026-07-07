@@ -34,6 +34,7 @@ from cairn.human_factors import (
 )
 from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider, LLMRequest, LLMResponse
 from cairn.live_observer import analyze_live_observations, format_live_observation_report
+from cairn.observation_contract import observation_event, observation_to_galeed_trace_event
 from cairn.render import export_view, register_exporter, registered_exporters, registered_profiles, render_plan
 from cairn.system_discovery import discover_system, format_system_discovery_report
 from cairn.ui_evidence import (
@@ -78,6 +79,8 @@ __all__ = [
     "interpret_ui_experience",
     "LLMRequest",
     "LLMResponse",
+    "observation_event",
+    "observation_to_galeed_trace_event",
     "is_conformant",
     "parse_document",
     "export_view",

@@ -106,6 +106,12 @@ This preserves Galeed correlation keys (`request_id`, `session_id`, `trace_id`,
 `plan_id`, `job_id`) while mapping trace events into Cairn observation kinds such
 as `agent_step`, `agent_output`, `queue_event`, `feedback`, and `system_log`.
 
+For product emitters, use the portable observation contract in
+`docs/galeed/emitter-contract.md`. The helper `observation_event` normalizes the
+small Cairn event shape, and `observation_to_galeed_trace_event` converts it into
+a Galeed-compatible trace record while preserving tags, human-system cues,
+durations, and correlation ids.
+
 The report includes:
 
 - observation counts by source and kind,
