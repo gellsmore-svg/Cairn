@@ -4,8 +4,6 @@
 **Purpose:** give the operator enough local evidence to understand the proposed semantic link.
 - **cognitive_load: context switching** - Matched cues in step 3.1: context_switches.
   Mitigation: co-locate evidence and reduce navigation before the decision point.
-- **cognitive_load: uncertainty load** - Matched cues in step 3.1: missing.
-  Mitigation: show what is known, unknown, and disputed before asking for judgement.
 - **trust_automation: automation bias** - Matched cues in step 3.1: authoritative.
   Mitigation: expose evidence, uncertainty, and disagreement separately from the AI suggestion.
 - **behavioural_economics: effort avoidance** - Matched cues in step 3.1: trivial_actions.
@@ -20,10 +18,14 @@ Rationale: the operator is asked to judge meaning from compressed evidence, so w
 
 ## 3.2. operator decision.
 **Purpose:** make graph promotion depend on an explicit human judgement.
-- **cognitive_load: uncertainty load** - Matched cues in step 3.2: uncertainty.
+- **cognitive_load: uncertainty load** - Matched cues in step 3.2: uncertainty_loops.
   Mitigation: show what is known, unknown, and disputed before asking for judgement.
 - **interface_friction: input burden** - Matched cues in step 3.2: input_burden.
   Mitigation: provide structured inputs and editable templates for high-value feedback.
+- **interface_friction: closure ambiguity** - Matched cues in step 3.2: closure_clarity.
+  Mitigation: show explicit completion, failure, and next-action state.
+- **trust_automation: rubber-stamp risk** - Matched cues in step 3.2: rubber stamp, one-click accept, lowest-effort path.
+  Mitigation: make reject, defer, and inspect-more-context paths as easy and legitimate as approval.
 - **social_role: accountability without control** - Matched cues in step 3.2: accountable.
   Mitigation: align accountability with inspectable evidence, authority, and recovery paths.
 - **behavioural_economics: effort avoidance** - Matched cues in step 3.2: effort, one-click.
@@ -33,14 +35,21 @@ Rationale: a single human decision controls durable graph writes, and review qua
 **Conversation starters:**
 - What human-system forces are plausibly present in this step?
 - Is the human accountable for a decision they can inspect, control, and recover from?
+- Does the process calibrate trust before asking the human to approve or rely on AI output?
 - Which context switches or memory burdens can be removed before the business decision?
 
 ## 3.3. DecideCandidate(candidate_id, action, reviewer, note) → result
 **Purpose:** record the decision with enough provenance for later audit and learning.
 - **interface_friction: input burden** - Matched cues in step 3.3: input_burden, blank.
   Mitigation: provide structured inputs and editable templates for high-value feedback.
+- **interface_friction: closure ambiguity** - Matched cues in step 3.3: closure_clarity.
+  Mitigation: show explicit completion, failure, and next-action state.
+- **interface_friction: provenance burden** - Matched cues in step 3.3: provenance.
+  Mitigation: keep source, trace, reviewer, timestamp, and decision context inspectable together.
 - **social_role: accountability without control** - Matched cues in step 3.3: audit.
   Mitigation: align accountability with inspectable evidence, authority, and recovery paths.
+- **organisational_change: feedback suppression** - Matched cues in step 3.3: feedback.
+  Mitigation: offer low-friction, structured feedback prompts tied to the trace or decision.
 **Risk:** moderate (probability: low; impact: medium; confidence: medium)
 Rationale: the main decision already happened, but poor feedback capture reduces future learning.
 **Conversation starters:**
@@ -48,6 +57,8 @@ Rationale: the main decision already happened, but poor feedback capture reduces
 
 ## 2b. accept → CALL PromoteToReviewedEdge(candidate, reviewer, note)
 **Purpose:** turn an inspected candidate into a durable reviewed edge.
+- **interface_friction: provenance burden** - Matched cues in step 2b: source evidence.
+  Mitigation: keep source, trace, reviewer, timestamp, and decision context inspectable together.
 - **social_role: accountability without control** - Matched cues in step 2b: accountable.
   Mitigation: align accountability with inspectable evidence, authority, and recovery paths.
 **Risk:** significant (probability: medium; impact: high; confidence: medium)

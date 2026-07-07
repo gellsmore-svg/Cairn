@@ -192,6 +192,8 @@ The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
 - [GRAMMAR.md](GRAMMAR.md) — structural EBNF for the skeleton.
 - [examples/](examples/) — real systems described in Cairn (Tirzah, Hoglah, Mahalath, Mahlah, Milcah, Mizpah); see `tirzah-system.cairn.md` for end-to-end composition.
 - [CHANGELOG.md](CHANGELOG.md) — how the spec has evolved.
+- [docs/HUMAN-FACTORS-METHODOLOGY.md](docs/HUMAN-FACTORS-METHODOLOGY.md) — how
+  to annotate human demand, factors, qualitative risk, and LLM-assisted review.
 - [okf/](okf/index.md) — an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
   knowledge bundle: Cairn's concepts and reference, as linked markdown.
 

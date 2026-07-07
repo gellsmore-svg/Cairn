@@ -102,3 +102,20 @@ def test_hoglah_provider_is_optional_and_uses_hoglah_api(monkeypatch):
     response = provider.complete(LLMRequest(task="task", prompt="hello", context={}))
     assert response.provider == "hoglah"
     assert response.text == "queued interpretation"
+
+
+def test_analyzer_detects_mahlah_patterns_without_broad_missing_noise():
+    md = (EXAMPLES / "mahlah.cairn.md").read_text(encoding="utf-8")
+    report = analyze_human_factors(md)
+    first = next(step for step in report.steps if step.step == "1" and "rolling chat" in step.text)
+    first_factors = {(finding.family, finding.factor) for finding in first.factors}
+    assert ("cognitive_load", "uncertainty load") not in first_factors
+    assert ("emotional_agency", "recoverability and control") in first_factors
+
+    devlog = next(step for step in report.steps if "devlog" in step.text)
+    devlog_factors = {(finding.family, finding.factor) for finding in devlog.factors}
+    assert ("cognitive_load", "mode switching") in devlog_factors
+
+    feedback = next(step for step in report.steps if "feedback" in step.text.lower())
+    feedback_factors = {(finding.family, finding.factor) for finding in feedback.factors}
+    assert ("organisational_change", "feedback suppression") in feedback_factors

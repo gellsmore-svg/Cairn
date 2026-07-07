@@ -81,8 +81,20 @@ _FACTOR_RULES = (
     {
         "family": "cognitive_load",
         "factor": "uncertainty load",
-        "tokens": ("uncertainty", "missing", "disagreement", "ambiguous"),
+        "tokens": ("uncertainty_loops", "hidden uncertainty", "source disagreement", "ambiguous", "missing context", "missing evidence", "missing information", "not obviously grounded"),
         "mitigation": "show what is known, unknown, and disputed before asking for judgement.",
+    },
+    {
+        "family": "cognitive_load",
+        "factor": "mode switching",
+        "tokens": ("mode switch", "second-window", "second window", "dev log", "split attention"),
+        "mitigation": "make cross-surface correlation visible and keep the main task resumable.",
+    },
+    {
+        "family": "cognitive_load",
+        "factor": "vigilance load",
+        "tokens": ("vigilance_load", "waiting for live events", "appears stalled"),
+        "mitigation": "make running, stalled, completed, and failed states explicit.",
     },
     {
         "family": "interface_friction",
@@ -91,10 +103,34 @@ _FACTOR_RULES = (
         "mitigation": "provide structured inputs and editable templates for high-value feedback.",
     },
     {
+        "family": "interface_friction",
+        "factor": "closure ambiguity",
+        "tokens": ("closure_clarity", "unclear closure", "final status", "completed or failed", "loop close"),
+        "mitigation": "show explicit completion, failure, and next-action state.",
+    },
+    {
+        "family": "interface_friction",
+        "factor": "provenance burden",
+        "tokens": ("provenance", "source evidence", "used nodes", "process trace", "trace/session", "review_history"),
+        "mitigation": "keep source, trace, reviewer, timestamp, and decision context inspectable together.",
+    },
+    {
         "family": "trust_automation",
         "factor": "automation bias",
-        "tokens": ("assisted-by: llm", "ai summary", "ai recommendation", "authoritative", "automation bias"),
+        "tokens": ("assisted-by: llm", "ai summary", "ai recommendation", "authoritative", "automation bias", "fluent answers", "fluent generated"),
         "mitigation": "expose evidence, uncertainty, and disagreement separately from the AI suggestion.",
+    },
+    {
+        "family": "trust_automation",
+        "factor": "rubber-stamp risk",
+        "tokens": ("rubber stamp", "rubber-stamp", "one-click accept", "one-click endorsement", "lowest-effort path"),
+        "mitigation": "make reject, defer, and inspect-more-context paths as easy and legitimate as approval.",
+    },
+    {
+        "family": "emotional_agency",
+        "factor": "recoverability and control",
+        "tokens": ("emotional_agency", "retry path", "repair the interaction", "without losing", "calm recovery"),
+        "mitigation": "provide calm recovery paths and visible confirmation that the user's action was received.",
     },
     {
         "family": "social_role",
@@ -119,6 +155,12 @@ _FACTOR_RULES = (
         "factor": "role shift",
         "tokens": ("role_shift", "new_skill", "deskilling", "upskilling", "adoption_support"),
         "mitigation": "name the new skill, train it, and make support visible during rollout.",
+    },
+    {
+        "family": "organisational_change",
+        "factor": "feedback suppression",
+        "tokens": ("feedback", "feedback prompts", "text box is blank", "high input burden suppresses useful signal"),
+        "mitigation": "offer low-friction, structured feedback prompts tied to the trace or decision.",
     },
 )
 
@@ -236,12 +278,24 @@ def _evidence_blob(node: StepNode) -> str:
 
 
 def _token_matches(evidence: str, token: str) -> bool:
-    if token in {"context_switches", "navigation_actions", "trivial_actions", "input_burden", "uncertainty_loops"}:
+    if token in {
+        "context_switches",
+        "navigation_actions",
+        "trivial_actions",
+        "input_burden",
+        "uncertainty_loops",
+        "closure_clarity",
+        "vigilance_load",
+    }:
         match = re.search(rf"\b{re.escape(token)}\s*:\s*([^\n]+)", evidence)
         if not match:
             return False
         value = match.group(1).strip()
-        if value.startswith("0") or value in {"none", "low", "n/a"}:
+        if token == "closure_clarity":
+            if value.startswith("0") or value in {"none", "high", "n/a"}:
+                return False
+            return True
+        if token != "closure_clarity" and (value.startswith("0") or value in {"none", "low", "n/a"}):
             return False
         return True
     return token in evidence
