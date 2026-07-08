@@ -29,8 +29,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("-o", "--output", help="Write report to file instead of stdout")
     args = parser.parse_args(argv)
 
-    raw = sys.stdin.read() if args.input in (None, "-") else Path(args.input).read_text(encoding="utf-8")
-    observations = _load_observations(raw)
+    try:
+        raw = sys.stdin.read() if args.input in (None, "-") else Path(args.input).read_text(encoding="utf-8")
+        observations = _load_observations(raw)
+    except (OSError, ValueError) as exc:
+        print(f"cairn-live-observe: {exc}", file=sys.stderr)
+        return 2
     report = analyze_live_observations(observations, title=args.title)
     formatted = format_live_observation_report(report, output_format=args.output_format)
     out = json.dumps(formatted, indent=2) if args.output_format == "json" else str(formatted)
@@ -49,13 +53,29 @@ def _load_observations(raw: str) -> list[dict[str, Any]]:
     if text[0] in "[{":
         try:
             parsed = json.loads(text)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as exc:
+            if text[0] == "[":
+                raise ValueError(f"Invalid JSON input: {exc}") from exc
             parsed = None
         if isinstance(parsed, list):
-            return [dict(item) for item in parsed]
+            return [_as_record(item, index=index) for index, item in enumerate(parsed, start=1)]
         if isinstance(parsed, dict):
             return [dict(parsed)]
-    return [json.loads(line) for line in raw.splitlines() if line.strip()]
+    records: list[dict[str, Any]] = []
+    for index, line in enumerate(raw.splitlines(), start=1):
+        if not line.strip():
+            continue
+        try:
+            records.append(_as_record(json.loads(line), index=index))
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON on line {index}: {exc}") from exc
+    return records
+
+
+def _as_record(value: Any, *, index: int) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"Expected JSON object at record {index}, got {type(value).__name__}")
+    return dict(value)
 
 
 if __name__ == "__main__":

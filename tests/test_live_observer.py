@@ -48,6 +48,17 @@ def test_live_observer_cli_reads_jsonl(tmp_path):
     assert "HUMAN_RISK" in text
 
 
+def test_live_observer_cli_reports_invalid_json(tmp_path, capsys):
+    source = tmp_path / "broken.jsonl"
+    source.write_text('{"ok": true}\nnot-json\n', encoding="utf-8")
+
+    rc = live_observer_main([str(source)])
+
+    assert rc == 2
+    captured = capsys.readouterr()
+    assert "Invalid JSON on line 2" in captured.err
+
+
 def test_analyze_live_observations_finds_queue_vigilance_load():
     observations = [
         {

@@ -53,6 +53,22 @@ def test_galeed_llm_call_maps_to_observation():
     assert observation["duration_ms"] == 3001
 
 
+def test_galeed_trace_event_accepts_scalar_metadata_tags():
+    event = {
+        "trace_id": "trace_1",
+        "session_id": "sess_1",
+        "type": "message.user.observed",
+        "source": "mahlah-ui",
+        "summary": "User checked the trace.",
+        "metadata": {"tags": "context_switch", "human_systems": "audit reasoning"},
+    }
+
+    observation = galeed_event_to_observation(event)
+
+    assert "context_switch" in observation["tags"]
+    assert "audit reasoning" in observation["human_systems"]
+
+
 def test_galeed_observe_cli_writes_report_and_observations(tmp_path):
     source = ROOT / "docs" / "galeed" / "sample-trace-events.jsonl"
     report = tmp_path / "report.md"
@@ -101,3 +117,14 @@ def test_galeed_observe_cli_accepts_pretty_json_array_export(tmp_path):
     assert "Galeed JSON export test" in report.read_text(encoding="utf-8")
     converted = _load_observations(observations.read_text(encoding="utf-8"))
     assert len(converted) == len(records)
+
+
+def test_galeed_observe_cli_reports_invalid_json(tmp_path, capsys):
+    source = tmp_path / "broken.json"
+    source.write_text("[not json", encoding="utf-8")
+
+    rc = galeed_observe_main([str(source)])
+
+    assert rc == 2
+    captured = capsys.readouterr()
+    assert "Invalid JSON input" in captured.err

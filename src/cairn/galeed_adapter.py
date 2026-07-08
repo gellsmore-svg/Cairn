@@ -92,7 +92,7 @@ def _kind_for_event(event_type: str, metadata: dict[str, Any] | None = None) -> 
 
 def _tags_for_event(event_type: str, event: dict[str, Any], metadata: dict[str, Any]) -> list[str]:
     tags = [event_type.replace(".", "_")]
-    tags.extend(str(tag) for tag in metadata.get("tags", []) if str(tag).strip())
+    tags.extend(_list_of_strings(metadata.get("tags")))
     status = str(event.get("status") or "").lower()
     severity = str(event.get("severity") or "").lower()
     if status in {"failed", "error"} or severity == "error" or event_type.endswith(".failed"):
@@ -118,9 +118,21 @@ def _human_systems_for_event(event_type: str, tags: list[str], metadata: dict[st
     if event_type.startswith("feedback."):
         systems.add("language")
         systems.add("recall")
-    for item in metadata.get("human_systems", []):
-        systems.add(str(item))
+    for item in _list_of_strings(metadata.get("human_systems")):
+        systems.add(item)
     return sorted(systems)
+
+
+def _list_of_strings(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        items = [value]
+    elif isinstance(value, (list, tuple, set)):
+        items = list(value)
+    else:
+        items = [value]
+    return [str(item) for item in items if str(item).strip()]
 
 
 def _duration_ms(metadata: dict[str, Any]) -> int:

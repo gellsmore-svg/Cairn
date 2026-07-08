@@ -33,9 +33,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("-o", "--output", help="Write report to file instead of stdout")
     args = parser.parse_args(argv)
 
-    raw = sys.stdin.read() if args.input in (None, "-") else Path(args.input).read_text(encoding="utf-8")
-    records = _load_records(raw)
-    observations = galeed_records_to_observations(records, record_type=args.record_type)
+    try:
+        raw = sys.stdin.read() if args.input in (None, "-") else Path(args.input).read_text(encoding="utf-8")
+        records = _load_records(raw)
+        observations = galeed_records_to_observations(records, record_type=args.record_type)
+    except (OSError, ValueError) as exc:
+        print(f"cairn-galeed-observe: {exc}", file=sys.stderr)
+        return 2
 
     if args.observations_output:
         Path(args.observations_output).write_text(
