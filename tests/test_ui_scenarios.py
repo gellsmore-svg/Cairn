@@ -80,6 +80,33 @@ def test_validate_ui_scenario_accepts_hci_touchpoint_phases():
     assert not any("not one of" in warning for warning in report.warnings)
 
 
+def test_validate_ui_scenario_accepts_measure_layout_action():
+    scenario = {
+        "name": "layout-load",
+        "steps": [
+            {
+                "action": "measureLayout",
+                "label": "Measure PO review layout",
+                "elements": [
+                    {"id": "po_number", "selector": "#po-number", "role": "field"},
+                    {"id": "duplicate_warning", "selector": "#duplicate-warning", "role": "warning"},
+                    {"id": "accept", "selector": "#accept", "role": "button"},
+                ],
+                "relations": [
+                    {"from": "po_number", "to": "duplicate_warning", "type": "related"},
+                    {"from": "duplicate_warning", "to": "accept", "type": "evidence_to_action"},
+                ],
+                "sequence": ["po_number", "duplicate_warning", "accept"],
+            }
+        ],
+    }
+
+    report = validate_ui_scenario(scenario)
+
+    assert report.ok
+    assert report.errors == []
+
+
 def test_scenario_validate_cli_returns_nonzero_for_invalid(tmp_path, capsys):
     scenario = tmp_path / "invalid.json"
     scenario.write_text(json.dumps({"steps": [{"action": "fill", "selector": ".x"}]}), encoding="utf-8")

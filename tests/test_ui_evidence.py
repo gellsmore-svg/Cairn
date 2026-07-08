@@ -50,6 +50,43 @@ def test_missing_information_report_marks_uncertainty_load():
     assert "uncertainty management" in report.suggested_blocks["HUMAN_LOAD"]
 
 
+def test_ui_evidence_includes_functional_layout_load_snapshots():
+    raw = {
+        "scenario": "po-review-layout",
+        "metrics": {"clicks": 1, "fills": 0, "waits": 0, "contextSwitches": 0, "layoutSnapshots": 1},
+        "observations": [
+            {
+                "type": "human_load",
+                "phase": "orientation",
+                "systems": ["attention"],
+                "demand": "The user orients to PO risk and available action.",
+            }
+        ],
+        "layoutLoad": [
+            {
+                "viewport": {"width": 1440, "height": 900},
+                "elements": [
+                    {"id": "po_number", "role": "field", "x": 40, "y": 120, "width": 200, "height": 36},
+                    {"id": "duplicate_warning", "role": "warning", "x": 980, "y": 620, "width": 260, "height": 48},
+                    {"id": "accept", "role": "button", "x": 1120, "y": 140, "width": 120, "height": 44},
+                ],
+                "relations": [
+                    {"from": "po_number", "to": "duplicate_warning", "type": "related"},
+                    {"from": "duplicate_warning", "to": "accept", "type": "evidence_to_action"},
+                ],
+                "sequence": ["po_number", "duplicate_warning", "accept"],
+            }
+        ],
+    }
+
+    report = analyze_ui_simulation_report(raw)
+
+    factors = {(finding.family, finding.factor) for finding in report.findings}
+    assert any(family == "functional_layout_load" and "layout traversal load" in factor for family, factor in factors)
+    assert "FUNCTIONAL_LAYOUT_LOAD" in report.suggested_blocks
+    assert "layout_load:" in report.suggested_blocks["FUNCTIONAL_LAYOUT_LOAD"]
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)

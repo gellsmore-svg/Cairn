@@ -76,6 +76,10 @@ Coordinates are CSS pixels in the current viewport. A Playwright script can
 collect them with `locator.boundingBox()`. An LLM or human reviewer can supply
 relationships when DOM hierarchy does not encode the business relationship.
 
+In Cairn UI scenarios, use the `measureLayout` action to collect this geometry
+during `cairn-ui-sim`. The resulting `layoutLoad` snapshots are consumed by
+`cairn-ui-evidence` automatically.
+
 ## CLI
 
 ```bash

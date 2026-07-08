@@ -128,11 +128,34 @@ Supported actions in the prototype:
 - `waitForText`
 - `waitForNonEmptyText`
 - `waitForCountAtLeast`
+- `measureLayout`
 - `popup`
 - `screenshot`
 - `finding`
 
 Most selector-based actions accept an optional zero-based `index`, which is useful when a UI has repeated controls.
+
+`measureLayout` records DOM geometry for functional layout load analysis:
+
+```json
+{
+  "action": "measureLayout",
+  "label": "Measure PO review layout",
+  "elements": [
+    {"id": "po_number", "selector": "#po-number", "role": "field"},
+    {"id": "duplicate_warning", "selector": "#duplicate-warning", "role": "warning"},
+    {"id": "accept", "selector": "#accept", "role": "button"}
+  ],
+  "relations": [
+    {"from": "po_number", "to": "duplicate_warning", "type": "related"},
+    {"from": "duplicate_warning", "to": "accept", "type": "evidence_to_action"}
+  ],
+  "sequence": ["po_number", "duplicate_warning", "accept"]
+}
+```
+
+The runner stores the bounding boxes under `layoutLoad`. The evidence layer then
+adds `FUNCTIONAL_LAYOUT_LOAD` findings and blocks automatically.
 
 Each step may include `humanLoad`:
 
@@ -158,6 +181,8 @@ The report records:
 
 - Mechanical counts: clicks, fills, waits, assertions, popups, context switches, and screenshots.
 - Browser observations: what was clicked, filled, selected, waited for, or opened.
+- Layout snapshots: measured element rectangles, relationships, and task
+  sequence for functional layout load analysis.
 - Human-load observations: phase, involved human systems, and the demand being placed on the user.
 - Findings: estimated risks, impacts, and mitigations supplied by the scenario author or later by an LLM.
 

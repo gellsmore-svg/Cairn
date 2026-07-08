@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from cairn.layout_load import analyze_functional_layout
 from cairn.llm_adapters import LLMProvider, LLMRequest
 
 
@@ -65,7 +66,8 @@ def analyze_ui_simulation_report(report: dict[str, Any]) -> UiHumanLoadReport:
     observations = list(report.get("observations", []))
     phases = _phase_demands(observations)
     systems = sorted(_systems(observations))
-    findings = _findings(report, metrics, phases, systems)
+    layout_reports = list(_layout_reports(report))
+    findings = _findings(report, metrics, phases, systems, layout_reports)
     risk = _risk(findings, metrics, bool(report.get("errors")))
     return UiHumanLoadReport(
         scenario=str(report.get("scenario") or "UI simulation"),
@@ -74,7 +76,7 @@ def analyze_ui_simulation_report(report: dict[str, Any]) -> UiHumanLoadReport:
         systems=systems,
         findings=findings,
         risk=risk,
-        suggested_blocks=_suggested_blocks(metrics, phases, systems, findings, risk),
+        suggested_blocks=_suggested_blocks(metrics, phases, systems, findings, risk, layout_reports),
     )
 
 
@@ -290,6 +292,7 @@ def _findings(
     metrics: dict[str, int],
     phases: dict[str, list[str]],
     systems: list[str],
+    layout_reports: list[Any] | None = None,
 ) -> list[UiEvidenceFinding]:
     findings: list[UiEvidenceFinding] = []
 
@@ -366,6 +369,23 @@ def _findings(
             )
         )
 
+    for layout_report in layout_reports or []:
+        if layout_report.metrics.get("layout_load") in {"medium", "high"}:
+            findings.append(
+                UiEvidenceFinding(
+                    family="functional_layout_load",
+                    factor=f"{layout_report.metrics['layout_load']} layout traversal load",
+                    reason=(
+                        "Layout geometry suggests avoidable scan or pointer effort: "
+                        f"avg related distance {layout_report.metrics['avg_related_distance_px']}px; "
+                        f"pointer travel {layout_report.metrics['cumulative_pointer_travel_viewports']} viewport(s)."
+                    ),
+                    mitigation="Group related fields, evidence, warnings, and actions into one decision region where possible.",
+                    probability="medium",
+                    impact="medium" if layout_report.metrics["layout_load"] == "medium" else "high",
+                )
+            )
+
     for item in raw_report.get("findings", []):
         findings.append(
             UiEvidenceFinding(
@@ -379,6 +399,12 @@ def _findings(
         )
 
     return findings
+
+
+def _layout_reports(raw_report: dict[str, Any]):
+    for snapshot in raw_report.get("layoutLoad", []):
+        if isinstance(snapshot, dict):
+            yield analyze_functional_layout(snapshot)
 
 
 def _risk(findings: list[UiEvidenceFinding], metrics: dict[str, int], has_errors: bool) -> UiEvidenceRisk | None:
@@ -414,6 +440,7 @@ def _suggested_blocks(
     systems: list[str],
     findings: list[UiEvidenceFinding],
     risk: UiEvidenceRisk | None,
+    layout_reports: list[Any] | None = None,
 ) -> dict[str, str]:
     blocks: dict[str, str] = {}
     if phases:
@@ -430,6 +457,12 @@ def _suggested_blocks(
             f"human_systems: {', '.join(systems) if systems else 'none declared'}",
         ]
     )
+    if layout_reports:
+        lines: list[str] = []
+        for index, layout_report in enumerate(layout_reports, start=1):
+            lines.append(f"snapshot_{index}:")
+            lines.extend(f"  {key}: {value}" for key, value in layout_report.metrics.items())
+        blocks["FUNCTIONAL_LAYOUT_LOAD"] = "\n".join(lines)
     if findings:
         blocks["HUMAN_FACTORS"] = "\n".join(
             f"{finding.family}: {finding.factor} - {finding.reason}" for finding in findings

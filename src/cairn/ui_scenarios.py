@@ -15,6 +15,7 @@ ALLOWED_ACTIONS = {
     "click",
     "fill",
     "finding",
+    "measureLayout",
     "popup",
     "press",
     "screenshot",
@@ -138,6 +139,8 @@ def _validate_step(report: ScenarioValidationReport, step: Any, index: int) -> i
         _validate_non_negative_int(report, step, "count", prefix)
     if action == "finding" and not isinstance(step.get("value"), dict):
         report.errors.append(f"{prefix}.value must be an object for finding actions")
+    if action == "measureLayout":
+        _validate_measure_layout(report, step, prefix)
 
     _validate_optional_str(report, step, "label", prefix=prefix)
     _validate_positive_int(report, step, "timeout", optional=True, prefix=prefix)
@@ -149,6 +152,56 @@ def _validate_step(report: ScenarioValidationReport, step: Any, index: int) -> i
     if step.get("contextSwitch") and not step.get("humanLoad"):
         report.warnings.append(f"{prefix} marks a context switch without explaining humanLoad")
     return human_load_count
+
+
+def _validate_measure_layout(report: ScenarioValidationReport, step: dict[str, Any], prefix: str) -> None:
+    elements = step.get("elements")
+    if not isinstance(elements, list) or not elements:
+        report.errors.append(f"{prefix}.elements must be a non-empty list for measureLayout actions")
+        return
+    ids: set[str] = set()
+    for idx, element in enumerate(elements):
+        eprefix = f"{prefix}.elements[{idx}]"
+        if not isinstance(element, dict):
+            report.errors.append(f"{eprefix} must be an object")
+            continue
+        _validate_required_str(report, element, "id", eprefix)
+        _validate_required_str(report, element, "selector", eprefix)
+        if isinstance(element.get("id"), str):
+            ids.add(element["id"])
+        _validate_optional_str(report, element, "role", prefix=eprefix)
+        _validate_optional_str(report, element, "label", prefix=eprefix)
+        _validate_optional_str(report, element, "group", prefix=eprefix)
+        _validate_non_negative_int(report, element, "index", optional=True, prefix=eprefix)
+
+    relations = step.get("relations", [])
+    if not isinstance(relations, list):
+        report.errors.append(f"{prefix}.relations must be a list")
+    else:
+        for idx, relation in enumerate(relations):
+            rprefix = f"{prefix}.relations[{idx}]"
+            if not isinstance(relation, dict):
+                report.errors.append(f"{rprefix} must be an object")
+                continue
+            source = relation.get("from") or relation.get("source")
+            target = relation.get("to") or relation.get("target")
+            if not isinstance(source, str) or not source:
+                report.errors.append(f"{rprefix}.from/source must be a non-empty string")
+            elif source not in ids:
+                report.warnings.append(f"{rprefix} source {source!r} is not in elements")
+            if not isinstance(target, str) or not target:
+                report.errors.append(f"{rprefix}.to/target must be a non-empty string")
+            elif target not in ids:
+                report.warnings.append(f"{rprefix} target {target!r} is not in elements")
+            _validate_optional_str(report, relation, "type", prefix=rprefix)
+
+    sequence = step.get("sequence", [])
+    if not isinstance(sequence, list) or not all(isinstance(item, str) for item in sequence):
+        report.errors.append(f"{prefix}.sequence must be a list of element ids")
+    else:
+        for item in sequence:
+            if item not in ids:
+                report.warnings.append(f"{prefix}.sequence item {item!r} is not in elements")
 
 
 def _validate_human_load(report: ScenarioValidationReport, step: dict[str, Any], prefix: str) -> int:

@@ -36,9 +36,11 @@ const report = {
     screenshots: 0,
     contextSwitches: 0,
     popups: 0,
+    layoutSnapshots: 0,
   },
   observations: [],
   findings: [],
+  layoutLoad: [],
   screenshots: [],
   errors: [],
 }
@@ -173,6 +175,13 @@ async function runStep(step) {
     case 'finding':
       report.findings.push({ label, ...step.value })
       break
+    case 'measureLayout': {
+      const snapshot = await measureLayout(step, label)
+      report.metrics.layoutSnapshots += 1
+      report.layoutLoad.push(snapshot)
+      report.observations.push({ type: 'measureLayout', label, elements: snapshot.elements.length })
+      break
+    }
     default:
       throw new Error(`Unknown scenario action: ${step.action}`)
   }
@@ -187,4 +196,35 @@ function selectorObservation(type, label, step) {
   return Number.isInteger(step.index)
     ? { type, label, selector: step.selector, index: step.index }
     : { type, label, selector: step.selector }
+}
+
+async function measureLayout(step, label) {
+  const viewport = page.viewportSize() || scenario.viewport || { width: 1280, height: 800 }
+  const elements = []
+  for (const spec of step.elements || []) {
+    const locator = Number.isInteger(spec.index)
+      ? page.locator(spec.selector).nth(spec.index)
+      : page.locator(spec.selector).first()
+    await locator.waitFor({ state: 'visible', timeout: spec.timeout || step.timeout || defaultTimeout })
+    const box = await locator.boundingBox()
+    if (!box) continue
+    elements.push({
+      id: spec.id,
+      role: spec.role || 'element',
+      label: spec.label,
+      group: spec.group,
+      selector: spec.selector,
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
+    })
+  }
+  return {
+    label,
+    viewport,
+    elements,
+    relations: step.relations || [],
+    sequence: step.sequence || [],
+  }
 }
