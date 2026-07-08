@@ -21,6 +21,9 @@ All defined in [SPEC.md](https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.m
 - **[HCI touchpoints and cognitive aesthetic](hci-touchpoints.md)** - UI-mediated
   human work across awareness, orientation, execution, feedback, recovery,
   handoff, and adaptation.
+- **[Functional layout load](functional-layout-load.md)** - form and operational
+  layout effort estimated from element distance, grouping, scan path, and
+  pointer travel.
 - **[Constructs](constructs.md)** — PROCESS, STEP, ITERATE, RECURSE, QUEUE,
   PARALLEL, SERVICE, DECISION, RETRY, ERROR, AWAIT, CALL, MILESTONE, PURPOSE,
   BREAK/CONTINUE (SPEC §5).

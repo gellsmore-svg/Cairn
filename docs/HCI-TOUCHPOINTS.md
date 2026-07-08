@@ -89,6 +89,9 @@ Use this rubric:
   audit implications are available where trust is required.
 - `density_fit` - information density matches the work: operational tools may
   be dense, but must still be scannable and ordered by task relevance.
+- `functional_layout_load` - related fields, labels, evidence, warnings, and
+  actions are spatially arranged to reduce scan distance, pointer travel,
+  column confusion, and recovery distance.
 
 Useful external anchors include Nielsen Norman Group's
 [10 usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/)
@@ -96,6 +99,9 @@ around system status, real-world match, user control, recognition over recall,
 error prevention, and recovery, and W3C
 [WCAG 2.2](https://www.w3.org/TR/WCAG22/) guidance for accessible labels,
 instructions, focus, and input support.
+
+For a computable layout-specific heuristic, see
+[`FUNCTIONAL-LAYOUT-LOAD.md`](FUNCTIONAL-LAYOUT-LOAD.md).
 
 ## Playwright Evidence Protocol
 
