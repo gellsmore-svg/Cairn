@@ -99,6 +99,10 @@ FUNCTIONAL_LAYOUT_LOAD:
   layout_load: high
 ```
 
+See `docs/analysis/customer-po-review-layout.json` and
+`docs/analysis/customer-po-review-layout-load.md` for a worked incoming customer
+PO review example.
+
 ## Interpretation
 
 High layout load suggests that users may be doing avoidable spatial work:
