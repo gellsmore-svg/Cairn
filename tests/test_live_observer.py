@@ -59,6 +59,16 @@ def test_live_observer_cli_reports_invalid_json(tmp_path, capsys):
     assert "Invalid JSON on line 2" in captured.err
 
 
+def test_live_observer_cli_reports_output_write_error(tmp_path, capsys):
+    source = ROOT / "docs" / "observations" / "noa-live-observer-sample.jsonl"
+
+    rc = live_observer_main([str(source), "-o", str(tmp_path / "missing" / "report.md")])
+
+    assert rc == 2
+    captured = capsys.readouterr()
+    assert "cairn-live-observe:" in captured.err
+
+
 def test_analyze_live_observations_finds_queue_vigilance_load():
     observations = [
         {

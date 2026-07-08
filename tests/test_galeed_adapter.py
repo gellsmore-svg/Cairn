@@ -128,3 +128,13 @@ def test_galeed_observe_cli_reports_invalid_json(tmp_path, capsys):
     assert rc == 2
     captured = capsys.readouterr()
     assert "Invalid JSON input" in captured.err
+
+
+def test_galeed_observe_cli_reports_output_write_error(tmp_path, capsys):
+    source = ROOT / "docs" / "galeed" / "sample-trace-events.jsonl"
+
+    rc = galeed_observe_main([str(source), "-o", str(tmp_path / "missing" / "report.md")])
+
+    assert rc == 2
+    captured = capsys.readouterr()
+    assert "cairn-galeed-observe:" in captured.err

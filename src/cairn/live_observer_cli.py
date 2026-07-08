@@ -32,17 +32,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         raw = sys.stdin.read() if args.input in (None, "-") else Path(args.input).read_text(encoding="utf-8")
         observations = _load_observations(raw)
+        report = analyze_live_observations(observations, title=args.title)
+        formatted = format_live_observation_report(report, output_format=args.output_format)
+        out = json.dumps(formatted, indent=2) if args.output_format == "json" else str(formatted)
+
+        if args.output:
+            Path(args.output).write_text(out, encoding="utf-8")
+        else:
+            print(out)
     except (OSError, ValueError) as exc:
         print(f"cairn-live-observe: {exc}", file=sys.stderr)
         return 2
-    report = analyze_live_observations(observations, title=args.title)
-    formatted = format_live_observation_report(report, output_format=args.output_format)
-    out = json.dumps(formatted, indent=2) if args.output_format == "json" else str(formatted)
-
-    if args.output:
-        Path(args.output).write_text(out, encoding="utf-8")
-    else:
-        print(out)
     return 0
 
 
