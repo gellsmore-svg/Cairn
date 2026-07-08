@@ -156,6 +156,7 @@ Most selector-based actions accept an optional zero-based `index`, which is usef
 
 The runner stores the bounding boxes under `layoutLoad`. The evidence layer then
 adds `FUNCTIONAL_LAYOUT_LOAD` findings and blocks automatically.
+See `docs/scenarios/customer-po-review-layout.json` for a worked scenario.
 
 Each step may include `humanLoad`:
 

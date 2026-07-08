@@ -86,6 +86,10 @@ def test_ui_evidence_includes_functional_layout_load_snapshots():
     assert "FUNCTIONAL_LAYOUT_LOAD" in report.suggested_blocks
     assert "layout_load:" in report.suggested_blocks["FUNCTIONAL_LAYOUT_LOAD"]
 
+    snippet = format_cairn_annotation_snippet(report, step_title="PO layout evidence")
+    assert "FUNCTIONAL_LAYOUT_LOAD:" in snippet
+    assert "layout_load:" in snippet
+
 
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))

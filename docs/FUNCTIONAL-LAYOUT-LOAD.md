@@ -103,6 +103,13 @@ See `docs/analysis/customer-po-review-layout.json` and
 `docs/analysis/customer-po-review-layout-load.md` for a worked incoming customer
 PO review example.
 
+For the browser-simulation shape, see:
+
+- `docs/scenarios/customer-po-review-layout.json`
+- `docs/analysis/customer-po-review-ui-sim-report.json`
+- `docs/analysis/customer-po-review-ui-evidence.md`
+- `docs/analysis/customer-po-review-ui-annotations.cairn.md`
+
 ## Interpretation
 
 High layout load suggests that users may be doing avoidable spatial work:

@@ -162,7 +162,7 @@ def format_cairn_annotation_snippet(
             ]
         )
 
-    for block in ("HUMAN_DEMAND", "HUMAN_LOAD", "HUMAN_FACTORS", "HUMAN_RISK"):
+    for block in ("HUMAN_DEMAND", "HUMAN_LOAD", "FUNCTIONAL_LAYOUT_LOAD", "HUMAN_FACTORS", "HUMAN_RISK"):
         value = report.suggested_blocks.get(block)
         if not value:
             continue
