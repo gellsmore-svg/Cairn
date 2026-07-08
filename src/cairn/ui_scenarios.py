@@ -27,11 +27,13 @@ ALLOWED_ACTIONS = {
 
 HUMAN_LOAD_PHASES = {
     "awareness",
+    "orientation",
     "execution",
+    "feedback",
     "notification",
     "inspection",
-    "feedback",
     "recovery",
+    "handoff",
     "adaptation",
     "organisational_pressure",
 }

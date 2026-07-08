@@ -11,10 +11,17 @@ A scenario is a JSON file with a base URL and ordered steps. Each step can be a 
 The useful unit of analysis is usually not just "the user clicks a button". A step can contain several human experiences:
 
 - Awareness: noticing that work is needed and finding the relevant surface.
+- Orientation: understanding the current state, priority, risk, evidence, and
+  available next action.
 - Execution: performing the work, including prompts, choices, form entry, review, and correction.
+- Feedback: seeing how the interface responds while work is in progress.
 - Notification: receiving the result and understanding whether the work is complete.
 - Inspection: optionally opening traces, logs, provenance, or explanations.
-- Feedback: reporting the quality of the outcome back into the system.
+- Recovery: handling missing information, wrong state, errors, or disagreement.
+- Handoff: seeing how the result reaches the next person, queue, system, or
+  audit trail.
+- Adaptation: noticing how repeated use changes skill, trust, shortcuts, or
+  organisational behaviour.
 
 Those phases map onto Cairn's human factors vocabulary. A scenario can name the human systems plausibly involved, such as attention, working memory, trust calibration, social risk, configuration burden, and context switching.
 
@@ -137,8 +144,9 @@ Each step may include `humanLoad`:
 }
 ```
 
-Known phases are `awareness`, `execution`, `notification`, `inspection`,
-`feedback`, `recovery`, `adaptation`, and `organisational_pressure`.
+Known phases are `awareness`, `orientation`, `execution`, `feedback`,
+`notification`, `inspection`, `recovery`, `handoff`, `adaptation`, and
+`organisational_pressure`.
 
 Steps may also set `contextSwitch: true` when the action moves the user into a
 different surface, mode, or mental frame. The evidence layer counts this
@@ -153,7 +161,16 @@ The report records:
 - Human-load observations: phase, involved human systems, and the demand being placed on the user.
 - Findings: estimated risks, impacts, and mitigations supplied by the scenario author or later by an LLM.
 
-The next layer is an LLM reviewer that consumes this report together with a Cairn process description and asks: "what human systems are plausibly present in this process step, and where does the interface create avoidable load?"
+The next layer is an LLM reviewer that consumes this report together with a
+Cairn process description and asks: "what human systems are plausibly present in
+this process step, which HCI touchpoints mediate the work, and where does the
+interface create avoidable cognitive load?"
+
+For cognitive-aesthetic review, ask the LLM to inspect visual hierarchy,
+information scent, recognition over recall, state visibility, affordance
+clarity, perceptual grouping, error prevention, recovery, accessibility, focus,
+confidence cues, and information density. See
+[`HCI-TOUCHPOINTS.md`](HCI-TOUCHPOINTS.md).
 
 ## Where This Goes Next
 

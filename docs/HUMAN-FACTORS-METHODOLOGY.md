@@ -29,6 +29,11 @@ Recommended shape:
 Good `HUMAN_DEMAND` text is concrete. It should say what the human actually has
 to notice, hold in mind, decide, and recover from.
 
+For UI-mediated work, also map the HCI touchpoint explicitly. A screen is not
+just where the step happens; it is part of the human process. Use the phases in
+[`HCI-TOUCHPOINTS.md`](HCI-TOUCHPOINTS.md): awareness, orientation, execution,
+feedback, notification, recovery, handoff, and adaptation.
+
 ### HUMAN_LOAD
 
 Use `HUMAN_LOAD` for rough workload cues:
@@ -175,6 +180,10 @@ For each human-facing step, ask:
 - How does the person know this needs attention?
 - What must they compare, remember, or infer?
 - What is business work, and what is interface overhead?
+- Which UI touchpoints mediate awareness, orientation, execution, feedback,
+  recovery, and handoff?
+- Does the visual design reduce or increase thinking load at the point of
+  action?
 - What happens if information is missing or wrong?
 - Can the person recover without shame, blame, or technical debugging?
 - Is the human accountable for something they can inspect and control?

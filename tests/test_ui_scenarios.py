@@ -48,6 +48,38 @@ def test_validate_ui_scenario_reports_action_errors():
     assert any("humanLoad.demand" in error for error in report.errors)
 
 
+def test_validate_ui_scenario_accepts_hci_touchpoint_phases():
+    scenario = {
+        "name": "hci-touchpoints",
+        "steps": [
+            {
+                "action": "assertVisible",
+                "selector": "#po-queue",
+                "humanLoad": {
+                    "phase": "orientation",
+                    "systems": ["attention", "working memory"],
+                    "demand": "The user understands queue state, priority, and risk before choosing a PO.",
+                },
+            },
+            {
+                "action": "assertVisible",
+                "selector": "#po-status",
+                "humanLoad": {
+                    "phase": "handoff",
+                    "systems": ["audit reasoning"],
+                    "demand": "The user verifies that the completed PO state is visible downstream.",
+                },
+            },
+        ],
+    }
+
+    report = validate_ui_scenario(scenario)
+
+    assert report.ok
+    assert report.errors == []
+    assert not any("not one of" in warning for warning in report.warnings)
+
+
 def test_scenario_validate_cli_returns_nonzero_for_invalid(tmp_path, capsys):
     scenario = tmp_path / "invalid.json"
     scenario.write_text(json.dumps({"steps": [{"action": "fill", "selector": ".x"}]}), encoding="utf-8")

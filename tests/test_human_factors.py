@@ -51,6 +51,10 @@ def test_interpret_human_factors_uses_provider():
     report = analyze_human_factors(md)
     prompt = build_human_factors_prompt(md, report)
     assert "Highest-risk steps" in prompt
+    assert "HCI touchpoints" in prompt
+    assert "cognitive aesthetic" in prompt
+    assert "visual hierarchy" in prompt
+    assert "Separate observed evidence from inference" in prompt
     interpretation = interpret_human_factors(md, FakeProvider(), report=report)
     assert interpretation.provider == "fake"
     assert "Step 3" in interpretation.text

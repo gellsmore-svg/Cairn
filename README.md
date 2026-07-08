@@ -194,6 +194,8 @@ The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
 - [CHANGELOG.md](CHANGELOG.md) — how the spec has evolved.
 - [docs/HUMAN-FACTORS-METHODOLOGY.md](docs/HUMAN-FACTORS-METHODOLOGY.md) — how
   to annotate human demand, factors, qualitative risk, and LLM-assisted review.
+- [docs/HCI-TOUCHPOINTS.md](docs/HCI-TOUCHPOINTS.md) — how consuming LLMs should
+  analyze UI touchpoints and cognitive-aesthetic load.
 - [okf/](okf/index.md) — an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
   knowledge bundle: Cairn's concepts and reference, as linked markdown.
 
