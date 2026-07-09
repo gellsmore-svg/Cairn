@@ -40,6 +40,10 @@
 - Added `cairn-agent-harness-plan` and `build_agent_harness_plan` so interactive
   agents can ask Cairn which deterministic commands fit the available evidence.
 - Added shell-script formatting for agent harness plans.
+- Added harness-plan input provenance, repository/screenshot inputs, optional
+  local file checks, and shell preflight guards for supplied evidence.
+- Added `--fail-on-missing` for agent harness plans so unattended callers can
+  write a plan and still fail fast on missing local evidence.
 
 ## [0.8.0] — 2026-07-07
 

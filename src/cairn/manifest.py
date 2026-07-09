@@ -266,13 +266,18 @@ def build_manifest() -> Manifest:
                         "process_path": {"type": "string"},
                         "ui_evidence_path": {"type": "string"},
                         "layout_path": {"type": "string"},
+                        "repository_path": {"type": "string"},
+                        "screenshot_paths": {"type": "array", "items": {"type": "string"}},
                         "output_dir": {"type": "string"},
+                        "check_paths": {"type": "boolean"},
                     },
                 },
                 output_schema={
                     "type": "object",
                     "properties": {
                         "title": {"type": "string"},
+                        "inputs": {"type": "object"},
+                        "missing_inputs": {"type": "array"},
                         "steps": {"type": "array"},
                         "open_questions": {"type": "array"},
                     },

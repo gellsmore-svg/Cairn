@@ -7,6 +7,7 @@ interactive agent into a repeatable Cairn CLI/Python sequence.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 import shlex
 from typing import Any
 
@@ -26,6 +27,8 @@ class AgentHarnessPlan:
     output_dir: str
     context_sources: list[str]
     steps: list[AgentHarnessStep]
+    inputs: dict[str, Any] = field(default_factory=dict)
+    missing_inputs: list[str] = field(default_factory=list)
     open_questions: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
@@ -37,10 +40,21 @@ def build_agent_harness_plan(
     process_path: str | None = None,
     ui_evidence_path: str | None = None,
     layout_path: str | None = None,
+    repository_path: str | None = None,
+    screenshot_paths: list[str] | None = None,
     output_dir: str = "cairn-agent-output",
     title: str = "Tool-assisted Cairn agent analysis",
+    check_paths: bool = False,
 ) -> AgentHarnessPlan:
     """Return a deterministic command plan for an interactive agent harness."""
+    inputs = _inputs(
+        process_path=process_path,
+        ui_evidence_path=ui_evidence_path,
+        layout_path=layout_path,
+        repository_path=repository_path,
+        screenshot_paths=screenshot_paths or [],
+    )
+    missing_inputs = _missing_inputs(inputs) if check_paths else []
     context_sources = [
         "SPEC.md",
         "docs/usage-modes.md",
@@ -71,6 +85,8 @@ def build_agent_harness_plan(
         ),
     ]
     open_questions: list[str] = []
+    for missing in missing_inputs:
+        open_questions.append(f"Supplied input was not found: {missing}")
 
     if process_path:
         process_q = _q(process_path)
@@ -95,6 +111,16 @@ def build_agent_harness_plan(
         )
     else:
         open_questions.append("No Cairn process file was supplied; process validation and deterministic human-factors analysis are unavailable.")
+
+    if repository_path:
+        steps.append(
+            AgentHarnessStep(
+                name="Inspect repository surfaces",
+                purpose="Identify process files, UI code, agent entry points, tests, and logging surfaces relevant to the human-facing workflow.",
+                command=None,
+                produces=["repository evidence inventory", "candidate human-facing surfaces"],
+            )
+        )
 
     if ui_evidence_path:
         ui_q = _q(ui_evidence_path)
@@ -126,6 +152,16 @@ def build_agent_harness_plan(
         )
     else:
         open_questions.append("No UI simulation evidence was supplied; HCI touchpoint and interface recommendations may remain inferential.")
+
+    if screenshot_paths:
+        steps.append(
+            AgentHarnessStep(
+                name="Review screenshots",
+                purpose="Use screenshots as visual evidence for HCI touchpoints, layout grouping, affordance clarity, and cognitive aesthetic load.",
+                command=None,
+                produces=["screenshot observations", "candidate UI questions"],
+            )
+        )
 
     if layout_path:
         layout_q = _q(layout_path)
@@ -170,6 +206,8 @@ def build_agent_harness_plan(
         output_dir=output_dir,
         context_sources=context_sources,
         steps=steps,
+        inputs=inputs,
+        missing_inputs=missing_inputs,
         open_questions=open_questions,
     )
 
@@ -184,6 +222,15 @@ def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "m
     lines = [f"# {plan.title}", ""]
     lines.append(f"Output directory: `{plan.output_dir}`")
     lines.append("")
+    if plan.inputs:
+        lines.append("## Inputs")
+        for key, value in plan.inputs.items():
+            if isinstance(value, list):
+                rendered = ", ".join(f"`{item}`" for item in value) if value else "`[]`"
+            else:
+                rendered = f"`{value}`"
+            lines.append(f"- {key}: {rendered}")
+        lines.append("")
     lines.append("## Context Sources")
     for source in plan.context_sources:
         lines.append(f"- `{source}`")
@@ -205,6 +252,11 @@ def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "m
         lines.append("## Open Questions")
         for question in plan.open_questions:
             lines.append(f"- {question}")
+    if plan.missing_inputs:
+        lines.append("")
+        lines.append("## Missing Inputs")
+        for missing in plan.missing_inputs:
+            lines.append(f"- `{missing}`")
     return "\n".join(lines).strip()
 
 
@@ -216,8 +268,25 @@ def _format_shell(plan: AgentHarnessPlan) -> str:
         f"# {plan.title}",
         f"# Output directory: {plan.output_dir}",
         "",
-        "# Context sources to load before interpretation:",
     ]
+    local_inputs = _local_input_paths(plan.inputs)
+    if local_inputs:
+        lines.extend(
+            [
+                "require_path() {",
+                "  if [ ! -e \"$1\" ]; then",
+                "    echo \"Missing required input: $1\" >&2",
+                "    exit 2",
+                "  fi",
+                "}",
+                "",
+                "# Preflight supplied local inputs:",
+            ]
+        )
+        for path in local_inputs:
+            lines.append(f"require_path {_q(path)}")
+        lines.append("")
+    lines.append("# Context sources to load before interpretation:")
     for source in plan.context_sources:
         lines.append(f"# - {source}")
     lines.append("")
@@ -236,6 +305,52 @@ def _format_shell(plan: AgentHarnessPlan) -> str:
         for question in plan.open_questions:
             lines.append(f"# - {question}")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _inputs(
+    *,
+    process_path: str | None,
+    ui_evidence_path: str | None,
+    layout_path: str | None,
+    repository_path: str | None,
+    screenshot_paths: list[str],
+) -> dict[str, Any]:
+    inputs: dict[str, Any] = {}
+    if process_path:
+        inputs["process"] = process_path
+    if ui_evidence_path:
+        inputs["ui_evidence"] = ui_evidence_path
+    if layout_path:
+        inputs["layout"] = layout_path
+    if repository_path:
+        inputs["repository"] = repository_path
+    if screenshot_paths:
+        inputs["screenshots"] = list(screenshot_paths)
+    return inputs
+
+
+def _missing_inputs(inputs: dict[str, Any]) -> list[str]:
+    missing: list[str] = []
+    for path in _local_input_paths(inputs):
+        if not Path(path).exists():
+            missing.append(path)
+    return missing
+
+
+def _local_input_paths(inputs: dict[str, Any]) -> list[str]:
+    paths: list[str] = []
+    for value in inputs.values():
+        values = value if isinstance(value, list) else [value]
+        for item in values:
+            text = str(item)
+            if _is_remote(text):
+                continue
+            paths.append(text)
+    return paths
+
+
+def _is_remote(value: str) -> bool:
+    return value.startswith(("http://", "https://", "git@", "ssh://"))
 
 
 def _q(value: str) -> str:

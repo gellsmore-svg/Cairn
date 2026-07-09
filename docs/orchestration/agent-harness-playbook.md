@@ -36,6 +36,10 @@ interpretation, prioritisation, synthesis, and careful explanation.
      --process process.cairn.md \
      --ui-evidence ui-sim-report.json \
      --layout layout.json \
+     --repo . \
+     --screenshot review-screen.png \
+     --check-files \
+     --fail-on-missing \
      --output-dir cairn-agent-output
    ```
 
@@ -45,9 +49,13 @@ interpretation, prioritisation, synthesis, and careful explanation.
    cairn-agent-harness-plan \
      --process process.cairn.md \
      --ui-evidence ui-sim-report.json \
+     --check-files \
      --format shell \
      --output cairn-agent-plan.sh
    ```
+
+   The shell format includes preflight checks for supplied local inputs. Remote
+   repository URLs are recorded as provenance but are not treated as local files.
 
 4. Run deterministic human-factors analysis:
 

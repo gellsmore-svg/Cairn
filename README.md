@@ -60,7 +60,7 @@ cairn-human-factors my-process.cairn.md -f json
 
 # Traceable interface recommendations and reports
 cairn-agent-harness-plan --process my-process.cairn.md --ui-evidence ui-evidence.json \
-  --output-dir cairn-agent-output
+  --repo . --check-files --output-dir cairn-agent-output
 cairn-agent-harness-plan --process my-process.cairn.md --ui-evidence ui-evidence.json \
   --format shell --output cairn-agent-plan.sh
 cairn-recommend-interface-changes ui-evidence.json --future-svg-output future.svg
