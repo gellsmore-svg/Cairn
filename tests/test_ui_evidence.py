@@ -103,6 +103,16 @@ def test_render_ui_layout_overlay_uses_first_layout_snapshot():
     assert "evidence_to_action" in svg
 
 
+def test_render_ui_layout_overlay_can_select_snapshot_index():
+    raw = _multi_snapshot_report()
+
+    svg = render_ui_layout_overlay(raw, snapshot_index=1)
+
+    assert svg is not None
+    assert "second_state_action" in svg
+    assert "first_state_action" not in svg
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)
@@ -147,6 +157,30 @@ def test_ui_evidence_cli_writes_layout_svg(tmp_path):
 
     assert rc == 0
     assert svg.read_text(encoding="utf-8").startswith("<svg")
+
+
+def test_ui_evidence_cli_writes_selected_layout_snapshot(tmp_path):
+    source = tmp_path / "multi-snapshot-report.json"
+    output = tmp_path / "ui-evidence.md"
+    svg = tmp_path / "layout-overlay.svg"
+    source.write_text(json.dumps(_multi_snapshot_report()), encoding="utf-8")
+
+    rc = ui_evidence_main(
+        [
+            str(source),
+            "-o",
+            str(output),
+            "--layout-svg-output",
+            str(svg),
+            "--layout-snapshot-index",
+            "1",
+        ]
+    )
+
+    assert rc == 0
+    text = svg.read_text(encoding="utf-8")
+    assert "second_state_action" in text
+    assert "first_state_action" not in text
 
 
 def test_ui_annotations_cli_writes_cairn_snippet(tmp_path):
@@ -203,3 +237,32 @@ def test_ui_roleplay_cli_command_provider(tmp_path):
 
     assert rc == 0
     assert output.read_text(encoding="utf-8") == "Roleplay OK: mahlah-human-load"
+
+
+def _multi_snapshot_report() -> dict:
+    return {
+        "scenario": "multi-layout-flow",
+        "metrics": {"clicks": 0, "fills": 0, "waits": 0, "contextSwitches": 0, "layoutSnapshots": 2},
+        "observations": [],
+        "layoutLoad": [
+            {
+                "viewport": {"width": 800, "height": 600},
+                "elements": [
+                    {"id": "first_state_field", "role": "field", "x": 40, "y": 80, "width": 200, "height": 36},
+                    {"id": "first_state_action", "role": "button", "x": 320, "y": 80, "width": 120, "height": 40},
+                ],
+                "sequence": ["first_state_field", "first_state_action"],
+            },
+            {
+                "viewport": {"width": 800, "height": 600},
+                "elements": [
+                    {"id": "second_state_warning", "role": "warning", "x": 60, "y": 220, "width": 220, "height": 56},
+                    {"id": "second_state_action", "role": "button", "x": 460, "y": 420, "width": 140, "height": 44},
+                ],
+                "relations": [
+                    {"from": "second_state_warning", "to": "second_state_action", "type": "evidence_to_action"}
+                ],
+                "sequence": ["second_state_warning", "second_state_action"],
+            },
+        ],
+    }

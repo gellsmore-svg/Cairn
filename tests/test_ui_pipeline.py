@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import sys
 
@@ -61,6 +62,61 @@ def test_ui_pipeline_from_report_writes_layout_overlay_when_measured(tmp_path, c
     assert rc == 0
     assert "layout_svg:" in captured.out
     assert "duplicate_warning" in layout_svg.read_text(encoding="utf-8")
+
+
+def test_ui_pipeline_from_report_writes_selected_layout_snapshot(tmp_path, capsys):
+    scenario = ROOT / "docs" / "scenarios" / "customer-po-review-layout.json"
+    report = tmp_path / "multi-layout-ui-sim-report.json"
+    layout_svg = tmp_path / "selected-layout-overlay.svg"
+    report.write_text(
+        json.dumps(
+            {
+                "scenario": "multi-layout-flow",
+                "metrics": {"clicks": 0, "fills": 0, "waits": 0, "contextSwitches": 0, "layoutSnapshots": 2},
+                "observations": [],
+                "layoutLoad": [
+                    {
+                        "viewport": {"width": 800, "height": 600},
+                        "elements": [
+                            {"id": "first_state_action", "role": "button", "x": 120, "y": 80, "width": 140, "height": 44}
+                        ],
+                        "sequence": ["first_state_action"],
+                    },
+                    {
+                        "viewport": {"width": 800, "height": 600},
+                        "elements": [
+                            {"id": "second_state_action", "role": "button", "x": 420, "y": 320, "width": 140, "height": 44}
+                        ],
+                        "sequence": ["second_state_action"],
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    rc = ui_pipeline_main(
+        [
+            str(scenario),
+            "--from-report",
+            str(report),
+            "--evidence-output",
+            str(tmp_path / "evidence.md"),
+            "--annotations-output",
+            str(tmp_path / "annotations.cairn.md"),
+            "--layout-svg-output",
+            str(layout_svg),
+            "--layout-snapshot-index",
+            "1",
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert rc == 0
+    assert "layout_svg:" in captured.out
+    text = layout_svg.read_text(encoding="utf-8")
+    assert "second_state_action" in text
+    assert "first_state_action" not in text
 
 
 def test_ui_pipeline_from_report_can_roleplay_with_command_provider(tmp_path):

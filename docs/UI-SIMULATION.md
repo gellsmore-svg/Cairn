@@ -66,7 +66,8 @@ This second step turns mechanical observations into suggested Cairn blocks such
 as `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`.
 When the report includes measured layout snapshots, add
 `--layout-svg-output docs/analysis/example-layout-overlay.svg` to export a
-visual overlay of the first snapshot.
+visual overlay. Use `--layout-snapshot-index 1` to render a later zero-based
+snapshot when a scenario measures several UI states.
 
 Then ask an LLM to role-play plausible user experience from the grounded
 evidence:
@@ -160,7 +161,7 @@ Most selector-based actions accept an optional zero-based `index`, which is usef
 
 The runner stores the bounding boxes under `layoutLoad`. The evidence layer then
 adds `FUNCTIONAL_LAYOUT_LOAD` findings and blocks automatically, and can export
-the measured geometry as a layout overlay SVG for visual review.
+any measured snapshot as a layout overlay SVG for visual review.
 See `docs/scenarios/customer-po-review-layout.json` for a worked scenario.
 
 Each step may include `humanLoad`:

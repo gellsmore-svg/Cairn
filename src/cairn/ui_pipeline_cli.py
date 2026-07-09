@@ -31,6 +31,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--evidence-output", help="Write Markdown evidence summary to this path")
     parser.add_argument("--annotations-output", help="Write Cairn annotation snippet to this path")
     parser.add_argument("--layout-svg-output", help="Write measured layout overlay SVG to this path")
+    parser.add_argument(
+        "--layout-snapshot-index",
+        type=int,
+        default=0,
+        help="Zero-based layoutLoad snapshot index to render into the layout SVG overlay",
+    )
     parser.add_argument("--roleplay-output", help="Write optional LLM role-play Markdown to this path")
     parser.add_argument("--step-title", help="Heading to use for the generated Cairn annotation snippet")
     parser.add_argument("--persona", action="append", default=[], help="Persona/perspective to simulate; repeatable")
@@ -84,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
         encoding="utf-8",
     )
 
-    layout_svg = render_ui_layout_overlay(raw_report)
+    layout_svg = render_ui_layout_overlay(raw_report, snapshot_index=args.layout_snapshot_index)
     if layout_svg is not None:
         layout_svg_path.parent.mkdir(parents=True, exist_ok=True)
         layout_svg_path.write_text(layout_svg, encoding="utf-8")
