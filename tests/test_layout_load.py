@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 
+import cairn
 from cairn.layout_load import analyze_functional_layout, format_functional_layout_report, render_layout_svg
 from cairn.layout_load_cli import main as layout_load_main
 
@@ -49,6 +50,12 @@ def test_format_functional_layout_report_markdown_and_json():
     payload = format_functional_layout_report(report, output_format="json")
     assert isinstance(payload, dict)
     assert payload["metrics"]["layout_load"] == "high"
+
+
+def test_layout_load_helpers_are_public_api():
+    assert cairn.analyze_functional_layout is analyze_functional_layout
+    assert cairn.format_functional_layout_report is format_functional_layout_report
+    assert cairn.render_layout_svg is render_layout_svg
 
 
 def test_render_layout_svg_draws_elements_and_relations():

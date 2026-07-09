@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import cairn
 import sys
 
 from cairn.llm_adapters import LLMRequest, LLMResponse
@@ -149,6 +150,13 @@ def test_format_ui_layout_overlay_manifest_includes_metrics():
     assert manifest["snapshots"][1]["overlay"] == "second.svg"
     assert manifest["snapshots"][1]["metrics"]["element_count"] == 2
     assert "layout_load" in manifest["snapshots"][1]["metrics"]
+
+
+def test_ui_layout_overlay_helpers_are_public_api():
+    assert cairn.render_ui_layout_overlay is render_ui_layout_overlay
+    assert cairn.render_ui_layout_overlays is render_ui_layout_overlays
+    assert cairn.format_ui_layout_overlay_index is format_ui_layout_overlay_index
+    assert cairn.format_ui_layout_overlay_manifest is format_ui_layout_overlay_manifest
 
 
 def test_format_ui_human_load_report_markdown_and_json():

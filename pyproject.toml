@@ -23,10 +23,10 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Typing :: Typed",
 ]
-# Dependency-free: the conformance surface is pure stdlib so any runtime can adopt it.
-dependencies = [
-    "keturah>=0.1",  # LLM-interface manifest (build_manifest / to_mcp)
-]
+# Dependency-free by default so the conformance, render, UI evidence, and layout
+# analysis surfaces can be adopted by any runtime. If Keturah is installed,
+# cairn.manifest uses it; otherwise Cairn provides a small compatible manifest.
+dependencies = []
 
 [project.scripts]
 cairn-render = "cairn.cli:main"

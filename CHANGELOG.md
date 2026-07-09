@@ -1,3 +1,25 @@
+## [Unreleased] — 2026-07-09
+
+- Added browser-driven UI evidence tooling for human-load analysis:
+  - `cairn-ui-sim` scenarios can collect `measureLayout` snapshots from Playwright.
+  - `cairn-ui-evidence` and `cairn-ui-pipeline` turn simulation reports into
+    HCI phase evidence, human-factor findings, qualitative risk, and Cairn
+    annotation snippets.
+  - Layout overlay exports now support single snapshots, selected snapshot
+    indices, bulk numbered SVG exports, Markdown indexes, and JSON manifests.
+- Added functional layout-load analysis for UI geometry:
+  - `cairn-layout-load` estimates label/control distance, related-element
+    distance, evidence-to-action distance, columns, scan path, pointer travel,
+    and recovery load.
+  - Reports include suggested `FUNCTIONAL_LAYOUT_LOAD` Cairn blocks and SVG
+    overlays for visual review.
+- Expanded package and manifest surfaces so deterministic UI evidence and
+  layout-load analyzers are discoverable from Python and Keturah-compatible
+  tooling.
+- Removed the hard runtime dependency on Keturah. Cairn now uses Keturah when it
+  is installed and otherwise provides a small compatible manifest representation,
+  keeping `pip install cairn-lang` dependency-light.
+
 ## [0.8.0] — 2026-07-07
 
 - **Export story completed**: Built-in exporters for `html` (always available), `docx` (via python-docx), `pdf` (via fpdf2) under the new `cairn-lang[export]` extra.

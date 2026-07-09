@@ -265,8 +265,9 @@ Grammar parser: [docs/GRAMMAR-PARSER.md](docs/GRAMMAR-PARSER.md). Simplified vie
 Tirzah's recursive planner is tested against `cairn.validate_plan` so its output
 cannot drift from the grammar.
 
-Works the same on native Linux and WSL. Requires `keturah` in the same environment
-(local editable install or PyPI once published).
+Works the same on native Linux and WSL. Cairn has no hard runtime dependency on
+Keturah; when Keturah is installed, `cairn.manifest` uses it, and otherwise
+Cairn provides a small compatible manifest surface.
 
 ```bash
 pip install -e ".[dev]" && pytest
