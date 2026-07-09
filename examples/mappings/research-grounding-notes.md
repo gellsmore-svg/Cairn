@@ -76,3 +76,24 @@ Source anchors:
 - NIOSH Total Worker Health Program: https://www.cdc.gov/niosh/twh/programs/index.html
 - WHO Healthy Workplace Framework and Model: https://www.who.int/publications/i/item/who-healthy-workplace-framework-and-model
 - ISO 45001 overview: https://www.iso.org/standard/63787.html
+
+## Governance, Compliance, And Assurance Work
+
+- Compliance and governance workflows are human systems: they rely on truthful
+  reporting, clear accountability, contestability, proportional evidence, and
+  visible follow-through.
+- AI governance benefits from risk-based review, mapped accountability,
+  monitoring, and challenge paths; generated summaries should support, not
+  replace, accountable judgement.
+- Compliance management should be maintained and improved as an operating
+  system, not reduced to periodic evidence collection.
+- Speak-up, audit, privacy incident, and third-party-risk processes carry
+  psychological and sociological load because they involve blame risk, power
+  asymmetry, reputational stakes, and uncertain evidence.
+
+Source anchors:
+- NIST AI Risk Management Framework: https://www.nist.gov/itl/ai-risk-management-framework
+- NIST AI RMF Core overview: https://airc.nist.gov/airmf-resources/airmf/
+- ISO 37301 compliance management systems: https://www.iso.org/standard/75080.html
+- OECD AI Principles: https://www.oecd.org/en/topics/sub-issues/ai-principles.html
+- EU AI Act overview: https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai

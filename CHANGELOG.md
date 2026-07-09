@@ -58,6 +58,10 @@
 - Added an occupational health and safety suite covering safety-management
   systems, incident learning, health surveillance/privacy, psychosocial risk,
   return to work, contractor coordination, ergonomics, and workplace violence.
+- Added a governance, risk, and compliance suite covering AI model governance,
+  privacy incident triage, audit remediation, regulatory change, third-party
+  risk, speak-up, policy waivers, crisis governance, records holds, and
+  sustainability claim assurance.
 - Updated example validation to recurse into categorized example folders.
 
 ## [0.8.0] — 2026-07-07
