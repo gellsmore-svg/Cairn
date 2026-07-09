@@ -180,6 +180,34 @@ def format_ui_layout_overlay_index(
     return "\n".join(lines).strip()
 
 
+def format_ui_layout_overlay_manifest(
+    report: dict[str, Any],
+    *,
+    filenames: dict[int, str] | None = None,
+) -> dict[str, Any]:
+    """Format a JSON-compatible manifest for measured UI layout overlays."""
+    snapshots: list[dict[str, Any]] = []
+    for index, snapshot in enumerate(report.get("layoutLoad", [])):
+        if not isinstance(snapshot, dict):
+            continue
+        layout_report = analyze_functional_layout(snapshot)
+        snapshots.append(
+            {
+                "index": index,
+                "number": index + 1,
+                "label": str(snapshot.get("label") or f"Snapshot {index + 1}"),
+                "overlay": (filenames or {}).get(index, f"layout-snapshot-{index + 1}.svg"),
+                "metrics": layout_report.metrics,
+                "finding_count": len(layout_report.findings),
+            }
+        )
+    return {
+        "scenario": str(report.get("scenario") or "UI simulation"),
+        "snapshot_count": len(snapshots),
+        "snapshots": snapshots,
+    }
+
+
 def format_cairn_annotation_snippet(
     report: UiHumanLoadReport,
     *,

@@ -11,6 +11,7 @@ from cairn.ui_evidence import (
     analyze_ui_simulation_report,
     format_cairn_annotation_snippet,
     format_ui_layout_overlay_index,
+    format_ui_layout_overlay_manifest,
     format_ui_human_load_report,
     interpret_ui_experience,
     render_ui_layout_overlay,
@@ -101,6 +102,7 @@ def main(argv: list[str] | None = None) -> int:
 
     layout_svg_paths: list[Path] = []
     layout_svg_index_path = None
+    layout_svg_manifest_path = None
     if layout_svg_dir is not None:
         overlays = render_ui_layout_overlays(raw_report)
         if overlays:
@@ -114,6 +116,11 @@ def main(argv: list[str] | None = None) -> int:
                 filenames[index] = filename
             layout_svg_index_path = layout_svg_dir / "index.md"
             layout_svg_index_path.write_text(format_ui_layout_overlay_index(raw_report, filenames=filenames), encoding="utf-8")
+            layout_svg_manifest_path = layout_svg_dir / "index.json"
+            layout_svg_manifest_path.write_text(
+                json.dumps(format_ui_layout_overlay_manifest(raw_report, filenames=filenames), indent=2),
+                encoding="utf-8",
+            )
 
     roleplay_path = None
     if args.llm_command or args.hoglah_model:
@@ -142,6 +149,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"layout_svg_dir: {layout_svg_dir}")
     if layout_svg_index_path:
         print(f"layout_svg_index: {layout_svg_index_path}")
+    if layout_svg_manifest_path:
+        print(f"layout_svg_manifest: {layout_svg_manifest_path}")
     if roleplay_path:
         print(f"roleplay: {roleplay_path}")
     return 0

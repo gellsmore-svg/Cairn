@@ -10,6 +10,7 @@ from pathlib import Path
 from cairn.ui_evidence import (
     analyze_ui_simulation_report,
     format_ui_layout_overlay_index,
+    format_ui_layout_overlay_manifest,
     format_ui_human_load_report,
     render_ui_layout_overlay,
     render_ui_layout_overlays,
@@ -66,6 +67,10 @@ def main(argv: list[str] | None = None) -> int:
             (output_dir / filename).write_text(svg, encoding="utf-8")
             filenames[index] = filename
         (output_dir / "index.md").write_text(format_ui_layout_overlay_index(raw, filenames=filenames), encoding="utf-8")
+        (output_dir / "index.json").write_text(
+            json.dumps(format_ui_layout_overlay_manifest(raw, filenames=filenames), indent=2),
+            encoding="utf-8",
+        )
 
     if args.output:
         Path(args.output).write_text(out, encoding="utf-8")

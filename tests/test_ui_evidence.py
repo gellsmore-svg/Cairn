@@ -11,6 +11,7 @@ from cairn.ui_evidence import (
     build_ui_roleplay_prompt,
     format_cairn_annotation_snippet,
     format_ui_layout_overlay_index,
+    format_ui_layout_overlay_manifest,
     format_ui_human_load_report,
     interpret_ui_experience,
     render_ui_layout_overlay,
@@ -136,6 +137,20 @@ def test_format_ui_layout_overlay_index_links_snapshots_and_metrics():
     assert "cumulative_pointer_travel_viewports:" in index
 
 
+def test_format_ui_layout_overlay_manifest_includes_metrics():
+    manifest = format_ui_layout_overlay_manifest(
+        _multi_snapshot_report(),
+        filenames={0: "first.svg", 1: "second.svg"},
+    )
+
+    assert manifest["scenario"] == "multi-layout-flow"
+    assert manifest["snapshot_count"] == 2
+    assert manifest["snapshots"][0]["overlay"] == "first.svg"
+    assert manifest["snapshots"][1]["overlay"] == "second.svg"
+    assert manifest["snapshots"][1]["metrics"]["element_count"] == 2
+    assert "layout_load" in manifest["snapshots"][1]["metrics"]
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)
@@ -226,10 +241,13 @@ def test_ui_evidence_cli_writes_all_layout_snapshots(tmp_path):
     first = (svg_dir / "layout-snapshot-1.svg").read_text(encoding="utf-8")
     second = (svg_dir / "layout-snapshot-2.svg").read_text(encoding="utf-8")
     index = (svg_dir / "index.md").read_text(encoding="utf-8")
+    manifest = json.loads((svg_dir / "index.json").read_text(encoding="utf-8"))
     assert "first_state_action" in first
     assert "second_state_action" in second
     assert "[layout-snapshot-1.svg](layout-snapshot-1.svg)" in index
     assert "Snapshot 2" in index
+    assert manifest["snapshot_count"] == 2
+    assert manifest["snapshots"][1]["overlay"] == "layout-snapshot-2.svg"
 
 
 def test_ui_annotations_cli_writes_cairn_snippet(tmp_path):
