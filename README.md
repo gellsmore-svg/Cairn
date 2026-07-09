@@ -210,6 +210,8 @@ The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
   GitHub-link agent, embedded, and CI/review-gate usage modes.
 - [docs/orchestration/manual-agent-analysis.cairn.md](docs/orchestration/manual-agent-analysis.cairn.md)
   — a Cairn-described orchestration pattern for manual agent analysis.
+- [docs/orchestration/agent-harness-playbook.md](docs/orchestration/agent-harness-playbook.md)
+  — concrete CLI/Python sequence for tool-assisted interactive agent use.
 - [docs/future-usage-logging-spec.md](docs/future-usage-logging-spec.md) —
   future plan for real-world touchpoint logging and analysis.
 - [docs/augmentation-integration-notes.md](docs/augmentation-integration-notes.md)

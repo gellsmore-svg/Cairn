@@ -43,6 +43,7 @@ Claude, Grok, Amazon Q, Cursor, or Gemini and asks it to analyze with Cairn.
 Do not rely on a loose prompt. Point the agent to:
 
 - `docs/orchestration/manual-agent-analysis.cairn.md`
+- `docs/orchestration/agent-harness-playbook.md`
 - `okf/concepts/index.md`
 - `docs/HCI-TOUCHPOINTS.md`
 - `docs/FUNCTIONAL-LAYOUT-LOAD.md`
@@ -59,6 +60,9 @@ human-factors analysis, UI evidence review, layout-load analysis, interface
 recommendations, and report generation wherever those tools fit the evidence.
 The agent still interprets, prioritises, and explains, but deterministic Cairn
 libraries should carry the repeatable parts of the work.
+
+For a concrete sequence, see
+`docs/orchestration/agent-harness-playbook.md`.
 
 ## Mode 4: Embedded Governance Library
 

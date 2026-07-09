@@ -35,6 +35,8 @@
   becomes a portable semantic contract.
 - Clarified that manual interactive agent analysis can and should invoke Cairn
   Python APIs and CLI tools when the harness can execute local code.
+- Added an agent harness playbook with a concrete CLI and Python sequence for
+  tool-assisted manual Cairn analysis.
 
 ## [0.8.0] — 2026-07-07
 
