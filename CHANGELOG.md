@@ -45,6 +45,13 @@
 - Added `--fail-on-missing` for agent harness plans so unattended callers can
   write a plan and still fail fast on missing local evidence.
 - Made `--fail-on-missing` imply local input checking for agent harness plans.
+- Added a categorized expanded example library covering corporate lifecycle,
+  AI-native organisational change, psychological and sociological work
+  interfaces, technical/agentic workflows, cross-cutting Cairn meta-processes,
+  and OKF-style human-systems mappings.
+- Added research grounding notes and a SPEC/GRAMMAR review note for the expanded
+  example corpus.
+- Updated example validation to recurse into categorized example folders.
 
 ## [0.8.0] — 2026-07-07
 

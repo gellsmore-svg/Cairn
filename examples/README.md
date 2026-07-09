@@ -2,6 +2,24 @@
 
 Worked Cairn descriptions of real systems, used to stress-test the spec.
 
+## Expanded Example Library
+
+The example library now includes categorized suites under subfolders. These are
+intended as instructive patterns for both humans and LLMs:
+
+- [`corporate/business-lifecycle-suite.cairn.md`](corporate/business-lifecycle-suite.cairn.md) — six corporate lifecycle processes: idea intake, concept-to-MVP, lead-to-opportunity, quote-to-order, order-to-cash exception, and support retention.
+- [`org-change/ai-native-change-suite.cairn.md`](org-change/ai-native-change-suite.cairn.md) — AI-native operating-model redesign, trauma-informed ERP rollout, post-merger integration, and ethical AI governance change.
+- [`psychological/psychological-work-interfaces.cairn.md`](psychological/psychological-work-interfaces.cairn.md) — acute stress, non-diagnostic Cluster B pattern interfaces, loss aversion, and caregiver mental-load spillover.
+- [`sociological/sociological-work-interfaces.cairn.md`](sociological/sociological-work-interfaces.cairn.md) — meeting power/status, reputation flow, hybrid belonging, and domestic/work boundary negotiation.
+- [`technical-agentic/technical-agentic-suite.cairn.md`](technical-agentic/technical-agentic-suite.cairn.md) — CI/CD governance, incident response, multi-agent research review, accessibility remediation, and layout-load optimization.
+- [`cross-cutting/cairn-meta-examples.cairn.md`](cross-cutting/cairn-meta-examples.cairn.md) — manual agent analysis with the Cairn harness and the process of expanding the example corpus.
+- [`mappings/human-systems-interface-map.md`](mappings/human-systems-interface-map.md) — OKF-style mapping of psychological, sociological, work, augmentation, and HCI interfaces.
+- [`mappings/research-grounding-notes.md`](mappings/research-grounding-notes.md) — concise research lenses used by the expanded examples.
+- [`mappings/spec-grammar-review.md`](mappings/spec-grammar-review.md) — review of whether the new examples require SPEC/GRAMMAR changes.
+
+The subfolder examples are included in `scripts/validate_examples.py` via
+recursive validation.
+
 | Example | System | Slice |
 |---------|--------|-------|
 | [`tirzah-system.cairn.md`](tirzah-system.cairn.md) | Tirzah | **Composition:** ingest → ask → observe |

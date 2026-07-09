@@ -30,7 +30,7 @@ def validate(path: Path) -> list[str]:
 
 
 def main() -> int:
-    files = sorted(EXAMPLES.glob("*.cairn.md"))
+    files = sorted(EXAMPLES.rglob("*.cairn.md"))
     if not files:
         print("no examples found", file=sys.stderr)
         return 1

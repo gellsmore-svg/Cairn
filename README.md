@@ -39,7 +39,10 @@ traceability):
    CONSTRAINTS: answer only from retrieved context; do not invent sources.
 ```
 
-Full worked descriptions of three real systems are in [`examples/`](examples/).
+Full worked descriptions and categorized example suites are in [`examples/`](examples/).
+The example library includes real systems plus suites for corporate lifecycle,
+AI-native organisational change, psychological and sociological work interfaces,
+technical/agentic workflows, and OKF-style human-systems mappings.
 
 ### Rendering & export
 Cairn can be turned into audience-friendly views:
