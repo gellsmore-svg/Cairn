@@ -35,7 +35,7 @@ def main(argv: list[str] | None = None) -> int:
         screenshot_paths=args.screenshot,
         output_dir=args.output_dir,
         title=args.title,
-        check_paths=args.check_files,
+        check_paths=args.check_files or args.fail_on_missing,
     )
     formatted = format_agent_harness_plan(plan, output_format=args.output_format)
     out = json.dumps(formatted, indent=2) if isinstance(formatted, dict) else formatted

@@ -118,6 +118,26 @@ def test_agent_harness_cli_can_fail_on_missing_after_writing_plan(tmp_path):
     assert output.exists()
 
 
+def test_agent_harness_fail_on_missing_implies_file_check(tmp_path):
+    output = tmp_path / "plan.json"
+
+    rc = harness_main(
+        [
+            "--process",
+            str(tmp_path / "missing.cairn.md"),
+            "--fail-on-missing",
+            "-f",
+            "json",
+            "-o",
+            str(output),
+        ]
+    )
+
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert rc == 2
+    assert payload["missing_inputs"] == [str(tmp_path / "missing.cairn.md")]
+
+
 def test_agent_harness_cli_writes_shell(tmp_path):
     output = tmp_path / "plan.sh"
 

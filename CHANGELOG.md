@@ -44,6 +44,7 @@
   local file checks, and shell preflight guards for supplied evidence.
 - Added `--fail-on-missing` for agent harness plans so unattended callers can
   write a plan and still fail fast on missing local evidence.
+- Made `--fail-on-missing` imply local input checking for agent harness plans.
 
 ## [0.8.0] — 2026-07-07
 

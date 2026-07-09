@@ -54,8 +54,9 @@ interpretation, prioritisation, synthesis, and careful explanation.
      --output cairn-agent-plan.sh
    ```
 
-   The shell format includes preflight checks for supplied local inputs. Remote
-   repository URLs are recorded as provenance but are not treated as local files.
+   The shell format includes preflight checks for supplied local inputs.
+   `--fail-on-missing` implies local file checking. Remote repository URLs are
+   recorded as provenance but are not treated as local files.
 
 4. Run deterministic human-factors analysis:
 
