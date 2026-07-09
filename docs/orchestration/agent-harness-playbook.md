@@ -29,6 +29,16 @@ interpretation, prioritisation, synthesis, and careful explanation.
    cairn-validate process.cairn.md
    ```
 
+   To generate this sequence from available artifacts, use:
+
+   ```bash
+   cairn-agent-harness-plan \
+     --process process.cairn.md \
+     --ui-evidence ui-sim-report.json \
+     --layout layout.json \
+     --output-dir cairn-agent-output
+   ```
+
 4. Run deterministic human-factors analysis:
 
    ```bash
@@ -75,11 +85,17 @@ import json
 
 from cairn import (
     analyze_human_factors,
+    build_agent_harness_plan,
     build_analysis_report,
     format_analysis_report,
     recommend_interface_changes,
 )
 
+plan = build_agent_harness_plan(
+    process_path="process.cairn.md",
+    ui_evidence_path="ui-sim-report.json",
+    output_dir="cairn-agent-output",
+)
 process_text = Path("process.cairn.md").read_text(encoding="utf-8")
 ui_evidence = json.loads(Path("ui-sim-report.json").read_text(encoding="utf-8"))
 
@@ -97,6 +113,10 @@ Path("human-factors.json").write_text(
 )
 Path("interface-recommendations.json").write_text(
     json.dumps(recommendations.to_dict(), indent=2),
+    encoding="utf-8",
+)
+Path("agent-harness-plan.json").write_text(
+    json.dumps(plan.to_dict(), indent=2),
     encoding="utf-8",
 )
 Path("cairn-analysis-report.md").write_text(

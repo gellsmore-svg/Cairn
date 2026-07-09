@@ -17,6 +17,12 @@ from cairn.conformance import (
     is_conformant,
     validate_plan,
 )
+from cairn.agent_harness import (
+    AgentHarnessPlan,
+    AgentHarnessStep,
+    build_agent_harness_plan,
+    format_agent_harness_plan,
+)
 from cairn.grammar import (
     CairnDocument,
     document_to_dict,
@@ -67,6 +73,8 @@ from cairn.ui_scenarios import format_scenario_validation_report, validate_ui_sc
 
 __all__ = [
     "CANONICAL_PLAN",
+    "AgentHarnessPlan",
+    "AgentHarnessStep",
     "CairnDocument",
     "CONFORMANCE_VERSION",
     "PLAN_CONSTRUCTS",
@@ -86,6 +94,7 @@ __all__ = [
     "analyze_live_observations",
     "analyze_ui_simulation_report",
     "build_ui_roleplay_prompt",
+    "build_agent_harness_plan",
     "build_human_factors_prompt",
     "build_analysis_report",
     "CommandLLMProvider",
@@ -94,6 +103,7 @@ __all__ = [
     "HostedLLMProvider",
     "HoglahLLMProvider",
     "format_cairn_annotation_snippet",
+    "format_agent_harness_plan",
     "format_analysis_report",
     "format_functional_layout_report",
     "format_human_factors_report",

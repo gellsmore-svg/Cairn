@@ -256,6 +256,30 @@ def build_manifest() -> Manifest:
                 tags=["report", "ui", "human-factors", "okf"],
             ),
             capability(
+                "build_agent_harness_plan",
+                "Plan deterministic Cairn CLI/API steps for an interactive agent harness based on "
+                "available process, UI evidence, and layout artifacts. Returns commands to run and "
+                "open questions for missing evidence; it does not execute the commands.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "process_path": {"type": "string"},
+                        "ui_evidence_path": {"type": "string"},
+                        "layout_path": {"type": "string"},
+                        "output_dir": {"type": "string"},
+                    },
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "steps": {"type": "array"},
+                        "open_questions": {"type": "array"},
+                    },
+                },
+                tags=["agent", "orchestration", "harness", "offline"],
+            ),
+            capability(
                 "plan_schema",
                 "The Cairn plan contract: required fields ("
                 + ", ".join(REQUIRED_PLAN_FIELDS)

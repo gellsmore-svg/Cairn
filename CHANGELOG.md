@@ -37,6 +37,8 @@
   Python APIs and CLI tools when the harness can execute local code.
 - Added an agent harness playbook with a concrete CLI and Python sequence for
   tool-assisted manual Cairn analysis.
+- Added `cairn-agent-harness-plan` and `build_agent_harness_plan` so interactive
+  agents can ask Cairn which deterministic commands fit the available evidence.
 
 ## [0.8.0] — 2026-07-07
 

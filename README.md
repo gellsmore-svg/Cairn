@@ -59,6 +59,8 @@ cairn-human-factors my-process.cairn.md
 cairn-human-factors my-process.cairn.md -f json
 
 # Traceable interface recommendations and reports
+cairn-agent-harness-plan --process my-process.cairn.md --ui-evidence ui-evidence.json \
+  --output-dir cairn-agent-output
 cairn-recommend-interface-changes ui-evidence.json --future-svg-output future.svg
 cairn-generate-report --input my-process.cairn.md --interface-evidence ui-evidence.json \
   --format html --output report.html
@@ -80,8 +82,9 @@ from cairn.render import render_plan, export_view
 view = render_plan(text, profile="operator")
 pdf = export_view(view, "pdf")
 
-from cairn import analyze_human_factors
+from cairn import analyze_human_factors, build_agent_harness_plan
 report = analyze_human_factors(text)  # pure Python; no LLM service required
+plan = build_agent_harness_plan(process_path="my-process.cairn.md", ui_evidence_path="ui-evidence.json")
 
 from cairn import CommandLLMProvider, HoglahLLMProvider, interpret_human_factors
 provider = CommandLLMProvider("my-llm-wrapper --model local")

@@ -29,6 +29,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
+cairn-agent-harness-plan = "cairn.agent_harness_cli:main"
 cairn-render = "cairn.cli:main"
 cairn-human-factors = "cairn.human_factors_cli:main"
 cairn-ui-sim = "cairn.ui_sim_cli:main"
