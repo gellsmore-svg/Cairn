@@ -62,6 +62,9 @@
   privacy incident triage, audit remediation, regulatory change, third-party
   risk, speak-up, policy waivers, crisis governance, records holds, and
   sustainability claim assurance.
+- Added agent-harness review checks so generated plans explicitly steer
+  consuming LLMs toward UI touchpoint phases, functional layout load, interface
+  overhead, evidence/inference boundaries, and AI challenge/override paths.
 - Updated example validation to recurse into categorized example folders.
 
 ## [0.8.0] — 2026-07-07

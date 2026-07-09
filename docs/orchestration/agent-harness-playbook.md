@@ -95,6 +95,17 @@ interpretation, prioritisation, synthesis, and careful explanation.
    - recommendations without OKF traceability
    - human risks that are plausible but not yet evidenced
    - UI touchpoints that were skipped because no UI evidence was supplied
+   - awareness, orientation, execution, feedback, notification, recovery,
+     handoff, and adaptation phases for each UI-mediated step
+   - business work versus interface overhead, including trivial focus actions,
+     context switches, avoidable explicit decisions, and recovery loops
+   - AI recommendation surfaces that lack evidence, uncertainty, challenge,
+     reject, defer, or override paths
+
+The generated harness plan includes an `Agent Review Checklist` section in
+Markdown/shell output, and a `review_checks` array in JSON output, so an
+interactive LLM can be explicitly steered toward HCI touchpoints and functional
+layout load even when the user invokes Cairn through a general agent interface.
 
 ## Python Harness Example
 

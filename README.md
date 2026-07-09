@@ -42,7 +42,8 @@ traceability):
 Full worked descriptions and categorized example suites are in [`examples/`](examples/).
 The example library includes real systems plus suites for corporate lifecycle,
 AI-native organisational change, psychological and sociological work interfaces,
-technical/agentic workflows, and OKF-style human-systems mappings.
+technical/agentic workflows, occupational health, governance/risk/compliance,
+and OKF-style human-systems mappings.
 
 ### Rendering & export
 Cairn can be turned into audience-friendly views:
@@ -78,6 +79,11 @@ cairn-human-factors examples/accounts-payable-exception.cairn.md --llm-command "
 cairn-human-factors my-process.cairn.md --hoglah-model gemma3:1b
 cairn-human-factors my-process.cairn.md --hoglah-model gemma3:1b --hoglah-real
 ```
+
+`cairn-agent-harness-plan` also emits an agent review checklist so interactive
+LLMs explicitly check HCI touchpoint phases, functional layout load, business
+work versus interface overhead, and AI challenge/override paths instead of
+stopping at a generic human-risk summary.
 
 Or programmatically:
 

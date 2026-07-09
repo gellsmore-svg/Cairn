@@ -30,6 +30,7 @@ class AgentHarnessPlan:
     inputs: dict[str, Any] = field(default_factory=dict)
     missing_inputs: list[str] = field(default_factory=list)
     open_questions: list[str] = field(default_factory=list)
+    review_checks: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -196,10 +197,17 @@ def build_agent_harness_plan(
     steps.append(
         AgentHarnessStep(
             name="Agent review and explanation",
-            purpose="Review generated artifacts for missing evidence, unsupported certainty, uncited recommendations, and skipped UI touchpoints.",
+            purpose="Review generated artifacts against the plan checklist before producing a plain-language synthesis.",
             command=None,
             produces=["plain-language synthesis", "open questions"],
         )
+    )
+    review_checks = _review_checks(
+        has_process=bool(process_path),
+        has_ui_evidence=bool(ui_evidence_path),
+        has_layout=bool(layout_path),
+        has_repository=bool(repository_path),
+        has_screenshots=bool(screenshot_paths),
     )
     return AgentHarnessPlan(
         title=title,
@@ -209,6 +217,7 @@ def build_agent_harness_plan(
         inputs=inputs,
         missing_inputs=missing_inputs,
         open_questions=open_questions,
+        review_checks=review_checks,
     )
 
 
@@ -252,6 +261,11 @@ def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "m
         lines.append("## Open Questions")
         for question in plan.open_questions:
             lines.append(f"- {question}")
+    if plan.review_checks:
+        lines.append("")
+        lines.append("## Agent Review Checklist")
+        for check in plan.review_checks:
+            lines.append(f"- {check}")
     if plan.missing_inputs:
         lines.append("")
         lines.append("## Missing Inputs")
@@ -304,7 +318,42 @@ def _format_shell(plan: AgentHarnessPlan) -> str:
         lines.append("# Open questions:")
         for question in plan.open_questions:
             lines.append(f"# - {question}")
+        lines.append("")
+    if plan.review_checks:
+        lines.append("# Agent review checklist:")
+        for check in plan.review_checks:
+            lines.append(f"# - {check}")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _review_checks(
+    *,
+    has_process: bool,
+    has_ui_evidence: bool,
+    has_layout: bool,
+    has_repository: bool,
+    has_screenshots: bool,
+) -> list[str]:
+    checks = [
+        "Separate observed evidence from inference and mark confidence plainly.",
+        "Identify human risks as process conditions, not traits of individual users.",
+        "Check whether awareness, orientation, execution, feedback, notification, recovery, handoff, and adaptation touchpoints were considered for every UI-mediated step.",
+        "Distinguish business work from interface overhead, including trivial focus actions, context switches, and avoidable explicit decisions.",
+        "Confirm that AI recommendations include evidence, uncertainty, challenge, reject, defer, and override paths where the process depends on trust calibration.",
+    ]
+    if has_process:
+        checks.append("Verify that suggested annotations map back to concrete Cairn process steps.")
+    if has_ui_evidence:
+        checks.append("Use UI simulation evidence to ground HCI phase findings, and flag any skipped non-happy-path states.")
+    else:
+        checks.append("Treat UI claims as inferential unless screenshots, traces, layout JSON, or repository UI code were inspected.")
+    if has_layout:
+        checks.append("Review functional layout load for related-field distance, evidence-to-action distance, scan path, pointer travel, and recovery distance.")
+    elif has_screenshots:
+        checks.append("Estimate layout load qualitatively from screenshots and recommend layout JSON if geometry is decision-relevant.")
+    if has_repository:
+        checks.append("Inspect repository UI, logging, queue, and agent surfaces for hidden human handoffs or accountability gaps.")
+    return checks
 
 
 def _inputs(
