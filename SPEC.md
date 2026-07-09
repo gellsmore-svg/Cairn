@@ -754,7 +754,25 @@ text.
 
 ---
 
-## 13. Versioning & evolution
+## 13. Usage modes and orchestration
+
+Cairn can be used as a package/CLI surface, a local or remote LLM orchestration
+library, a manual agent-analysis scaffold for GitHub links or process files, an
+embedded governance library, or a CI/review-gate tool.
+
+Manual agent-driven analysis SHOULD use a versioned Cairn orchestration pattern,
+such as `docs/orchestration/manual-agent-analysis.cairn.md`, rather than an
+ad-hoc prompt. The pattern SHOULD require explicit OKF concept traceability for
+human-factors findings, augmentation findings, interface recommendations, and
+reports.
+
+Runtime telemetry, dashboards, and product-specific usage analytics are outside
+the core language contract and SHOULD be separated unless they become portable
+semantic contracts.
+
+---
+
+## 14. Versioning & evolution
 
 - **v0.9** adds versioned live `PLAN` envelopes for bounded recursive revision of a complete `PROCESS` backbone.
 - **v0.8** adds **render profiles** (the `ai`/`operator`/`executive`/`audit`

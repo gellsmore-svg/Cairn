@@ -221,6 +221,41 @@ def build_manifest() -> Manifest:
                 tags=["ui", "layout", "human-load", "analysis", "offline"],
             ),
             capability(
+                "recommend_interface_changes",
+                "Generate deterministic interface change recommendations from UI evidence. Every "
+                "recommendation includes OKF traceability, rationale, priority, effort, current "
+                "state, and proposed future state.",
+                input_schema={
+                    "type": "object",
+                    "properties": {"evidence": {"type": "object", "description": "UI simulation report or layout JSON"}},
+                    "required": ["evidence"],
+                },
+                output_schema={
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "recommendations": {"type": "array"},
+                        "references": {"type": "array"},
+                    },
+                },
+                tags=["ui", "recommendations", "okf", "traceability"],
+            ),
+            capability(
+                "build_analysis_report",
+                "Assemble a structured Cairn analysis report from process text and/or UI evidence, "
+                "including human factors, augmentation findings, traceable interface recommendations, "
+                "and references. Can be exported as Markdown, HTML, JSON, or PDF through the CLI.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "input_cairn": {"type": "string"},
+                        "interface_evidence": {"type": "object"},
+                    },
+                },
+                output_schema={"type": "object", "properties": {"title": {"type": "string"}}},
+                tags=["report", "ui", "human-factors", "okf"],
+            ),
+            capability(
                 "plan_schema",
                 "The Cairn plan contract: required fields ("
                 + ", ".join(REQUIRED_PLAN_FIELDS)

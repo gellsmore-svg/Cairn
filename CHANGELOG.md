@@ -24,6 +24,15 @@
   interaction richness, trust calibration, and automation-bias risk.
 - Extended HCI touchpoints, functional layout load, and the offline
   human-factors analyzer with augmentation-specific cues and review questions.
+- Added usage-mode documentation and a Cairn-described manual agent analysis
+  orchestration pattern for GitHub-link/process-file analysis.
+- Added interactionless hosted LLM wrappers for Grok/xAI, Claude/Anthropic,
+  OpenAI-compatible endpoints, and Gemini.
+- Added OKF-traceable interface recommendation generation and report assembly
+  (`cairn-recommend-interface-changes`, `cairn-generate-report`).
+- Added a future usage logging and touchpoint analytics specification, with
+  explicit guidance to keep production telemetry outside Cairn core unless it
+  becomes a portable semantic contract.
 
 ## [0.8.0] — 2026-07-07
 

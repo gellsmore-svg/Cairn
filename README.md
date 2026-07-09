@@ -58,6 +58,11 @@ cairn-render my-process.cairn.md -f pdf -o plan.pdf   # requires [export]
 cairn-human-factors my-process.cairn.md
 cairn-human-factors my-process.cairn.md -f json
 
+# Traceable interface recommendations and reports
+cairn-recommend-interface-changes ui-evidence.json --future-svg-output future.svg
+cairn-generate-report --input my-process.cairn.md --interface-evidence ui-evidence.json \
+  --format html --output report.html
+
 # Optional LLM interpretation through any command provider
 cairn-human-factors my-process.cairn.md --llm-command "my-llm-wrapper --model local"
 cairn-human-factors examples/accounts-payable-exception.cairn.md --llm-command "python examples/llm_command_stub.py"
@@ -201,6 +206,12 @@ The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
   analyze UI touchpoints and cognitive-aesthetic load.
 - [docs/FUNCTIONAL-LAYOUT-LOAD.md](docs/FUNCTIONAL-LAYOUT-LOAD.md) — how to
   estimate form/layout traversal load from UI geometry.
+- [docs/usage-modes.md](docs/usage-modes.md) — PyPI, recursive LLM, manual
+  GitHub-link agent, embedded, and CI/review-gate usage modes.
+- [docs/orchestration/manual-agent-analysis.cairn.md](docs/orchestration/manual-agent-analysis.cairn.md)
+  — a Cairn-described orchestration pattern for manual agent analysis.
+- [docs/future-usage-logging-spec.md](docs/future-usage-logging-spec.md) —
+  future plan for real-world touchpoint logging and analysis.
 - [docs/augmentation-integration-notes.md](docs/augmentation-integration-notes.md)
   — how the augmentation process research was mapped into Cairn.
 - [okf/](okf/index.md) — an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)

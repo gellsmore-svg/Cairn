@@ -19,6 +19,8 @@ def test_manifest_conforms_and_lists_grammar():
     assert "analyze_human_factors" in tool_names
     assert "analyze_ui_simulation_report" in tool_names
     assert "analyze_functional_layout" in tool_names
+    assert "recommend_interface_changes" in tool_names
+    assert "build_analysis_report" in tool_names
 
 
 def test_manifest_version_prefers_distribution_name(monkeypatch):
