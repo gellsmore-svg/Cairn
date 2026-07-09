@@ -12,6 +12,7 @@ from cairn.ui_evidence import (
     format_cairn_annotation_snippet,
     format_ui_human_load_report,
     interpret_ui_experience,
+    render_ui_layout_overlay,
 )
 from cairn.ui_scenarios import load_ui_scenario
 from cairn.ui_sim_cli import main as ui_sim_main
@@ -29,6 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report-output", help="Write or read the UI simulation report at this path")
     parser.add_argument("--evidence-output", help="Write Markdown evidence summary to this path")
     parser.add_argument("--annotations-output", help="Write Cairn annotation snippet to this path")
+    parser.add_argument("--layout-svg-output", help="Write measured layout overlay SVG to this path")
     parser.add_argument("--roleplay-output", help="Write optional LLM role-play Markdown to this path")
     parser.add_argument("--step-title", help="Heading to use for the generated Cairn annotation snippet")
     parser.add_argument("--persona", action="append", default=[], help="Persona/perspective to simulate; repeatable")
@@ -71,6 +73,7 @@ def main(argv: list[str] | None = None) -> int:
     outputs = _default_outputs(report_path)
     evidence_path = Path(args.evidence_output).resolve() if args.evidence_output else outputs["evidence"]
     annotations_path = Path(args.annotations_output).resolve() if args.annotations_output else outputs["annotations"]
+    layout_svg_path = Path(args.layout_svg_output).resolve() if args.layout_svg_output else outputs["layout_svg"]
 
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(format_ui_human_load_report(evidence), encoding="utf-8")
@@ -80,6 +83,11 @@ def main(argv: list[str] | None = None) -> int:
         format_cairn_annotation_snippet(evidence, step_title=args.step_title),
         encoding="utf-8",
     )
+
+    layout_svg = render_ui_layout_overlay(raw_report)
+    if layout_svg is not None:
+        layout_svg_path.parent.mkdir(parents=True, exist_ok=True)
+        layout_svg_path.write_text(layout_svg, encoding="utf-8")
 
     roleplay_path = None
     if args.llm_command or args.hoglah_model:
@@ -102,6 +110,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"report: {report_path}")
     print(f"evidence: {evidence_path}")
     print(f"annotations: {annotations_path}")
+    if layout_svg is not None:
+        print(f"layout_svg: {layout_svg_path}")
     if roleplay_path:
         print(f"roleplay: {roleplay_path}")
     return 0
@@ -122,6 +132,7 @@ def _default_outputs(report_path: Path) -> dict[str, Path]:
     return {
         "evidence": report_path.with_name(f"{base}-ui-evidence.md"),
         "annotations": report_path.with_name(f"{base}-ui-annotations.cairn.md"),
+        "layout_svg": report_path.with_name(f"{base}-layout-overlay.svg"),
         "roleplay": report_path.with_name(f"{base}-ui-roleplay.md"),
     }
 

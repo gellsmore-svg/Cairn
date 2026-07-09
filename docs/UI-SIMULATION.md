@@ -50,8 +50,9 @@ cairn-ui-pipeline docs/scenarios/mahlah-recovery-loop.json \
 
 The pipeline validates the scenario, runs the browser simulation, writes the
 JSON report, generates the evidence summary, exports the Cairn annotation
-snippet, and runs role-play when an LLM provider is supplied. Use `--from-report`
-to regenerate evidence, annotations, or role-play from an existing report
+snippet, writes a layout SVG overlay when `measureLayout` snapshots are present,
+and runs role-play when an LLM provider is supplied. Use `--from-report` to
+regenerate evidence, annotations, overlay, or role-play from an existing report
 without opening a browser.
 
 After running the browser simulation, summarise it as human-load evidence:
@@ -63,6 +64,9 @@ cairn-ui-evidence docs/analysis/mahlah-ui-sim-report.json \
 
 This second step turns mechanical observations into suggested Cairn blocks such
 as `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`.
+When the report includes measured layout snapshots, add
+`--layout-svg-output docs/analysis/example-layout-overlay.svg` to export a
+visual overlay of the first snapshot.
 
 Then ask an LLM to role-play plausible user experience from the grounded
 evidence:
@@ -155,7 +159,8 @@ Most selector-based actions accept an optional zero-based `index`, which is usef
 ```
 
 The runner stores the bounding boxes under `layoutLoad`. The evidence layer then
-adds `FUNCTIONAL_LAYOUT_LOAD` findings and blocks automatically.
+adds `FUNCTIONAL_LAYOUT_LOAD` findings and blocks automatically, and can export
+the measured geometry as a layout overlay SVG for visual review.
 See `docs/scenarios/customer-po-review-layout.json` for a worked scenario.
 
 Each step may include `humanLoad`:

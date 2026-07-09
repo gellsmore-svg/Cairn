@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
-from cairn.layout_load import analyze_functional_layout
+from cairn.layout_load import analyze_functional_layout, render_layout_svg
 from cairn.llm_adapters import LLMProvider, LLMRequest
 
 
@@ -132,6 +132,14 @@ def format_ui_human_load_report(report: UiHumanLoadReport, *, output_format: str
             lines.append("")
 
     return "\n".join(lines).strip()
+
+
+def render_ui_layout_overlay(report: dict[str, Any], *, snapshot_index: int = 0) -> str | None:
+    """Render an SVG overlay for a measured UI layout snapshot."""
+    snapshots = [snapshot for snapshot in report.get("layoutLoad", []) if isinstance(snapshot, dict)]
+    if snapshot_index < 0 or snapshot_index >= len(snapshots):
+        return None
+    return render_layout_svg(snapshots[snapshot_index])
 
 
 def format_cairn_annotation_snippet(

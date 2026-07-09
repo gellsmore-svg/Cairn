@@ -12,6 +12,7 @@ from cairn.ui_evidence import (
     format_cairn_annotation_snippet,
     format_ui_human_load_report,
     interpret_ui_experience,
+    render_ui_layout_overlay,
 )
 from cairn.ui_annotations_cli import main as ui_annotations_main
 from cairn.ui_evidence_cli import main as ui_evidence_main
@@ -91,6 +92,17 @@ def test_ui_evidence_includes_functional_layout_load_snapshots():
     assert "layout_load:" in snippet
 
 
+def test_render_ui_layout_overlay_uses_first_layout_snapshot():
+    raw = json.loads((ROOT / "docs" / "analysis" / "customer-po-review-ui-sim-report.json").read_text(encoding="utf-8"))
+
+    svg = render_ui_layout_overlay(raw)
+
+    assert svg is not None
+    assert svg.startswith("<svg")
+    assert "duplicate_warning" in svg
+    assert "evidence_to_action" in svg
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)
@@ -125,6 +137,16 @@ def test_ui_evidence_cli_writes_markdown(tmp_path):
     text = output.read_text(encoding="utf-8")
     assert "Suggested Cairn Blocks" in text
     assert "HUMAN_RISK" in text
+
+
+def test_ui_evidence_cli_writes_layout_svg(tmp_path):
+    source = ROOT / "docs" / "analysis" / "customer-po-review-ui-sim-report.json"
+    output = tmp_path / "ui-evidence.md"
+    svg = tmp_path / "layout-overlay.svg"
+    rc = ui_evidence_main([str(source), "-o", str(output), "--layout-svg-output", str(svg)])
+
+    assert rc == 0
+    assert svg.read_text(encoding="utf-8").startswith("<svg")
 
 
 def test_ui_annotations_cli_writes_cairn_snippet(tmp_path):

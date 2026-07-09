@@ -38,6 +38,31 @@ def test_ui_pipeline_from_report_writes_default_outputs(tmp_path, capsys):
     assert "RECOVERY:" in annotation_text
 
 
+def test_ui_pipeline_from_report_writes_layout_overlay_when_measured(tmp_path, capsys):
+    scenario = ROOT / "docs" / "scenarios" / "customer-po-review-layout.json"
+    report = ROOT / "docs" / "analysis" / "customer-po-review-ui-sim-report.json"
+    layout_svg = tmp_path / "po-layout-overlay.svg"
+
+    rc = ui_pipeline_main(
+        [
+            str(scenario),
+            "--from-report",
+            str(report),
+            "--evidence-output",
+            str(tmp_path / "evidence.md"),
+            "--annotations-output",
+            str(tmp_path / "annotations.cairn.md"),
+            "--layout-svg-output",
+            str(layout_svg),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert rc == 0
+    assert "layout_svg:" in captured.out
+    assert "duplicate_warning" in layout_svg.read_text(encoding="utf-8")
+
+
 def test_ui_pipeline_from_report_can_roleplay_with_command_provider(tmp_path):
     script = tmp_path / "fake_roleplay.py"
     script.write_text(
