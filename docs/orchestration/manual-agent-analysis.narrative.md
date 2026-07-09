@@ -7,6 +7,8 @@ evidence bundle, or screenshot and asks for Cairn analysis.
    list missing files as open questions.
 2. Load Cairn semantic context: SPEC, README, OKF concept index, human factors,
    augmentation process, HCI touchpoints, and functional layout load.
+   If the harness can execute code, use Cairn's Python package and CLI commands
+   for repeatable validation, analysis, recommendation, and reporting steps.
 3. Classify the process type and identify all human-facing surfaces.
 4. Apply human-factors and augmentation lenses phase by phase. Separate observed
    evidence from inference.

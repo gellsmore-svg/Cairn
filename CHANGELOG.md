@@ -33,6 +33,8 @@
 - Added a future usage logging and touchpoint analytics specification, with
   explicit guidance to keep production telemetry outside Cairn core unless it
   becomes a portable semantic contract.
+- Clarified that manual interactive agent analysis can and should invoke Cairn
+  Python APIs and CLI tools when the harness can execute local code.
 
 ## [0.8.0] — 2026-07-07
 

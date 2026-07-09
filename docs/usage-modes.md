@@ -52,6 +52,14 @@ human-factors and augmentation lenses, generate OKF-traceable recommendations,
 and produce a report. Every recommendation must cite the exact OKF file and
 concept that drove it.
 
+When the interactive harness can run local code, treat the manual mode as
+tool-assisted rather than prompt-only. An agentic interface such as Codex CLI
+should use the installed Cairn Python package and CLI commands for validation,
+human-factors analysis, UI evidence review, layout-load analysis, interface
+recommendations, and report generation wherever those tools fit the evidence.
+The agent still interprets, prioritises, and explains, but deterministic Cairn
+libraries should carry the repeatable parts of the work.
+
 ## Mode 4: Embedded Governance Library
 
 Use when another product needs Cairn as a semantic contract: validation,

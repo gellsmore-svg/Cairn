@@ -766,6 +766,13 @@ ad-hoc prompt. The pattern SHOULD require explicit OKF concept traceability for
 human-factors findings, augmentation findings, interface recommendations, and
 reports.
 
+If the manual analysis happens inside an interactive agentic harness that can
+execute code, the harness SHOULD use Cairn's Python APIs and CLI commands for
+repeatable validation, deterministic analysis, recommendation generation, and
+report assembly. Manual agent analysis is therefore not necessarily prompt-only;
+the agent may orchestrate Cairn libraries and then interpret the result for the
+human.
+
 Runtime telemetry, dashboards, and product-specific usage analytics are outside
 the core language contract and SHOULD be separated unless they become portable
 semantic contracts.
