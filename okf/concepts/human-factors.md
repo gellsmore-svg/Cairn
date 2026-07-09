@@ -55,15 +55,17 @@ validation, offer structured inputs, make closure unmistakable.
 **Meaning:** whether a person can rely on automation appropriately.
 
 **Common factors:** automation bias, under-reliance, authority effect, poor trust
-calibration, opacity, false precision, hidden uncertainty.
+calibration, opacity, false precision, hidden uncertainty, explanation
+over-trust.
 
 **Cairn cues:** `[ASSISTED-BY: LLM]`, `[GATED]`, AI recommendation before
 evidence, missing confidence, weak source provenance, human accountable for an
-AI-shaped decision.
+AI-shaped decision, one-way AI recommendation, weak override path.
 
 **Mitigations:** show evidence before recommendation where needed, expose
 uncertainty and disagreement, require reasons for high-impact approval, separate
-AI suggestion from human decision.
+AI suggestion from human decision, make inspect/reject/defer legitimate and
+low effort.
 
 ### Emotional And Agency Impact
 
@@ -99,13 +101,32 @@ normal, preserve dissent, keep accountability aligned with control.
 incentives.
 
 **Common factors:** deskilling, upskilling, role shift, resistance, legitimacy,
-process ownership, institutional learning.
+process ownership, institutional learning, human-AI role complementarity.
 
 **Cairn cues:** `CHANGE_IMPACT`, new review duties, automation of old tasks,
 new metrics, AI-mediated decisions, repeated exception patterns.
 
 **Mitigations:** training, visible audit trail, reversible rollout, feedback
 loops, role clarity, manager support, recognition of new skill.
+
+### Augmentation Process
+
+**Meaning:** whether a human-AI workflow extends human capacity through
+complementary roles, cognitive-state awareness, adaptation, and calibrated trust.
+
+**Common factors:** cognitive-state visibility, adaptation loop closure, role
+complementarity, shared mental model maintenance, automation bias, interaction
+pattern richness.
+
+**Cairn cues:** `[ASSISTED-BY: LLM]`, `ADAPT`, `HUMAN_LOAD`, hidden model
+adaptation, AI recommendation without contestability, human accountable for
+AI-shaped judgement, repeated use changes skill or role.
+
+**Mitigations:** name the AI role and human role separately, show why adaptation
+happened, preserve human override, expose evidence and uncertainty, support
+challenge/revise/escalate, track longitudinal outcomes and workarounds.
+
+See [Augmentation process](augmentation-process.md).
 
 ### Behavioural Economics
 
@@ -167,3 +188,5 @@ An AI reviewing a step should ask:
 - Does the process create incentives to rubber-stamp, defer, escalate, or hide
   uncertainty?
 - How does the loop close, and how does the person know it closed?
+- If AI augments the step, what human capacity is being extended and what new
+  load, bias, or accountability has moved into the interface?

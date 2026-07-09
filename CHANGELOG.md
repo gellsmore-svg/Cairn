@@ -19,6 +19,11 @@
 - Removed the hard runtime dependency on Keturah. Cairn now uses Keturah when it
   is installed and otherwise provides a small compatible manifest representation,
   keeping `pip install cairn-lang` dependency-light.
+- Added the OKF Augmentation Process lens for human-AI collaboration:
+  cognitive-state adaptation, role complementarity, shared mental models,
+  interaction richness, trust calibration, and automation-bias risk.
+- Extended HCI touchpoints, functional layout load, and the offline
+  human-factors analyzer with augmentation-specific cues and review questions.
 
 ## [0.8.0] — 2026-07-07
 

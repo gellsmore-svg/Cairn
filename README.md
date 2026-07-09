@@ -109,6 +109,9 @@ Interactive composer: `cairn-serve`
 - Human factors semantics: a browsable lens library for plausible cognitive,
   psychological, social, organisational, behavioural-economic, and incentive
   risks, with qualitative probability/impact estimates.
+- Augmentation process semantics: human-AI role complementarity,
+  cognitive-state adaptation, interaction richness, trust calibration, and
+  bias dynamics.
 
 Put simply: Cairn treats software work, thinking work, and organisational work
 as processes embedded in human systems, not as purely mechanical flows.
@@ -198,6 +201,8 @@ The specification is at v0.9 (PLAN envelopes etc.). A structural grammar is in
   analyze UI touchpoints and cognitive-aesthetic load.
 - [docs/FUNCTIONAL-LAYOUT-LOAD.md](docs/FUNCTIONAL-LAYOUT-LOAD.md) — how to
   estimate form/layout traversal load from UI geometry.
+- [docs/augmentation-integration-notes.md](docs/augmentation-integration-notes.md)
+  — how the augmentation process research was mapped into Cairn.
 - [okf/](okf/index.md) — an [Open Knowledge Format](https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing)
   knowledge bundle: Cairn's concepts and reference, as linked markdown.
 

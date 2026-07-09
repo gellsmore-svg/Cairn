@@ -117,8 +117,32 @@ _FACTOR_RULES = (
     {
         "family": "trust_automation",
         "factor": "automation bias",
-        "tokens": ("assisted-by: llm", "ai summary", "ai recommendation", "authoritative", "automation bias", "fluent answers", "fluent generated"),
+        "tokens": ("assisted-by: llm", "ai summary", "ai recommendation", "authoritative", "automation bias", "fluent answers", "fluent generated", "one-way recommendation"),
         "mitigation": "expose evidence, uncertainty, and disagreement separately from the AI suggestion.",
+    },
+    {
+        "family": "augmentation_process",
+        "factor": "cognitive-state adaptation",
+        "tokens": ("cognitive state", "workload gauge", "adaptation trigger", "adaptation_visibility", "adapts to workload", "human_load"),
+        "mitigation": "surface why adaptation happened, keep override visible, and log whether adaptation helped.",
+    },
+    {
+        "family": "augmentation_process",
+        "factor": "role complementarity",
+        "tokens": ("augmentation", "complementarity", "human-ai", "human ai", "assisted-by: llm", "ai role", "human role"),
+        "mitigation": "name the AI role and human role separately, tune support by context, and preserve inspectability.",
+    },
+    {
+        "family": "augmentation_process",
+        "factor": "shared mental model",
+        "tokens": ("shared mental model", "shared task state", "interaction pattern", "bidirectional adaptation", "challenge path"),
+        "mitigation": "make task state, assumptions, corrections, and handoff visible to both human and AI participants.",
+    },
+    {
+        "family": "augmentation_process",
+        "factor": "trust calibration",
+        "tokens": ("trust calibration", "calibrated reliance", "uncertainty display", "override_for_recommendation", "bias_mitigation_affordances"),
+        "mitigation": "place evidence, uncertainty, inspect, reject, defer, and override controls at the decision point.",
     },
     {
         "family": "trust_automation",
@@ -221,12 +245,19 @@ def build_human_factors_prompt(input_cairn: str | dict[str, Any], report: HumanF
         "visibility, affordance clarity, perceptual grouping, error prevention, "
         "recovery, accessibility/focus, confidence cues, and density fit. "
         "Separate observed evidence from inference.\n\n"
+        "If the process uses AI as augmentation rather than simple automation, "
+        "identify what human capacity is being extended, whether human and AI "
+        "roles are complementary, what cognitive-state or adaptation signals are "
+        "visible, how trust is calibrated, where automation bias or under-reliance "
+        "could arise, and whether the interaction pattern supports challenge, "
+        "revision, override, and shared task state.\n\n"
         "Return concise Markdown with these sections:\n"
         "1. Highest-risk steps\n"
         "2. Proposed HUMAN_FACTORS / HUMAN_RISK annotations\n"
         "3. HCI touchpoint and cognitive-aesthetic findings\n"
-        "4. Questions for the developer or process owner\n"
-        "5. Redesign suggestions\n\n"
+        "4. Augmentation process findings\n"
+        "5. Questions for the developer or process owner\n"
+        "6. Redesign suggestions\n\n"
         "Cairn source:\n"
         f"{source_note}\n\n"
         "Offline report JSON:\n"

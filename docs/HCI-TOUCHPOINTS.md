@@ -26,7 +26,8 @@ For every human-facing process step, map the UI across these phases:
 - `handoff` - how the result becomes visible to the next person, queue, system,
   audit trail, or future self.
 - `adaptation` - how repeated use changes skill, trust, habits, workarounds,
-  team norms, or organisational load.
+  team norms, or organisational load; in human-AI workflows, how the interface
+  notices or responds to workload, uncertainty, disagreement, or user correction.
 
 The common failure is to analyze only `execution`. Many costly HCI problems live
 in `orientation`, `feedback`, `recovery`, and `handoff`.
@@ -87,6 +88,13 @@ Use this rubric:
   access, contrast, and target size support users under varied conditions.
 - `confidence_cues` - source, authority, uncertainty, timestamp, owner, and
   audit implications are available where trust is required.
+- `bias_mitigation_affordances` - the UI makes inspect, challenge, reject,
+  defer, and override paths as visible and legitimate as accepting an AI
+  recommendation.
+- `adaptation_visibility` - AI or interface adaptation is visible enough that
+  the person knows what changed, why, and how to override or correct it.
+- `interaction_pattern_richness` - the flow supports critique, questions,
+  revision, and shared task state rather than one-way recommendation.
 - `density_fit` - information density matches the work: operational tools may
   be dense, but must still be scannable and ordered by task relevance.
 - `functional_layout_load` - related fields, labels, evidence, warnings, and
@@ -113,12 +121,14 @@ order:
    each state.
 3. Record key selectors and visible text for status, risk, evidence, next
    action, errors, and confirmation.
-4. Count clicks, field entries, waits, explicit decisions, context switches, and
+4. Record AI recommendations, uncertainty displays, explanation/provenance,
+   challenge paths, override controls, and adaptation triggers where present.
+5. Count clicks, field entries, waits, explicit decisions, context switches, and
    recovery loops.
-5. Trigger at least one plausible error or missing-information path.
-6. Verify whether completion is visible in the original work queue or downstream
+6. Trigger at least one plausible error or missing-information path.
+7. Verify whether completion is visible in the original work queue or downstream
    handoff surface.
-7. Produce `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, `HUMAN_RISK`, and
+8. Produce `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, `HUMAN_RISK`, and
    `IMPROVEMENT` notes with evidence references.
 
 Do not rely on a single happy path. Cognitive load is often revealed by

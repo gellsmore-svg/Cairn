@@ -51,6 +51,12 @@ Use these dimensions when reviewing a form or operational UI:
   top-to-bottom or left-to-right path.
 - `recovery_distance` - distance from error/warning to the control or evidence
   needed to fix it.
+- `ai_output_evidence_distance` - distance between AI recommendation and the
+  evidence, provenance, or source context needed to verify it.
+- `uncertainty_action_distance` - distance between uncertainty/confidence cues
+  and the action that depends on them.
+- `override_distance` - distance between AI recommendation and inspect, reject,
+  defer, challenge, or override controls.
 
 ## JSON Input
 
@@ -75,6 +81,9 @@ Use these dimensions when reviewing a form or operational UI:
 Coordinates are CSS pixels in the current viewport. A Playwright script can
 collect them with `locator.boundingBox()`. An LLM or human reviewer can supply
 relationships when DOM hierarchy does not encode the business relationship.
+For human-AI workflows, model relationships such as `ai_output_to_evidence`,
+`uncertainty_to_action`, and `override_for_recommendation` when they are
+important to trust calibration.
 
 In Cairn UI scenarios, use the `measureLayout` action to collect this geometry
 during `cairn-ui-sim`. The resulting `layoutLoad` snapshots are consumed by
@@ -134,3 +143,5 @@ Recommended mitigations:
 - avoid wide multicolumn layouts unless columns represent clearly independent
   groups,
 - keep error messages beside the fields/actions needed for recovery.
+- keep AI recommendations, uncertainty, evidence, and override controls in one
+  inspectable decision region when trust calibration matters.

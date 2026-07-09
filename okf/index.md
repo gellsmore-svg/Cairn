@@ -37,5 +37,8 @@ description of its concepts and reference material.
   PROCESS.
 - A small set of [constructs](concepts/constructs.md) for real control flow,
   plus domain vocabularies for human-system awareness.
+- An [augmentation process](concepts/augmentation-process.md) lens for
+  human-AI collaboration, cognitive-state adaptation, complementarity, trust
+  calibration, and bias dynamics.
 - License: Apache-2.0. Used across the family — see the
   [examples](reference/examples.md) (Tirzah, Hoglah, Mahalath).

@@ -24,6 +24,9 @@ All defined in [SPEC.md](https://github.com/gellsmore-svg/Cairn/blob/main/SPEC.m
 - **[Functional layout load](functional-layout-load.md)** - form and operational
   layout effort estimated from element distance, grouping, scan path, and
   pointer travel.
+- **[Augmentation process](augmentation-process.md)** - human-AI collaboration,
+  cognitive-state adaptation, role complementarity, trust calibration, and bias
+  dynamics.
 - **[Constructs](constructs.md)** — PROCESS, STEP, ITERATE, RECURSE, QUEUE,
   PARALLEL, SERVICE, DECISION, RETRY, ERROR, AWAIT, CALL, MILESTONE, PURPOSE,
   BREAK/CONTINUE (SPEC §5).

@@ -55,6 +55,8 @@ def test_interpret_human_factors_uses_provider():
     assert "cognitive aesthetic" in prompt
     assert "visual hierarchy" in prompt
     assert "Separate observed evidence from inference" in prompt
+    assert "Augmentation process findings" in prompt
+    assert "challenge, revision, override" in prompt
     interpretation = interpret_human_factors(md, FakeProvider(), report=report)
     assert interpretation.provider == "fake"
     assert "Step 3" in interpretation.text
@@ -123,3 +125,23 @@ def test_analyzer_detects_mahlah_patterns_without_broad_missing_noise():
     feedback = next(step for step in report.steps if "feedback" in step.text.lower())
     feedback_factors = {(finding.family, finding.factor) for finding in feedback.factors}
     assert ("organisational_change", "feedback suppression") in feedback_factors
+
+
+def test_analyzer_detects_augmentation_process_cues():
+    md = """
+PROCESS — Review AI-assisted decision.
+  1. Review AI recommendation with uncertainty display and source evidence. [HUMAN, ASSISTED-BY: LLM]
+     HUMAN_LOAD:
+       cognitive state: reviewer may be overloaded during queue pressure
+       adaptation trigger: system reduces secondary detail when workload rises
+     HUMAN_FACTORS:
+       shared mental model: human and AI must keep the same task state
+       challenge path: reviewer can ask why, revise, or override
+"""
+    report = analyze_human_factors(md)
+
+    factors = {(finding.family, finding.factor) for step in report.steps for finding in step.factors}
+    assert ("augmentation_process", "cognitive-state adaptation") in factors
+    assert ("augmentation_process", "role complementarity") in factors
+    assert ("augmentation_process", "shared mental model") in factors
+    assert ("augmentation_process", "trust calibration") in factors

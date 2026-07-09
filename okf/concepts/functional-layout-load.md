@@ -25,16 +25,27 @@ separating things the user must understand together.
 - `grouping_clarity`
 - `scan_path_linearity`
 - `recovery_distance`
+- `ai_output_evidence_distance`
+- `uncertainty_action_distance`
+- `override_distance`
 
 ## Evidence
 
 Use DOM bounding boxes, screenshots, labels, ARIA relationships, DOM grouping,
 tab order, and likely interaction sequence. If business relationships are not
 encoded in the DOM, an LLM or human analyst may add explicit relations such as
-`label_for`, `related`, and `evidence_to_action`.
+`label_for`, `related`, `evidence_to_action`, `ai_output_to_evidence`,
+`uncertainty_to_action`, and `override_for_recommendation`.
 
 ## Interpretation
 
 High functional layout load suggests avoidable scanning, memory, comparison,
 pointer movement, or error-recovery burden. It should trigger redesign
 questions, not claims about a person's ability.
+
+For human-AI augmentation, also inspect whether the AI recommendation,
+uncertainty, evidence, source provenance, challenge path, and override action
+are spatially connected. A fluent recommendation placed near the primary action
+but far from uncertainty or evidence can increase automation-bias risk even when
+ordinary form metrics look acceptable. See
+[Augmentation process](augmentation-process.md).

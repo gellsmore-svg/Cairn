@@ -29,7 +29,8 @@ When an agent analyzes a UI-mediated process step, it should map:
 - `handoff` - how the result reaches the next person, queue, system, audit
   trail, or future self.
 - `adaptation` - how repeated use changes skill, shortcuts, trust, roles, and
-  organisational habits.
+  organisational habits; in human-AI workflows, how the system notices or
+  responds to workload, confidence, disagreement, or user correction.
 
 ## Cognitive Aesthetic
 
@@ -47,16 +48,24 @@ thinking. It is not decoration. Review:
 - error recovery,
 - accessibility and focus,
 - confidence cues,
+- bias-mitigation affordances,
+- cognitive-state and adaptation visibility,
+- interaction pattern richness,
 - density fit.
 
 ## Evidence
 
 Useful evidence includes screenshots, selectors, visible labels, disabled
 states, error messages, wait states, confirmation messages, click paths, context
-switches, and recovery paths. Claims about human confusion or confidence should
-be marked as inference unless validated by user research.
+switches, recovery paths, AI recommendations, uncertainty displays, override
+paths, adaptation triggers, and evidence of whether the person can challenge or
+revise AI output. Claims about human confusion or confidence should be marked as
+inference unless validated by user research.
 
 ## Cairn Output
 
 Preferred output is a short touchpoint map plus `HUMAN_DEMAND`, `HUMAN_LOAD`,
 `HUMAN_FACTORS`, `HUMAN_RISK`, and `IMPROVEMENT` notes grounded in evidence.
+For human-AI workflows, also ask the questions in
+[Augmentation process](augmentation-process.md): what capacity is being
+augmented, how trust is calibrated, and how adaptation closes.
