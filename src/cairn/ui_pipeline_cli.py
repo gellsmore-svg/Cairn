@@ -13,6 +13,7 @@ from cairn.ui_evidence import (
     format_ui_human_load_report,
     interpret_ui_experience,
     render_ui_layout_overlay,
+    render_ui_layout_overlays,
 )
 from cairn.ui_scenarios import load_ui_scenario
 from cairn.ui_sim_cli import main as ui_sim_main
@@ -31,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--evidence-output", help="Write Markdown evidence summary to this path")
     parser.add_argument("--annotations-output", help="Write Cairn annotation snippet to this path")
     parser.add_argument("--layout-svg-output", help="Write measured layout overlay SVG to this path")
+    parser.add_argument("--layout-svg-output-dir", help="Write every measured layout snapshot as numbered SVG overlays")
     parser.add_argument(
         "--layout-snapshot-index",
         type=int,
@@ -80,6 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     evidence_path = Path(args.evidence_output).resolve() if args.evidence_output else outputs["evidence"]
     annotations_path = Path(args.annotations_output).resolve() if args.annotations_output else outputs["annotations"]
     layout_svg_path = Path(args.layout_svg_output).resolve() if args.layout_svg_output else outputs["layout_svg"]
+    layout_svg_dir = Path(args.layout_svg_output_dir).resolve() if args.layout_svg_output_dir else None
 
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(format_ui_human_load_report(evidence), encoding="utf-8")
@@ -94,6 +97,16 @@ def main(argv: list[str] | None = None) -> int:
     if layout_svg is not None:
         layout_svg_path.parent.mkdir(parents=True, exist_ok=True)
         layout_svg_path.write_text(layout_svg, encoding="utf-8")
+
+    layout_svg_paths: list[Path] = []
+    if layout_svg_dir is not None:
+        overlays = render_ui_layout_overlays(raw_report)
+        if overlays:
+            layout_svg_dir.mkdir(parents=True, exist_ok=True)
+            for index, svg in overlays:
+                path = layout_svg_dir / f"layout-snapshot-{index + 1}.svg"
+                path.write_text(svg, encoding="utf-8")
+                layout_svg_paths.append(path)
 
     roleplay_path = None
     if args.llm_command or args.hoglah_model:
@@ -118,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"annotations: {annotations_path}")
     if layout_svg is not None:
         print(f"layout_svg: {layout_svg_path}")
+    if layout_svg_paths:
+        print(f"layout_svg_dir: {layout_svg_dir}")
     if roleplay_path:
         print(f"roleplay: {roleplay_path}")
     return 0

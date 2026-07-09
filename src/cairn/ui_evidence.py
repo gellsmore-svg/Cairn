@@ -142,6 +142,15 @@ def render_ui_layout_overlay(report: dict[str, Any], *, snapshot_index: int = 0)
     return render_layout_svg(snapshots[snapshot_index])
 
 
+def render_ui_layout_overlays(report: dict[str, Any]) -> list[tuple[int, str]]:
+    """Render SVG overlays for all measured UI layout snapshots."""
+    overlays: list[tuple[int, str]] = []
+    for index, snapshot in enumerate(report.get("layoutLoad", [])):
+        if isinstance(snapshot, dict):
+            overlays.append((index, render_layout_svg(snapshot)))
+    return overlays
+
+
 def format_cairn_annotation_snippet(
     report: UiHumanLoadReport,
     *,

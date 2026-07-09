@@ -7,7 +7,12 @@ import json
 import sys
 from pathlib import Path
 
-from cairn.ui_evidence import analyze_ui_simulation_report, format_ui_human_load_report, render_ui_layout_overlay
+from cairn.ui_evidence import (
+    analyze_ui_simulation_report,
+    format_ui_human_load_report,
+    render_ui_layout_overlay,
+    render_ui_layout_overlays,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -26,6 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("-o", "--output", help="Write to file instead of stdout")
     parser.add_argument("--layout-svg-output", help="Write a measured layout snapshot as an SVG overlay")
+    parser.add_argument("--layout-svg-output-dir", help="Write every measured layout snapshot as numbered SVG overlays")
     parser.add_argument(
         "--layout-snapshot-index",
         type=int,
@@ -47,6 +53,14 @@ def main(argv: list[str] | None = None) -> int:
         if svg is None:
             raise SystemExit(f"layoutLoad snapshot {args.layout_snapshot_index} not found in UI simulation report")
         Path(args.layout_svg_output).write_text(svg, encoding="utf-8")
+    if args.layout_svg_output_dir:
+        output_dir = Path(args.layout_svg_output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        overlays = render_ui_layout_overlays(raw)
+        if not overlays:
+            raise SystemExit("no layoutLoad snapshots found in UI simulation report")
+        for index, svg in overlays:
+            (output_dir / f"layout-snapshot-{index + 1}.svg").write_text(svg, encoding="utf-8")
 
     if args.output:
         Path(args.output).write_text(out, encoding="utf-8")

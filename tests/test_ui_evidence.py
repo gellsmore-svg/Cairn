@@ -13,6 +13,7 @@ from cairn.ui_evidence import (
     format_ui_human_load_report,
     interpret_ui_experience,
     render_ui_layout_overlay,
+    render_ui_layout_overlays,
 )
 from cairn.ui_annotations_cli import main as ui_annotations_main
 from cairn.ui_evidence_cli import main as ui_evidence_main
@@ -113,6 +114,14 @@ def test_render_ui_layout_overlay_can_select_snapshot_index():
     assert "first_state_action" not in svg
 
 
+def test_render_ui_layout_overlays_returns_all_snapshots():
+    overlays = render_ui_layout_overlays(_multi_snapshot_report())
+
+    assert [index for index, _ in overlays] == [0, 1]
+    assert "first_state_action" in overlays[0][1]
+    assert "second_state_action" in overlays[1][1]
+
+
 def test_format_ui_human_load_report_markdown_and_json():
     raw = json.loads((ROOT / "docs" / "analysis" / "mahlah-ui-sim-report.json").read_text(encoding="utf-8"))
     report = analyze_ui_simulation_report(raw)
@@ -181,6 +190,29 @@ def test_ui_evidence_cli_writes_selected_layout_snapshot(tmp_path):
     text = svg.read_text(encoding="utf-8")
     assert "second_state_action" in text
     assert "first_state_action" not in text
+
+
+def test_ui_evidence_cli_writes_all_layout_snapshots(tmp_path):
+    source = tmp_path / "multi-snapshot-report.json"
+    output = tmp_path / "ui-evidence.md"
+    svg_dir = tmp_path / "layout-overlays"
+    source.write_text(json.dumps(_multi_snapshot_report()), encoding="utf-8")
+
+    rc = ui_evidence_main(
+        [
+            str(source),
+            "-o",
+            str(output),
+            "--layout-svg-output-dir",
+            str(svg_dir),
+        ]
+    )
+
+    assert rc == 0
+    first = (svg_dir / "layout-snapshot-1.svg").read_text(encoding="utf-8")
+    second = (svg_dir / "layout-snapshot-2.svg").read_text(encoding="utf-8")
+    assert "first_state_action" in first
+    assert "second_state_action" in second
 
 
 def test_ui_annotations_cli_writes_cairn_snippet(tmp_path):

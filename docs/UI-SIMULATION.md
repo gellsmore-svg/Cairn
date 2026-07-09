@@ -67,7 +67,9 @@ as `HUMAN_DEMAND`, `HUMAN_LOAD`, `HUMAN_FACTORS`, and `HUMAN_RISK`.
 When the report includes measured layout snapshots, add
 `--layout-svg-output docs/analysis/example-layout-overlay.svg` to export a
 visual overlay. Use `--layout-snapshot-index 1` to render a later zero-based
-snapshot when a scenario measures several UI states.
+snapshot when a scenario measures several UI states. Use
+`--layout-svg-output-dir docs/analysis/layout-overlays` to export every measured
+snapshot as numbered SVG files.
 
 Then ask an LLM to role-play plausible user experience from the grounded
 evidence:
