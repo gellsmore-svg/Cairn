@@ -29,12 +29,19 @@ corporate, and augmentation processes.
 - **Cairn constructs**: `AUGMENTATION_PROCESS`, `ASSISTED-BY`, `HCI_TOUCHPOINT`, `HUMAN_RISK`.
 - **Mitigations**: evidence display, challenge path, confidence limits, human audit outcomes.
 
+### Occupational Health And Work Design
+- **Cues**: hazard reports, near misses, fatigue, workload strain, psychosocial risk, discomfort, contractor boundary ambiguity.
+- **Process interface**: operations, HR, incident response, system rollout, support queues, field work, and AI-assisted monitoring.
+- **Cairn constructs**: `HUMAN_RISK`, `SUPPORT`, `CHANGE_IMPACT`, `HCI_TOUCHPOINT`, `FEEDBACK`, `REGULATION`.
+- **Mitigations**: worker participation, hierarchy of controls, confidential health boundaries, return-to-work adjustment, and non-retaliatory reporting.
+
 ## Relations
 
 - Psychological threat response can amplify sociological status dynamics when a person interprets disagreement as social danger.
 - Sociological norms can hide domestic/caregiver load when the group rewards constant availability.
 - AI augmentation can reduce cognitive load when evidence is visible, but increase social and psychological risk when it changes status, control, or accountability without explanation.
 - HCI layout load becomes a human-systems issue when warnings, evidence, and actions are separated in high-stakes tasks.
+- Occupational health risk increases when safety, workload, psychosocial risk, and work design are treated as individual compliance rather than system design.
 
 ## Recommended Cairn Pattern
 

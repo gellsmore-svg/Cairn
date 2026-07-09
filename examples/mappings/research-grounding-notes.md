@@ -58,3 +58,21 @@ Source anchors:
   reconstruct meaning from memory.
 - Cairn examples should model awareness, orientation, execution, feedback,
   recovery, handoff, and adaptation touchpoints when UI is present.
+
+## Occupational Health And Healthy Work
+
+- Occupational health and safety management should be proactive, participatory,
+  and continuously improved, not limited to post-incident compliance.
+- Worker participation, hazard identification, prevention/control, education,
+  program evaluation, and contractor/host coordination map naturally to Cairn
+  process steps and feedback loops.
+- Total Worker Health and healthy workplace models extend the lens from injury
+  prevention to work design, psychosocial risk, well-being, participation, and
+  community/work interface.
+
+Source anchors:
+- OSHA Recommended Practices for Safety and Health Programs: https://www.osha.gov/safety-management
+- OSHA Worker Participation: https://www.osha.gov/safety-management/worker-participation
+- NIOSH Total Worker Health Program: https://www.cdc.gov/niosh/twh/programs/index.html
+- WHO Healthy Workplace Framework and Model: https://www.who.int/publications/i/item/who-healthy-workplace-framework-and-model
+- ISO 45001 overview: https://www.iso.org/standard/63787.html
