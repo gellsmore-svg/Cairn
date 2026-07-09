@@ -69,7 +69,7 @@ When the report includes measured layout snapshots, add
 visual overlay. Use `--layout-snapshot-index 1` to render a later zero-based
 snapshot when a scenario measures several UI states. Use
 `--layout-svg-output-dir docs/analysis/layout-overlays` to export every measured
-snapshot as numbered SVG files.
+snapshot as numbered SVG files with an `index.md` summary.
 
 Then ask an LLM to role-play plausible user experience from the grounded
 evidence:

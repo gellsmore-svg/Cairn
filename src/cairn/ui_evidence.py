@@ -151,6 +151,35 @@ def render_ui_layout_overlays(report: dict[str, Any]) -> list[tuple[int, str]]:
     return overlays
 
 
+def format_ui_layout_overlay_index(
+    report: dict[str, Any],
+    *,
+    filenames: dict[int, str] | None = None,
+) -> str:
+    """Format a Markdown index for measured UI layout overlay artifacts."""
+    lines = [f"# UI Layout Overlays: {report.get('scenario') or 'UI simulation'}", ""]
+    snapshots = [(index, snapshot) for index, snapshot in enumerate(report.get("layoutLoad", [])) if isinstance(snapshot, dict)]
+    if not snapshots:
+        lines.append("No layoutLoad snapshots were found.")
+        return "\n".join(lines).strip()
+
+    for index, snapshot in snapshots:
+        label = str(snapshot.get("label") or f"Snapshot {index + 1}")
+        filename = (filenames or {}).get(index, f"layout-snapshot-{index + 1}.svg")
+        layout_report = analyze_functional_layout(snapshot)
+        metrics = layout_report.metrics
+        lines.append(f"## Snapshot {index + 1}: {label}")
+        lines.append(f"- Overlay: [{filename}]({filename})")
+        lines.append(f"- layout_load: {metrics.get('layout_load', 'unknown')}")
+        lines.append(f"- elements: {metrics.get('element_count', 0)}")
+        lines.append(f"- fields: {metrics.get('field_count', 0)}")
+        lines.append(f"- avg_related_distance_px: {metrics.get('avg_related_distance_px', 0)}")
+        lines.append(f"- cumulative_pointer_travel_viewports: {metrics.get('cumulative_pointer_travel_viewports', 0)}")
+        lines.append("")
+
+    return "\n".join(lines).strip()
+
+
 def format_cairn_annotation_snippet(
     report: UiHumanLoadReport,
     *,

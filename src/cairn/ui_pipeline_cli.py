@@ -10,6 +10,7 @@ from cairn.llm_adapters import CommandLLMProvider, HoglahLLMProvider
 from cairn.ui_evidence import (
     analyze_ui_simulation_report,
     format_cairn_annotation_snippet,
+    format_ui_layout_overlay_index,
     format_ui_human_load_report,
     interpret_ui_experience,
     render_ui_layout_overlay,
@@ -99,14 +100,20 @@ def main(argv: list[str] | None = None) -> int:
         layout_svg_path.write_text(layout_svg, encoding="utf-8")
 
     layout_svg_paths: list[Path] = []
+    layout_svg_index_path = None
     if layout_svg_dir is not None:
         overlays = render_ui_layout_overlays(raw_report)
         if overlays:
             layout_svg_dir.mkdir(parents=True, exist_ok=True)
+            filenames: dict[int, str] = {}
             for index, svg in overlays:
-                path = layout_svg_dir / f"layout-snapshot-{index + 1}.svg"
+                filename = f"layout-snapshot-{index + 1}.svg"
+                path = layout_svg_dir / filename
                 path.write_text(svg, encoding="utf-8")
                 layout_svg_paths.append(path)
+                filenames[index] = filename
+            layout_svg_index_path = layout_svg_dir / "index.md"
+            layout_svg_index_path.write_text(format_ui_layout_overlay_index(raw_report, filenames=filenames), encoding="utf-8")
 
     roleplay_path = None
     if args.llm_command or args.hoglah_model:
@@ -133,6 +140,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"layout_svg: {layout_svg_path}")
     if layout_svg_paths:
         print(f"layout_svg_dir: {layout_svg_dir}")
+    if layout_svg_index_path:
+        print(f"layout_svg_index: {layout_svg_index_path}")
     if roleplay_path:
         print(f"roleplay: {roleplay_path}")
     return 0

@@ -167,8 +167,12 @@ def test_ui_pipeline_from_report_writes_all_layout_snapshots(tmp_path, capsys):
 
     assert rc == 0
     assert "layout_svg_dir:" in captured.out
+    assert "layout_svg_index:" in captured.out
     assert "first_state_action" in (layout_svg_dir / "layout-snapshot-1.svg").read_text(encoding="utf-8")
     assert "second_state_action" in (layout_svg_dir / "layout-snapshot-2.svg").read_text(encoding="utf-8")
+    index = (layout_svg_dir / "index.md").read_text(encoding="utf-8")
+    assert "[layout-snapshot-1.svg](layout-snapshot-1.svg)" in index
+    assert "Snapshot 2" in index
 
 
 def test_ui_pipeline_from_report_can_roleplay_with_command_provider(tmp_path):
