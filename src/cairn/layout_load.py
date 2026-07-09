@@ -8,6 +8,7 @@ layout traversal load from distances, grouping, and action sequence.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from html import escape
 from math import hypot
 from typing import Any
 
@@ -137,6 +138,63 @@ def format_functional_layout_report(
             lines.append("")
 
     return "\n".join(lines).strip()
+
+
+def render_layout_svg(payload: dict[str, Any]) -> str:
+    """Render a simple SVG overlay for layout-load review."""
+    viewport = _viewport(payload)
+    elements = _elements(payload.get("elements", []))
+    by_id = {element.id: element for element in elements}
+    relations = _relations(payload.get("relations", []))
+    sequence = [str(item) for item in payload.get("sequence", []) if str(item) in by_id]
+    width = viewport["width"]
+    height = viewport["height"]
+
+    lines = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width:g} {height:g}" width="{width:g}" height="{height:g}">',
+        "<defs>",
+        '<marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">',
+        '<path d="M0,0 L0,6 L9,3 z" fill="#7c3aed" />',
+        "</marker>",
+        "</defs>",
+        f'<rect x="0" y="0" width="{width:g}" height="{height:g}" fill="#ffffff" stroke="#cbd5e1" />',
+    ]
+
+    for rel in relations:
+        if rel.source not in by_id or rel.target not in by_id:
+            continue
+        sx, sy = by_id[rel.source].center
+        tx, ty = by_id[rel.target].center
+        color = _relation_color(rel.type)
+        lines.append(
+            f'<line x1="{sx:g}" y1="{sy:g}" x2="{tx:g}" y2="{ty:g}" '
+            f'stroke="{color}" stroke-width="3" stroke-dasharray="{_relation_dash(rel.type)}" opacity="0.72" />'
+        )
+        mx = (sx + tx) / 2
+        my = (sy + ty) / 2
+        lines.append(_text(mx + 6, my - 6, rel.type, size=13, fill=color))
+
+    if len(sequence) >= 2:
+        points = " ".join(f"{by_id[item].center[0]:g},{by_id[item].center[1]:g}" for item in sequence)
+        lines.append(
+            f'<polyline points="{points}" fill="none" stroke="#7c3aed" stroke-width="4" '
+            'stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" opacity="0.85" />'
+        )
+
+    for element in elements:
+        fill = _role_fill(element.role)
+        stroke = _role_stroke(element.role)
+        lines.append(
+            f'<rect x="{element.x:g}" y="{element.y:g}" width="{element.width:g}" height="{element.height:g}" '
+            f'rx="4" fill="{fill}" stroke="{stroke}" stroke-width="2" opacity="0.86" />'
+        )
+        label = element.label or element.id
+        lines.append(_text(element.x + 6, max(element.y - 8, 16), f"{element.id} ({element.role})", size=13, fill=stroke))
+        if label != element.id:
+            lines.append(_text(element.x + 8, element.y + min(element.height / 2 + 5, 22), label, size=12, fill="#111827"))
+
+    lines.append("</svg>")
+    return "\n".join(lines) + "\n"
 
 
 def _viewport(payload: dict[str, Any]) -> dict[str, float]:
@@ -295,3 +353,45 @@ def _suggested_blocks(metrics: dict[str, float | int | str], findings: list[Layo
         blocks["HUMAN_FACTORS"] = "\n".join(f"{f.family}: {f.factor} - {f.reason}" for f in findings)
         blocks["IMPROVEMENT"] = "\n".join(f.mitigation for f in findings)
     return blocks
+
+
+def _relation_color(kind: str) -> str:
+    if kind == "label_for":
+        return "#2563eb"
+    if kind == "evidence_to_action":
+        return "#dc2626"
+    return "#9333ea"
+
+
+def _relation_dash(kind: str) -> str:
+    return "5 5" if kind == "label_for" else "0"
+
+
+def _role_fill(role: str) -> str:
+    return {
+        "label": "#dbeafe",
+        "field": "#dcfce7",
+        "input": "#dcfce7",
+        "select": "#dcfce7",
+        "warning": "#fee2e2",
+        "evidence": "#fef3c7",
+        "button": "#ede9fe",
+        "action": "#ede9fe",
+    }.get(role, "#f8fafc")
+
+
+def _role_stroke(role: str) -> str:
+    return {
+        "label": "#2563eb",
+        "field": "#16a34a",
+        "input": "#16a34a",
+        "select": "#16a34a",
+        "warning": "#dc2626",
+        "evidence": "#d97706",
+        "button": "#7c3aed",
+        "action": "#7c3aed",
+    }.get(role, "#475569")
+
+
+def _text(x: float, y: float, value: str, *, size: int, fill: str) -> str:
+    return f'<text x="{x:g}" y="{y:g}" font-family="Arial, sans-serif" font-size="{size}" fill="{fill}">{escape(value)}</text>'

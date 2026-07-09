@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 
-from cairn.layout_load import analyze_functional_layout, format_functional_layout_report
+from cairn.layout_load import analyze_functional_layout, format_functional_layout_report, render_layout_svg
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -15,6 +15,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("input", nargs="?", help="Input JSON file. Reads stdin when omitted or '-'.")
     parser.add_argument("-o", "--output", help="Output path. Writes stdout when omitted.")
     parser.add_argument("-f", "--format", choices=["markdown", "json"], default="markdown")
+    parser.add_argument("--svg-output", help="Optional SVG overlay output path.")
     args = parser.parse_args(argv)
 
     try:
@@ -25,6 +26,8 @@ def main(argv: list[str] | None = None) -> int:
         report = analyze_functional_layout(payload)
         formatted = format_functional_layout_report(report, output_format=args.format)
         out = json.dumps(formatted, indent=2) if args.format == "json" else str(formatted)
+        if args.svg_output:
+            Path(args.svg_output).write_text(render_layout_svg(payload), encoding="utf-8")
         if args.output:
             Path(args.output).write_text(out, encoding="utf-8")
         else:

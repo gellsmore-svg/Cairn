@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from cairn.layout_load import analyze_functional_layout, format_functional_layout_report
+from cairn.layout_load import analyze_functional_layout, format_functional_layout_report, render_layout_svg
 from cairn.layout_load_cli import main as layout_load_main
 
 
@@ -51,6 +51,15 @@ def test_format_functional_layout_report_markdown_and_json():
     assert payload["metrics"]["layout_load"] == "high"
 
 
+def test_render_layout_svg_draws_elements_and_relations():
+    svg = render_layout_svg(_po_layout())
+
+    assert svg.startswith("<svg")
+    assert "po_number" in svg
+    assert "evidence_to_action" in svg
+    assert "<polyline" in svg
+
+
 def test_layout_load_cli_writes_report(tmp_path):
     source = tmp_path / "layout.json"
     output = tmp_path / "layout.md"
@@ -62,6 +71,18 @@ def test_layout_load_cli_writes_report(tmp_path):
     text = output.read_text(encoding="utf-8")
     assert "FUNCTIONAL_LAYOUT_LOAD" in text
     assert "cumulative_pointer_travel" in text
+
+
+def test_layout_load_cli_writes_svg_overlay(tmp_path):
+    source = tmp_path / "layout.json"
+    output = tmp_path / "layout.md"
+    svg = tmp_path / "layout.svg"
+    source.write_text(json.dumps(_po_layout()), encoding="utf-8")
+
+    rc = layout_load_main([str(source), "-o", str(output), "--svg-output", str(svg)])
+
+    assert rc == 0
+    assert svg.read_text(encoding="utf-8").startswith("<svg")
 
 
 def test_layout_load_cli_reports_invalid_json(tmp_path, capsys):

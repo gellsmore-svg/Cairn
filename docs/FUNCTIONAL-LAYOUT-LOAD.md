@@ -84,6 +84,7 @@ during `cairn-ui-sim`. The resulting `layoutLoad` snapshots are consumed by
 
 ```bash
 cairn-layout-load po-layout.json -o po-layout-load.md
+cairn-layout-load po-layout.json -o po-layout-load.md --svg-output po-layout-overlay.svg
 cairn-layout-load po-layout.json -f json
 ```
 
@@ -101,7 +102,10 @@ FUNCTIONAL_LAYOUT_LOAD:
 
 See `docs/analysis/customer-po-review-layout.json` and
 `docs/analysis/customer-po-review-layout-load.md` for a worked incoming customer
-PO review example.
+PO review example. The companion
+`docs/analysis/customer-po-review-layout-overlay.svg` renders the same geometry
+as a visual overlay, making label distance, evidence-to-action gaps, and the
+interaction path easier to inspect.
 
 For the browser-simulation shape, see:
 
