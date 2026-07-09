@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from typing import Any
 
 from cairn.human_factors import HumanFactorsReport, analyze_human_factors, format_human_factors_report

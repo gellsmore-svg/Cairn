@@ -66,7 +66,7 @@ def _docx_exporter(result: RenderResult, options: dict[str, Any]) -> bytes:
 
     doc = Document()
     title = options.get("title", f"Cairn View - {result.profile}")
-    heading = doc.add_heading(title, level=0)
+    doc.add_heading(title, level=0)
     para = doc.add_paragraph()
     run = para.add_run(f"Profile: {result.profile} | Language: {result.language}")
     run.italic = True

@@ -16,7 +16,13 @@ from typing import Any
 CONFORMANCE_VERSION = "1.0"
 
 # Step-level constructs from SPEC §5 (the ones a PLAN step may *be*).
-PLAN_CONSTRUCTS: frozenset[str] = frozenset(
+#
+# CORE = general control-flow constructs. EXTENSION = the human-systems / domain
+# constructs (psychology, change-management, sociology) the grammar parser also
+# accepts. Both are kept here as the single source of truth so the grammar and
+# this conformance surface never disagree — a document that PARSES must also
+# VALIDATE. (test_conformance enumerates the parser's constructs to enforce this.)
+CORE_CONSTRUCTS: frozenset[str] = frozenset(
     {
         "STEP",
         "CALL",
@@ -32,8 +38,35 @@ PLAN_CONSTRUCTS: frozenset[str] = frozenset(
         "BREAK",
         "CONTINUE",
         "MILESTONE",
+        "ERROR",
     }
 )
+
+EXTENSION_CONSTRUCTS: frozenset[str] = frozenset(
+    {
+        "REGULATION",
+        "APPRAISAL",
+        "DUAL_PROCESS",
+        "METACOGNITION",
+        "ALIGN",
+        "COALITION",
+        "RESISTANCE",
+        "REINFORCEMENT",
+        "CASCADE",
+        "VISION",
+        "SOCIALIZE",
+        "INSTITUTIONALIZE",
+        "SYMBOLIC_INTERACTION",
+        "CONFLICT",
+        "ACCOMMODATE",
+        "ASSIMILATE",
+        "ROLE",
+        "FEEDBACK",
+        "MACRO",
+    }
+)
+
+PLAN_CONSTRUCTS: frozenset[str] = CORE_CONSTRUCTS | EXTENSION_CONSTRUCTS
 
 # PLAN status (SPEC §4.5) and the revision verdict a revisable plan reports.
 PLAN_STATUSES: frozenset[str] = frozenset({"draft", "active", "stable", "complete", "blocked"})

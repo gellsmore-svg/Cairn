@@ -54,7 +54,6 @@ CONSTRUCT_PHRASES: dict[str, dict[str, str]] = {
         "VISION": "Former vision",
         "SOCIALIZE": "Socialiser",
         "SYMBOLIC_INTERACTION": "Interaction symbolique",
-        "FEEDBACK": "Rétroaction",
         "MACRO": "Macro",
         "PARALLEL": "Exécuter en parallèle",
         "MERGE": "Fusionner",

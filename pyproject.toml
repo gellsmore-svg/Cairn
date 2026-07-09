@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cairn-lang"
-version = "0.8.0"
+version = "0.8.1"
 description = "Cairn — a human-readable process language for governed agentic work in human systems, with grammar and plan conformance."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -53,7 +53,7 @@ Repository = "https://github.com/gellsmore-svg/Cairn"
 Issues = "https://github.com/gellsmore-svg/Cairn/issues"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "fastapi>=0.110", "uvicorn>=0.29", "httpx", "pyyaml>=6.0"]
+dev = ["pytest>=8", "ruff>=0.6", "fastapi>=0.110", "uvicorn>=0.29", "httpx", "pyyaml>=6.0"]
 render = ["pyyaml>=6.0"]
 web = ["fastapi>=0.110", "uvicorn>=0.29"]
 export = ["python-docx>=1.0", "fpdf2>=2.7"]

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from typing import Any
 
 from cairn.grammar.ast import (
     Annotation,
@@ -25,7 +24,7 @@ from cairn.grammar.ast import (
 )
 from cairn.grammar.extract import extract_cairn_source
 from cairn.grammar.lexer import Line, is_render_profile, tokenize_lines
-from cairn.grammar.tags import extract_bracket_tags, modifier_keys, split_tag_list
+from cairn.grammar.tags import extract_bracket_tags, split_tag_list
 
 _STEP_ID = re.compile(r"^(\d+(?:\.\d+)*)([a-z])?\.\s*(.*)$", re.I)
 _REQ_ID = re.compile(r"^(R\d+)\.\s*(.*)$", re.I)
@@ -465,7 +464,8 @@ def _parse_modifiers_dict(mods: list[str]) -> dict[str, str]:
         # split on ; or , for compound
         for part in m.replace(";", ",").split(","):
             part = part.strip()
-            if not part: continue
+            if not part:
+                continue
             if ":" in part:
                 k, v = part.split(":", 1)
                 result[k.strip().upper()] = v.strip()

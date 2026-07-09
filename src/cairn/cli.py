@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from cairn.render import registered_exporters, registered_profiles, render_plan
+from cairn.render import registered_profiles, render_plan
 
 
 def main(argv: list[str] | None = None) -> int:
