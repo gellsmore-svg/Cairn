@@ -51,6 +51,10 @@
   and OKF-style human-systems mappings.
 - Added research grounding notes and a SPEC/GRAMMAR review note for the expanded
   example corpus.
+- Expanded the categorized suites with additional corporate, change,
+  psychological, sociological, and technical/agentic examples, including the
+  remaining non-diagnostic Cluster B pattern lenses and end-to-end lifecycle
+  coverage.
 - Updated example validation to recurse into categorized example folders.
 
 ## [0.8.0] — 2026-07-07

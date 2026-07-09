@@ -135,3 +135,75 @@ PROCESS CaregiverMentalLoadWorkSpillover (INPUT: caregiver_load_and_work_demands
   4. Review work design without surveilling private life. [FEEDBACK, ETHICAL]
      CONSTRAINTS: aggregate support needs; do not turn caregiving status into individual performance scoring.
 ```
+
+## PROCESS — Antisocial-Pattern Exploitation Risk At Work
+
+```cairn
+PROCESS AntisocialPatternExploitationRisk (INPUT: low_accountability_high_reward_context; OUTPUT: contained_or_exploited_system)
+  1. Detect opportunity for rule-bending, intimidation, deception, or credit capture. [APPRAISAL, HUMAN]
+     HUMAN_FACTORS:
+       note: this is a non-diagnostic pattern lens for process design.
+       incentive_risk: weak controls and high rewards can invite exploitative behaviour.
+
+  2. Person or group tests whether boundaries are real. [HUMAN, DYNAMIC]
+     GAME_THEORY:
+       pattern: if violations produce reward and little cost, exploitation becomes rational.
+       mitigation: immediate, fair, documented boundary enforcement.
+
+  3. Apply transparent controls and protect affected people. [HUMAN, GATED]
+     SUPPORT: separate fact finding, psychological safety, due process, and retaliation protection.
+     HUMAN_RISK:
+       probability: low
+       impact: high
+       confidence: low
+       rationale: rare exploitative patterns can cause disproportionate harm when systems reward them.
+
+  4. Review structural incentives, not only individual behaviour. [FEEDBACK]
+```
+
+## PROCESS — Histrionic-Pattern Attention Dynamics
+
+```cairn
+PROCESS HistrionicPatternAttentionDynamics (INPUT: ambiguous_attention_or_recognition_context; OUTPUT: contained_or_disruptive_attention_cycle)
+  1. Interpret attention, praise, or neglect signals. [APPRAISAL, HUMAN]
+     HUMAN_FACTORS:
+       note: this is a non-diagnostic pattern lens for process design.
+       attention_need: ambiguous recognition can trigger dramatic bids for visibility.
+
+  2. Group responds with attention, irritation, avoidance, or escalation. [SOCIAL, DYNAMIC]
+     GAME_THEORY:
+       pattern: urgent attention can be reinforced if it reliably redirects group focus.
+       mitigation: predictable recognition, clear meeting structure, and private repair.
+
+  3. Redirect to evidence, role, and contribution. [REGULATION, SUPPORT]
+     SUPPORT: validate contribution without rewarding disruption or public escalation.
+     HUMAN_RISK:
+       probability: medium
+       impact: medium
+       confidence: low
+       rationale: attention cycles can consume meeting capacity and distort prioritisation.
+
+  4. Adjust norms for recognition and voice. [FEEDBACK]
+```
+
+## PROCESS — Present Bias In Planning
+
+```cairn
+PROCESS PresentBiasPlanning (INPUT: long_term_goal_with_short_term_cost; OUTPUT: protected_or_deferred_action)
+  1. Compare immediate effort with delayed benefit. [HUMAN, DECISION]
+     HUMAN_FACTORS:
+       behavioural_economics: present bias favours immediate ease over future value.
+       cognitive_load: planning is weaker when capacity is depleted.
+
+  2. Convert distant goal into near-term trigger and commitment. [SUPPORT]
+     SUPPORT: use defaults, reminders, visible progress, and smaller next actions.
+
+  3. Act, defer, or renegotiate goal. [HUMAN, GATED]
+     HUMAN_RISK:
+       probability: high
+       impact: medium
+       confidence: high
+       rationale: present bias repeatedly delays training, compliance, maintenance, and relationship repair.
+
+  4. Feed back outcome and adjust friction. [FEEDBACK]
+```

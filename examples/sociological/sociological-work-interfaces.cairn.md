@@ -92,3 +92,70 @@ PROCESS DomesticStressWorkBoundary (INPUT: domestic_stress_and_work_expectations
        confidence: medium
        rationale: unmanaged boundary conflict can become burnout, quality loss, or attrition.
 ```
+
+## PROCESS — Open Source Contribution Norming
+
+```cairn
+PROCESS OpenSourceContributionNorming (INPUT: new_contributor_pull_request; OUTPUT: integrated_or_lost_contributor)
+  1. Contributor interprets project norms from docs, issues, review tone, and response time. [HUMAN, SOCIAL]
+     HCI_TOUCHPOINT:
+       phase: awareness
+       human_goal: know how to contribute without guessing hidden rules.
+     HUMAN_FACTORS:
+       belonging: first interaction shapes whether contributor returns.
+
+  2. Maintainers review contribution and communicate standards. [HUMAN, GATED]
+     GAME_THEORY:
+       pattern: harsh review can protect quality short-term but reduce future contribution.
+       mitigation: separate quality bar from social dismissal.
+
+  3. Project accepts, requests change, or redirects. [SIDE-EFFECT]
+     SUPPORT: provide rationale, next action, and path to successful future contribution.
+
+  4. Norms update through repeated review interactions. [SOCIALIZE, EMERGENT]
+```
+
+## PROCESS — Customer Community Signal Flow
+
+```cairn
+PROCESS CustomerCommunitySignalFlow (INPUT: community_posts_and_reactions; OUTPUT: product_learning_or_noise)
+  1. Customers share workarounds, complaints, praise, and identity signals. [SOCIAL, ASYNC]
+     HUMAN_FACTORS:
+       social_proof: repeated stories can become perceived truth before product data confirms them.
+       reputation: visible response quality affects trust.
+
+  2. Community manager triages signals and escalates patterns. [HUMAN, ASSISTED-BY: LLM]
+     AUGMENTATION_PROCESS:
+       role_complementarity: AI clusters themes; human detects tone, harm, and relationship context.
+
+  3. Product team decides whether to act, observe, or communicate. [HUMAN, GATED]
+     HUMAN_RISK:
+       probability: medium
+       impact: medium
+       confidence: medium
+       rationale: loud communities can either reveal real pain or skew prioritisation.
+
+  4. Feed back decision to community. [FEEDBACK]
+     SUPPORT: close the loop visibly even when the product decision is no.
+```
+
+## PROCESS — Cultural Ritual And Meaning In Organisations
+
+```cairn
+PROCESS CulturalRitualMeaning (INPUT: repeated_organizational_ritual; OUTPUT: reinforced_or_changed_meaning)
+  1. Group repeats meeting, celebration, review, or story ritual. [SOCIAL, SYMBOLIC]
+     HUMAN_FACTORS:
+       symbolic_interaction: rituals tell people what is valued more strongly than policy.
+
+  2. Members interpret who is praised, ignored, blamed, or protected. [HUMAN, APPRAISAL]
+     HUMAN_RISK:
+       probability: medium
+       impact: medium
+       confidence: medium
+       rationale: rituals can reinforce trust or cynicism depending on lived evidence.
+
+  3. Leaders adjust ritual to align values and behaviour. [HUMAN, GATED]
+     SUPPORT: change who speaks, what evidence is shown, what is rewarded, and what is repaired.
+
+  4. New meaning stabilizes or is rejected by informal norms. [EMERGENT]
+```

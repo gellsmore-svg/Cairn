@@ -203,3 +203,163 @@ PROCESS SupportEscalationRetention (INPUT: high_risk_support_ticket; OUTPUT: ret
        role_shift: support becomes a learning sensor, not only a ticket closer.
        reinforcement: show reduced repeat tickets and better customer outcomes.
 ```
+
+## PROCESS — Marketing Campaign With Behavioural Experiment
+
+```cairn
+PROCESS MarketingCampaignBehaviouralExperiment (INPUT: campaign_brief; OUTPUT: measured_campaign_learning)
+  1. Define audience, problem, offer, and behavioural hypothesis. [HUMAN, GATED]
+     HUMAN_FACTORS:
+       behavioural_economics: framing, social proof, loss aversion, and scarcity can influence response.
+       ethics: persuasion must not become manipulation or exploit vulnerable segments.
+     SUPPORT: write the intended customer benefit and the behavioural mechanism separately.
+
+  2. Generate variants and compliance review notes. [LLM, ASSISTED-BY: marketer]
+     AUGMENTATION_PROCESS:
+       role_complementarity: AI drafts variants; humans judge brand, ethics, and customer context.
+       bias_mitigation: check whether variants stereotype or exclude audience groups.
+
+  3. Run A/B test and monitor early signals. [CODE, ASYNC]
+     HCI_TOUCHPOINT:
+       phase: feedback
+       human_goal: see performance without overreacting to noisy early data.
+
+  4. Decide scale, revise, stop, or investigate. [HUMAN, GATED]
+     HUMAN_RISK:
+       probability: medium
+       impact: medium
+       confidence: medium
+       rationale: campaign teams can mistake short-term clicks for durable customer value.
+```
+
+## PROCESS — Procurement Supplier Risk Review
+
+```cairn
+PROCESS ProcurementSupplierRiskReview (INPUT: supplier_request; OUTPUT: approved_supplier_or_mitigation_plan)
+  1. Collect supplier profile, spend, criticality, compliance, and continuity data. [UI, HUMAN]
+     HUMAN_DEMAND:
+       ORIENT: understand why the supplier matters and what evidence is missing.
+       ACT: provide or request documents, risk signals, and business rationale.
+       CLOSE: know whether review can proceed.
+
+  2. Summarize financial, security, ESG, delivery, and geopolitical risks. [LLM, ASSISTED-BY: rules_engine]
+     AUGMENTATION_PROCESS:
+       trust_calibration: risk summary must cite source evidence and confidence.
+       automation_bias: do not let a neat summary hide missing certifications or concentration risk.
+
+  3. Procurement, legal, and business owner decide route. [HUMAN, GATED]
+     HUMAN_FACTORS:
+       social_role: business urgency can pressure procurement to become a rubber stamp.
+       incentives_game_theory: local savings may create enterprise resilience risk.
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: supplier approval affects continuity, compliance, and reputation.
+
+  4. Record controls, owner, review date, and exit plan. [SIDE-EFFECT]
+     SUPPORT: make residual risk and accountable owner visible after approval.
+```
+
+## PROCESS — Inventory Replenishment Exception
+
+```cairn
+PROCESS InventoryReplenishmentException (INPUT: replenishment_signal; OUTPUT: replenishment_or_exception_action)
+  1. Detect stockout risk, forecast change, or supplier delay. [CODE, DETERMINISTIC]
+     OUTPUT: replenishment_exception
+
+  2. Present demand, inventory, lead time, substitute, and service-level evidence. [UI, HUMAN]
+     FUNCTIONAL_LAYOUT_LOAD:
+       evidence_action_distance: high if demand signal, supplier delay, and expedite action are separated.
+       cumulative_pointer_travel: medium when planner must jump across forecast, orders, and supplier tabs.
+     SUPPORT: group forecast, stock, open PO, supplier ETA, and action in one planning panel.
+
+  3. Planner decides replenish, expedite, substitute, allocate, or accept risk. [HUMAN, GATED]
+     HUMAN_FACTORS:
+       cognitive_load: planner integrates uncertain demand, lead times, cost, and customer priority.
+       behavioural_economics: availability bias can overweight the latest shortage crisis.
+
+  4. Notify impacted teams and update planning parameters. [CODE, ASYNC]
+     HCI_TOUCHPOINT:
+       phase: handoff
+       human_goal: know who has been notified and what customer promise changed.
+```
+
+## PROCESS — HR Onboarding For AI-Augmented Role
+
+```cairn
+PROCESS HROnboardingAIAugmentedRole (INPUT: new_hire; OUTPUT: confident_ai_augmented_employee)
+  1. Explain role expectations, AI tool boundaries, and accountability. [HUMAN, GATED]
+     HUMAN_FACTORS:
+       psychological_contract: new hires infer what is safe, valued, and surveilled.
+       cognitive_load: too many tools and policies can obscure the actual job.
+
+  2. Provide guided practice with realistic tasks and challenge paths. [HUMAN, ASSISTED-BY: LLM]
+     AUGMENTATION_PROCESS:
+       role_complementarity: employee learns what to delegate, verify, challenge, and own.
+       trust_calibration: practice includes both useful and wrong AI outputs.
+
+  3. Assign mentor, feedback cadence, and safe escalation. [SOCIALIZE, SUPPORT]
+     CHANGE_IMPACT:
+       adoption_support: peer norms matter more than policy documents.
+       reinforcement: reward good judgement and explicit verification, not blind speed.
+
+  4. Review confidence, workload, and tool-risk signals after first month. [FEEDBACK]
+```
+
+## PROCESS — Financial Close With Exception Triage
+
+```cairn
+PROCESS FinancialCloseExceptionTriage (INPUT: period_close_evidence; OUTPUT: closed_period_or_escalated_exception)
+  1. Aggregate reconciliations, journal status, anomalies, and owner sign-offs. [CODE, DETERMINISTIC]
+     OUTPUT: close_dashboard
+
+  2. Prioritize close exceptions by materiality, age, dependency, and uncertainty. [LLM, ASSISTED-BY: controller]
+     HUMAN_FACTORS:
+       automation_bias: anomaly ranking must not replace professional judgement.
+       cognitive_load: close work combines time pressure, audit concern, and dependency tracking.
+
+  3. Controller assigns, resolves, or escalates exceptions. [HUMAN, GATED]
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: weak exception triage can create misstated accounts or late close.
+     SUPPORT: show owner, evidence, materiality, downstream impact, and due time together.
+
+  4. Lock period and preserve audit trail. [SIDE-EFFECT]
+     HCI_TOUCHPOINT:
+       phase: closure
+       human_goal: know the period is closed and what remains open by exception.
+```
+
+## PROCESS — New Product Lifecycle End To End
+
+```cairn
+PROCESS NewProductLifecycleEndToEnd (INPUT: strategic_opportunity; OUTPUT: sustained_product_or_retired_offer)
+  1. Convert opportunity into funded concept. [HUMAN, GATED]
+     SUPPORT: require customer evidence, strategic fit, and reversible learning plan.
+
+  2. Discover, prototype, and validate MVP. [CODE, ITERATIVE, ASSISTED-BY: product_team]
+     HUMAN_FACTORS:
+       behavioural_economics: sunk cost and sponsor identity can distort pivot decisions.
+     AUGMENTATION_PROCESS:
+       interaction_richness: AI supports research synthesis, variant generation, and risk review.
+
+  3. Launch with sales, support, operations, finance, and compliance readiness. [HUMAN, MACRO]
+     HCI_TOUCHPOINT:
+       phase: handoff
+       human_goal: understand readiness and ownership across departments.
+     HUMAN_RISK:
+       probability: high
+       impact: high
+       confidence: medium
+       rationale: lifecycle failures often happen at cross-functional handoffs, not inside one team.
+
+  4. Sustain through support learning, renewal signals, and product health review. [ITERATIVE]
+     CHANGE_IMPACT:
+       reinforcement: route customer and operational learning back into roadmap and training.
+
+  5. Retire or redesign when value, risk, or fit changes. [HUMAN, GATED]
+     SUPPORT: make retirement a governed lifecycle option rather than a hidden failure.
+```

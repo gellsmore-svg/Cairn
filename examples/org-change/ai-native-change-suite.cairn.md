@@ -123,3 +123,97 @@ PROCESS EthicalAIGovernanceChange (INPUT: ungoverned_ai_use; OUTPUT: accountable
        confidence: medium
        rationale: AI risk changes as tools, users, incentives, and data change.
 ```
+
+## PROCESS — Adaptive Complexity-Informed Change
+
+```cairn
+PROCESS AdaptiveComplexityInformedChange (INPUT: volatile_environment; OUTPUT: adaptive_change_system)
+  1. Sense weak signals, constraints, local experiments, and emergent patterns. [HUMAN, ASSISTED-BY: LLM]
+     HUMAN_FACTORS:
+       cognitive_load: leaders may seek false certainty when the system is genuinely complex.
+       social_role: local knowledge can be discounted when it contradicts executive narratives.
+
+  2. Define safe-to-fail experiments instead of one master plan. [HUMAN, GATED]
+     CHANGE_IMPACT:
+       coalition: distributed sponsors protect experimentation.
+       reinforcement: learning velocity matters before standardization.
+
+  3. Run experiments with short feedback loops. [ITERATIVE]
+     HCI_TOUCHPOINT:
+       phase: feedback
+       human_goal: understand what changed and whether to amplify, adapt, or stop.
+
+  4. Scale patterns that produce resilience without suppressing local variation. [MACRO, HUMAN]
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: premature standardization can destroy useful local adaptation.
+```
+
+## PROCESS — Regenerative Purpose-Driven Evolution
+
+```cairn
+PROCESS RegenerativePurposeDrivenEvolution (INPUT: extractive_or_misaligned_operating_model; OUTPUT: healthier_value_system)
+  1. Map value flows, harms, dependencies, and stakeholder voice. [HUMAN, READONLY]
+     HUMAN_FACTORS:
+       moral_injury: employees may experience dissonance when stated values conflict with actual practice.
+       social_role: low-power stakeholders often carry harms that dashboards do not show.
+
+  2. Define purpose, constraints, and reciprocal value commitments. [COALITION, GATED]
+     SUPPORT: include customers, employees, community, environment, and long-term viability.
+
+  3. Redesign governance, metrics, and rituals around regenerative outcomes. [MACRO, HUMAN]
+     CHANGE_IMPACT:
+       role_shift: leaders move from extraction control to stewardship and learning.
+       reinforcement: reward repair, prevention, and long-term trust.
+
+  4. Review unintended consequences and update commitments. [FEEDBACK, ITERATIVE]
+```
+
+## PROCESS — Human-AI Symbiosis Transition
+
+```cairn
+PROCESS HumanAISymbiosisTransition (INPUT: individual_productivity_ai_use; OUTPUT: team_level_human_ai_symbiosis)
+  1. Identify where AI use is private, uneven, risky, or high value. [HUMAN, ASSISTED-BY: LLM]
+     HUMAN_FACTORS:
+       social_status: hidden AI skill can create invisible advantage or fear.
+       psychological_contract: people need to know whether AI use is expected, optional, or monitored.
+
+  2. Define shared patterns for delegation, verification, and escalation. [HUMAN, GATED]
+     AUGMENTATION_PROCESS:
+       role_complementarity: decide what humans own, what AI drafts, and what must be challenged.
+       trust_calibration: include examples of good, bad, and uncertain AI output.
+
+  3. Practice team workflows with explicit AI touchpoints. [SOCIALIZE, ITERATIVE]
+     HCI_TOUCHPOINT:
+       phase: adaptation
+       human_goal: build shared mental models of AI use without hiding uncertainty.
+
+  4. Review quality, wellbeing, fairness, and learning. [FEEDBACK]
+     HUMAN_RISK:
+       probability: high
+       impact: high
+       confidence: medium
+       rationale: symbiosis can improve capacity or amplify inequality depending on governance and norms.
+```
+
+## PROCESS — Remote Hybrid Work Transition
+
+```cairn
+PROCESS RemoteHybridWorkTransition (INPUT: office_centric_norms; OUTPUT: intentional_hybrid_operating_model)
+  1. Map work types, collaboration needs, inclusion risks, and domestic load interfaces. [HUMAN, READONLY]
+     HUMAN_FACTORS:
+       social_presence: proximity bias can distort perceived contribution.
+       domestic_work_interface: rigid synchronous norms can punish caregiving and disability needs.
+
+  2. Define hybrid principles, meeting norms, and decision records. [SOCIALIZE, GATED]
+     SUPPORT: make important decisions visible outside meetings.
+
+  3. Adjust systems, rituals, and management practice. [MACRO, HUMAN]
+     HCI_TOUCHPOINT:
+       phase: awareness
+       human_goal: know where work, decisions, and informal support happen.
+
+  4. Review belonging, productivity, burnout, and fairness signals. [FEEDBACK]
+```

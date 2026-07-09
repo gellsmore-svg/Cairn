@@ -121,3 +121,76 @@ PROCESS LayoutLoadOptimizationLoop (INPUT: measured_ui_layout; OUTPUT: lower_loa
        confidence: medium
        rationale: visual simplification can hide required audit evidence if reviewed only aesthetically.
 ```
+
+## PROCESS — Data Pipeline Quality With Human Review
+
+```cairn
+PROCESS DataPipelineQualityHumanReview (INPUT: data_pipeline_run; OUTPUT: trusted_or_quarantined_dataset)
+  1. Ingest, validate schema, and compute quality metrics. [CODE, DETERMINISTIC]
+     OUTPUT: data_quality_report
+
+  2. Summarize anomalies and likely downstream impact. [LLM, ASSISTED-BY: data_quality_rules]
+     AUGMENTATION_PROCESS:
+       trust_calibration: anomaly summary must cite metric, dataset, and affected consumer.
+       automation_bias: high-level summary must not hide row-level examples.
+
+  3. Data steward approves, quarantines, or requests repair. [HUMAN, GATED]
+     HUMAN_FACTORS:
+       cognitive_load: steward integrates technical metrics, business meaning, and downstream urgency.
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: bad data can silently corrupt decisions across many processes.
+
+  4. Publish dataset with lineage and owner. [SIDE-EFFECT]
+```
+
+## PROCESS — Human-In-The-Loop Agent Workflow
+
+```cairn
+PROCESS HumanInLoopAgentWorkflow (INPUT: user_goal; OUTPUT: completed_or_escalated_task)
+  1. Agent proposes plan, tools, assumptions, and stop conditions. [LLM, STOCHASTIC]
+     AUGMENTATION_PROCESS:
+       role_complementarity: agent decomposes; human confirms boundaries and risk tolerance.
+
+  2. Human approves tool access and irreversible actions. [HUMAN, GATED]
+     HCI_TOUCHPOINT:
+       phase: orientation
+       human_goal: understand what the agent will do before it acts.
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: stochastic plans can cross hidden trust, data, or side-effect boundaries.
+
+  3. Agent executes reversible steps and reports evidence. [LLM, TOOL, ITERATIVE]
+     CONSTRAINTS: pause before side effects, credential use, deletion, purchase, or external message.
+
+  4. Human reviews outcome, exceptions, and residual risk. [HUMAN, GATED]
+     SUPPORT: show action log, evidence, failures, uncertainty, and undo path.
+```
+
+## PROCESS — Live Agentic Observer Review
+
+```cairn
+PROCESS LiveAgenticObserverReview (INPUT: product_logs_ui_traces_and_user_feedback; OUTPUT: observer_findings_and_actions)
+  1. Collect logs, UI traces, issue signals, and agent outputs. [CODE, ASYNC]
+     OUTPUT: observation_bundle
+
+  2. Observer agent maps technical events to human-system risks. [LLM, ASSISTED-BY: Cairn]
+     AUGMENTATION_PROCESS:
+       role_complementarity: observer notices patterns; humans decide interventions.
+       bias_mitigation: observer must separate product failure from user blame.
+
+  3. Generate findings, confidence, and suggested Cairn annotations. [LLM, TOOL]
+     HUMAN_FACTORS:
+       cognitive_load: operators need prioritized findings, not raw telemetry.
+
+  4. Human product owner accepts, rejects, or converts findings into work. [HUMAN, GATED]
+     HUMAN_RISK:
+       probability: medium
+       impact: high
+       confidence: medium
+       rationale: live observation can improve systems or become surveillance if governance is weak.
+```
