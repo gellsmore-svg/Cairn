@@ -175,9 +175,11 @@ def build_agent_harness_plan(
 
 
 def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "markdown") -> str | dict[str, Any]:
-    """Format an agent harness plan as Markdown or JSON-compatible data."""
+    """Format an agent harness plan as Markdown, shell script, or JSON-compatible data."""
     if output_format == "json":
         return plan.to_dict()
+    if output_format == "shell":
+        return _format_shell(plan)
 
     lines = [f"# {plan.title}", ""]
     lines.append(f"Output directory: `{plan.output_dir}`")
@@ -204,6 +206,36 @@ def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "m
         for question in plan.open_questions:
             lines.append(f"- {question}")
     return "\n".join(lines).strip()
+
+
+def _format_shell(plan: AgentHarnessPlan) -> str:
+    lines = [
+        "#!/usr/bin/env bash",
+        "set -euo pipefail",
+        "",
+        f"# {plan.title}",
+        f"# Output directory: {plan.output_dir}",
+        "",
+        "# Context sources to load before interpretation:",
+    ]
+    for source in plan.context_sources:
+        lines.append(f"# - {source}")
+    lines.append("")
+
+    for index, step in enumerate(plan.steps, start=1):
+        lines.append(f"# {index}. {step.name}")
+        lines.append(f"# {step.purpose}")
+        if step.command:
+            lines.append(step.command)
+        else:
+            lines.append(f"# Manual/agent step; produces: {', '.join(step.produces) if step.produces else 'review output'}")
+        lines.append("")
+
+    if plan.open_questions:
+        lines.append("# Open questions:")
+        for question in plan.open_questions:
+            lines.append(f"# - {question}")
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def _q(value: str) -> str:

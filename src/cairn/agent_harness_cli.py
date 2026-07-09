@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--layout", help="Optional layout JSON")
     parser.add_argument("--output-dir", default="cairn-agent-output", help="Directory the planned commands should write to")
     parser.add_argument("--title", default="Tool-assisted Cairn agent analysis")
-    parser.add_argument("-f", "--format", choices=("markdown", "json"), default="markdown", dest="output_format")
+    parser.add_argument("-f", "--format", choices=("markdown", "json", "shell"), default="markdown", dest="output_format")
     parser.add_argument("-o", "--output", help="Write plan to file instead of stdout")
     args = parser.parse_args(argv)
 

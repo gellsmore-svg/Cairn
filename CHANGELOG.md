@@ -39,6 +39,7 @@
   tool-assisted manual Cairn analysis.
 - Added `cairn-agent-harness-plan` and `build_agent_harness_plan` so interactive
   agents can ask Cairn which deterministic commands fit the available evidence.
+- Added shell-script formatting for agent harness plans.
 
 ## [0.8.0] — 2026-07-07
 

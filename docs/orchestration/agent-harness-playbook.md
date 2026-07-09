@@ -39,6 +39,16 @@ interpretation, prioritisation, synthesis, and careful explanation.
      --output-dir cairn-agent-output
    ```
 
+   To emit a reviewable shell sequence:
+
+   ```bash
+   cairn-agent-harness-plan \
+     --process process.cairn.md \
+     --ui-evidence ui-sim-report.json \
+     --format shell \
+     --output cairn-agent-plan.sh
+   ```
+
 4. Run deterministic human-factors analysis:
 
    ```bash
