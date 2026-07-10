@@ -30,6 +30,7 @@ class AgentHarnessPlan:
     inputs: dict[str, Any] = field(default_factory=dict)
     missing_inputs: list[str] = field(default_factory=list)
     open_questions: list[str] = field(default_factory=list)
+    agent_prompts: list[str] = field(default_factory=list)
     review_checks: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
@@ -202,6 +203,13 @@ def build_agent_harness_plan(
             produces=["plain-language synthesis", "open questions"],
         )
     )
+    agent_prompts = _agent_prompts(
+        has_process=bool(process_path),
+        has_ui_evidence=bool(ui_evidence_path),
+        has_layout=bool(layout_path),
+        has_repository=bool(repository_path),
+        has_screenshots=bool(screenshot_paths),
+    )
     review_checks = _review_checks(
         has_process=bool(process_path),
         has_ui_evidence=bool(ui_evidence_path),
@@ -217,6 +225,7 @@ def build_agent_harness_plan(
         inputs=inputs,
         missing_inputs=missing_inputs,
         open_questions=open_questions,
+        agent_prompts=agent_prompts,
         review_checks=review_checks,
     )
 
@@ -261,6 +270,11 @@ def format_agent_harness_plan(plan: AgentHarnessPlan, *, output_format: str = "m
         lines.append("## Open Questions")
         for question in plan.open_questions:
             lines.append(f"- {question}")
+    if plan.agent_prompts:
+        lines.append("")
+        lines.append("## Consuming Agent Prompts")
+        for prompt in plan.agent_prompts:
+            lines.append(f"- {prompt}")
     if plan.review_checks:
         lines.append("")
         lines.append("## Agent Review Checklist")
@@ -319,11 +333,50 @@ def _format_shell(plan: AgentHarnessPlan) -> str:
         for question in plan.open_questions:
             lines.append(f"# - {question}")
         lines.append("")
+    if plan.agent_prompts:
+        lines.append("# Consuming agent prompts:")
+        for prompt in plan.agent_prompts:
+            lines.append(f"# - {prompt}")
+        lines.append("")
     if plan.review_checks:
         lines.append("# Agent review checklist:")
         for check in plan.review_checks:
             lines.append(f"# - {check}")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _agent_prompts(
+    *,
+    has_process: bool,
+    has_ui_evidence: bool,
+    has_layout: bool,
+    has_repository: bool,
+    has_screenshots: bool,
+) -> list[str]:
+    prompts = [
+        "Use Cairn's Python/CLI tools for repeatable evidence before free-form interpretation; do not replace deterministic outputs with general UX advice.",
+        "For every human-facing process step, ask: what makes the user aware, how do they orient, what do they execute, how do they receive feedback or notification, and how do they recover or hand off?",
+        "For every UI-mediated step, separate the business task from interface overhead: extra focus actions, cross-screen comparison, search, copying, re-keying, confirmation, and avoidable context switching.",
+        "Evaluate cognitive aesthetic explicitly: whether visual hierarchy, grouping, labels, affordances, status, warnings, and evidence make the right judgement easy at the point of need.",
+        "When scoring risk, state probability, impact, confidence, and evidence source separately so plausible human-system risks are not presented as measured facts.",
+    ]
+    if has_process:
+        prompts.append("Anchor each human-risk or HCI finding to a concrete Cairn process step or requirement, then propose a Cairn annotation or support clause.")
+    else:
+        prompts.append("If no Cairn process file is supplied, draft candidate process steps first and mark them as inferred before assessing human load.")
+    if has_ui_evidence:
+        prompts.append("Use UI simulation evidence as the primary source for HCI touchpoints, non-happy-path states, feedback timing, and interaction recursion.")
+    elif has_screenshots:
+        prompts.append("Use screenshots for qualitative HCI and cognitive-aesthetic findings, but mark geometry, sequence, and interaction-cost claims as estimates.")
+    else:
+        prompts.append("If no UI evidence or screenshots exist, actively ask whether a UI is involved; do not let human-risk analysis stop at backend process behaviour.")
+    if has_layout:
+        prompts.append("Use functional layout metrics for related-field distance, evidence-to-action distance, scan path, pointer travel, and recovery distance before recommending form changes.")
+    else:
+        prompts.append("If layout geometry is unavailable, recommend layout JSON or Playwright extraction when field distance, eye movement, or pointer travel would affect the decision.")
+    if has_repository:
+        prompts.append("Inspect repository UI, logs, queue, and agent surfaces for hidden handoffs, ambiguous accountability, and places where the system silently transfers cognitive work to the user.")
+    return prompts
 
 
 def _review_checks(

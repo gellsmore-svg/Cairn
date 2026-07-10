@@ -26,6 +26,8 @@ def test_agent_harness_plan_includes_available_deterministic_steps():
     assert not plan.open_questions
     assert any("awareness, orientation, execution" in check for check in plan.review_checks)
     assert any("functional layout load" in check.lower() for check in plan.review_checks)
+    assert any("business task from interface overhead" in prompt for prompt in plan.agent_prompts)
+    assert any("functional layout metrics" in prompt for prompt in plan.agent_prompts)
     assert cairn.build_agent_harness_plan is build_agent_harness_plan
 
 
@@ -37,7 +39,9 @@ def test_agent_harness_plan_marks_missing_evidence_as_questions():
     assert "Open Questions" in markdown
     assert "No UI simulation evidence was supplied" in markdown
     assert "Agent Review Checklist" in markdown
+    assert "Consuming Agent Prompts" in markdown
     assert "Treat UI claims as inferential" in markdown
+    assert "actively ask whether a UI is involved" in markdown
     assert "cairn-human-factors process.cairn.md" in markdown
 
 
@@ -57,7 +61,9 @@ def test_agent_harness_plan_formats_shell_script():
     assert "cairn-generate-report" in shell
     assert "# Manual/agent step" in shell
     assert "# Agent review checklist:" in shell
+    assert "# Consuming agent prompts:" in shell
     assert "challenge, reject, defer, and override paths" in shell
+    assert "do not replace deterministic outputs with general UX advice" in shell
 
 
 def test_agent_harness_plan_tracks_repo_screenshots_and_missing_inputs(tmp_path):
@@ -92,6 +98,7 @@ def test_agent_harness_cli_writes_json(tmp_path):
     assert payload["steps"]
     assert any(step["name"] == "Generate review report" for step in payload["steps"])
     assert payload["inputs"]["process"] == "p.cairn.md"
+    assert any("cognitive aesthetic" in prompt for prompt in payload["agent_prompts"])
     assert any("business work from interface overhead" in check for check in payload["review_checks"])
 
 

@@ -1,3 +1,12 @@
+## [0.8.2] — 2026-07-10
+
+- Added consuming-agent prompts to agent harness plans so Codex CLI, Kiro,
+  Claude Code, and similar interactive agents are explicitly steered to use
+  Cairn's deterministic Python/CLI tools, inspect HCI touchpoints, separate
+  business work from interface overhead, assess cognitive aesthetic, and state
+  probability, impact, confidence, and evidence source separately.
+- Rendered the new guidance in Markdown, shell, and JSON harness-plan output.
+
 ## [Unreleased] — 2026-07-09
 
 - Added browser-driven UI evidence tooling for human-load analysis:

@@ -103,9 +103,12 @@ interpretation, prioritisation, synthesis, and careful explanation.
      reject, defer, or override paths
 
 The generated harness plan includes an `Agent Review Checklist` section in
-Markdown/shell output, and a `review_checks` array in JSON output, so an
-interactive LLM can be explicitly steered toward HCI touchpoints and functional
-layout load even when the user invokes Cairn through a general agent interface.
+Markdown/shell output, and a `review_checks` array in JSON output. It also emits
+`Consuming Agent Prompts` / `agent_prompts`, which tell an interactive LLM to use
+Cairn's deterministic Python/CLI surfaces before free-form interpretation, ask
+explicit HCI-touchpoint questions, separate business work from interface
+overhead, assess cognitive aesthetic, and state probability, impact,
+confidence, and evidence source separately.
 
 ## Python Harness Example
 
