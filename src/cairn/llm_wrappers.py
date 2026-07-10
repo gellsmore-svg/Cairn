@@ -14,7 +14,7 @@ from typing import Any
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from cairn.llm_adapters import LLMProvider, LLMRequest, LLMResponse
+from cairn.llm_adapters import LLMRequest, LLMResponse
 
 
 @dataclass

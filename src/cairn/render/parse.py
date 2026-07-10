@@ -148,9 +148,9 @@ def parse_markdown(text: str) -> ProcessDocument:
                 if m:
                     doc.context[m.group(1)] = m.group(2)
         elif lower.startswith("requirements"):
-            doc.requirements.extend(l.strip() for l in lines if l.strip() and not l.strip().startswith("```"))
+            doc.requirements.extend(line.strip() for line in lines if line.strip() and not line.strip().startswith("```"))
         elif lower.startswith("outcomes"):
-            doc.outcomes.extend(l.strip() for l in lines if l.strip())
+            doc.outcomes.extend(line.strip() for line in lines if line.strip())
         elif "process" in lower:
             if "operator" in lower or "render-profile: operator" in "\n".join(lines):
                 doc.mode = "operator"

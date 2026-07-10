@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from cairn.grammar.ast import Annotation, CairnDocument, Plan, Process, Step
+from cairn.grammar.ast import CairnDocument, Plan, Step
 
 
 def document_to_plan(doc: CairnDocument) -> dict[str, Any]:
